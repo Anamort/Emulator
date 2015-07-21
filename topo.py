@@ -40,6 +40,8 @@ class HybridNode(Host):
 		
   def start(self):
     info("%s " % self.name)
+    # Se numera a partir de eth3 (eth1 y eth2 no parecen funcionar del todo, investigar)
+    START_INTERFACE = 3
 		
     shutil.rmtree("%s/%s" %(self.baseDIR, self.name), ignore_errors=True)
     os.mkdir("%s/%s" %(self.baseDIR, self.name))
@@ -81,6 +83,18 @@ class HybridNode(Host):
     ospfd_conf.write("hostname %s\n" % self.name)
     ospfd_conf.write("password zebra\n")
     ospfd_conf.write("log file /var/log/quagga/ospfd.log\n\n")
+    for x in range(START_INTERFACE, START_INTERFACE + len(self.ips)):
+      ospfd_conf.write("interface %s-eth%s \n" % (self.name, str(x)))
+    ospfd_conf.write("router ospf\n")
+    ospfd_conf.write("ospf router-id %s\n" % self.ips[0])
+    for ip in self.ips:
+       ospfd_conf.write("network %s/24 area 0\n" % ip)
+    self.cmd("chmod -R 777 /var/log/quagga")
+    self.cmd("chmod -R 777 /var/run/quagga")	
+    self.cmd("chmod -R 777 %s" %(self.path_quagga))	
+
+    self.cmd("%s -f %s/zebra.conf -A 127.0.0.1 &" %(self.zebra_exec, self.path_quagga))
+    self.cmd("%s -f %s/ospfd.conf -A 127.0.0.1 &" %(self.ospfd_exec, self.path_quagga))  
     
     zebra_conf.write("hostname %s\n" % self.name)
     zebra_conf.write("password zebra\n")
@@ -92,16 +106,11 @@ class HybridNode(Host):
       
       
     # Otras configs
-    # Se numera a partir de eth3 (eth1 y eth2 no parecen funcionar del todo, investigar)
-    i = 2
+    i = START_INTERFACE
     for ip in self.ips:
-      i = i + 1
       self.cmd('ifconfig %s-eth%s %s netmask 255.255.255.0' %(self.name, str(i), ip))
+      i = i + 1
     self.cmd('sysctl -w net.ipv4.ip_forward=0')
-    self.cmd('ifconfig %s-eth7 10.0.0.7 netmask 255.255.0.0' % self.name)
-    self.cmd('ifconfig %s-eth8 10.1.0.7 netmask 255.255.0.0' % self.name)
-    
-
 
 
 class MyTopo( Topo ):
@@ -128,7 +137,7 @@ class MyTopo( Topo ):
     
     # Alice
     alice = self.addHost('alice', loopback="127.0.0.1",
-			  ips=['192.168.1.14','10.10.2.2','10.10.5.2','10.10.3.2'],
+			  ips=['192.168.1.14','10.10.2.2','10.10.5.2','10.10.3.2', '10.0.0.7', '10.1.0.7'],
 			  dpid='0000000000000004', cls=HybridNode)
     
     # Controlador
