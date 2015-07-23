@@ -80,7 +80,7 @@ class HybridNode(Host):
     zebra_conf = open(self.path_quagga + "/zebra.conf","w")
     ospfd_conf = open(self.path_quagga + "/ospfd.conf","w")
     
-    ospfd_conf.write("hostname %s\n" % self.name)
+    ospfd_conf.write("hostname ospfd\n")
     ospfd_conf.write("password zebra\n")
     ospfd_conf.write("log file /var/log/quagga/ospfd.log\n\n")
     for x in range(START_INTERFACE, START_INTERFACE + len(self.ips)):
@@ -89,29 +89,49 @@ class HybridNode(Host):
     ospfd_conf.write("ospf router-id %s\n" % self.ips[0])
     for ip in self.ips:
        ospfd_conf.write("network %s/24 area 0\n" % ip)
-    self.cmd("chmod -R 777 /var/log/quagga")
-    self.cmd("chmod -R 777 /var/run/quagga")	
-    self.cmd("chmod -R 777 %s" %(self.path_quagga))	
-
-    self.cmd("%s -f %s/zebra.conf -A 127.0.0.1 &" %(self.zebra_exec, self.path_quagga))
-    self.cmd("%s -f %s/ospfd.conf -A 127.0.0.1 &" %(self.ospfd_exec, self.path_quagga))  
     
-    zebra_conf.write("hostname %s\n" % self.name)
+    zebra_conf.write("hostname zebra\n")
     zebra_conf.write("password zebra\n")
     zebra_conf.write("enable password zebra\n")
     zebra_conf.write("log file /var/log/quagga/zebra.log\n\n")
     
     ospfd_conf.close()
     zebra_conf.close()
-      
+    
+    self.cmd("chmod -R 777 /var/log/quagga")
+    self.cmd("chmod -R 777 /var/run/quagga")
+    self.cmd("chmod -R 777 %s" %(self.path_quagga))
+    self.cmd("chown quagga.quaggavty %s/zebra.conf" % self.path_quagga)
+    self.cmd("chown quagga.quaggavty %s/ospfd.conf" % self.path_quagga)
+    
+    #
+    zebra_pid = open(self.path_quagga + "/zebra.pid","w")
+    zebra_pid.write("3927\n")
+    ospfd_pid = open(self.path_quagga + "/ospfd.pid","w")
+    ospfd_pid.write("3928\n")
+    zebra_pid.close()
+    ospfd_pid.close()
+    self.cmd("chmod -R 777 %s/zebra.pid" % self.path_quagga)
+    self.cmd("chmod -R 777 %s/ospfd.pid" % self.path_quagga)
+    self.cmd("chown quagga.quaggavty %s/zebra.pid" % self.path_quagga)
+    self.cmd("chown quagga.quaggavty %s/ospfd.pid" % self.path_quagga)
+    #
+    
+    #self.cmd('%s -d -f /var/run/quagga -z /var/run/quagga/zserv.api -i /var/run/quagga/zebra.pid' % (self.zebra_exec))
+    #self.cmd('%s -d -f /var/run/quagga -z /var/run/quagga/zserv.api -i /var/run/quagga/ospfd.pid' % (self.ospfd_exec))
+    self.cmd("%s -f %s/zebra.conf -A 127.0.0.1 -i %s/zebra.pid &" %(self.zebra_exec, self.path_quagga, self.path_quagga))
+    self.cmd("%s -f %s/ospfd.conf -A 127.0.0.1 -i %s/ospfd.pid &" %(self.ospfd_exec, self.path_quagga, self.path_quagga))
+    self.cmd('sysctl -w net.ipv4.ip_forward=1')
       
     # Otras configs
     i = START_INTERFACE
     for ip in self.ips:
       self.cmd('ifconfig %s-eth%s %s netmask 255.255.255.0' %(self.name, str(i), ip))
       i = i + 1
-    self.cmd('sysctl -w net.ipv4.ip_forward=0')
 
+  def terminate( self ):
+    Host.terminate(self)
+    shutil.rmtree("%s/%s" %(self.baseDIR, self.name), ignore_errors=True)
 
 class MyTopo( Topo ):
   def __init__( self ):
