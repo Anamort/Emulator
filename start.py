@@ -45,6 +45,13 @@ def startNetwork():
   h1.cmd('ifconfig h1-eth0 10.1.0.1 netmask 255.255.0.0')
   h1.cmd('route add -net 10.0.0.0 netmask 255.0.0.0 dev h1-eth0')
   
+  h2 = net.get('h2')
+  h2.cmd('ifconfig h2-eth0 10.2.0.1 netmask 255.255.0.0')
+  h2.cmd('route add -net 10.0.0.0 netmask 255.0.0.0 dev h2-eth0')
+  h3 = net.get('h3')
+  h3.cmd('ifconfig h3-eth0 10.3.0.1 netmask 255.255.0.0')
+  h3.cmd('route add -net 10.0.0.0 netmask 255.0.0.0 dev h3-eth0')
+  
   for node in ['alice','oz','galois','possion','controller']:
     n = net.get(node)
     n.start()

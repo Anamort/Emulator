@@ -67,11 +67,8 @@ class HybridNode(Host):
     self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait set-controller %s tcp:192.168.1.10:6633" %(self.path_ovs, self.name))
     
     # Agregar puertos
-    self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait add-port %s %s-eth4" %(self.path_ovs, self.name, self.name))
-    self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait add-port %s %s-eth5" %(self.path_ovs, self.name, self.name))
-    self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait add-port %s %s-eth6" %(self.path_ovs, self.name, self.name))
-    self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait add-port %s %s-eth7" %(self.path_ovs, self.name, self.name))
-    self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait add-port %s %s-eth8" %(self.path_ovs, self.name, self.name))
+    for x in range(START_INTERFACE+1, START_INTERFACE + len(self.ips)):
+      self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait add-port %s %s-eth%s" %(self.path_ovs, self.name, self.name, str(x)))
     #self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait add-port %s %s -- set Interface %s type=internal" %(self.path_ovs, self.name, 
     #vi_name, vi_name))
     
@@ -116,9 +113,7 @@ class HybridNode(Host):
     self.cmd("chown quagga.quaggavty %s/zebra.pid" % self.path_quagga)
     self.cmd("chown quagga.quaggavty %s/ospfd.pid" % self.path_quagga)
     #
-    
-    #self.cmd('%s -d -f /var/run/quagga -z /var/run/quagga/zserv.api -i /var/run/quagga/zebra.pid' % (self.zebra_exec))
-    #self.cmd('%s -d -f /var/run/quagga -z /var/run/quagga/zserv.api -i /var/run/quagga/ospfd.pid' % (self.ospfd_exec))
+
     self.cmd("%s -f %s/zebra.conf -A 127.0.0.1 -i %s/zebra.pid &" %(self.zebra_exec, self.path_quagga, self.path_quagga))
     self.cmd("%s -f %s/ospfd.conf -A 127.0.0.1 -i %s/ospfd.pid &" %(self.ospfd_exec, self.path_quagga, self.path_quagga))
     self.cmd('sysctl -w net.ipv4.ip_forward=1')
@@ -140,6 +135,8 @@ class MyTopo( Topo ):
     # Hosts
     h0 = self.addHost('h0')
     h1 = self.addHost('h1')
+    h2 = self.addHost('h2')
+    h3 = self.addHost('h3')
     
     # Galois
     galois = self.addHost('galois', loopback="127.0.0.1",
@@ -147,7 +144,7 @@ class MyTopo( Topo ):
 			  dpid='0000000000000001', cls=HybridNode)
     # Oz
     oz = self.addHost('oz', loopback="127.0.0.1",
-		      ips=['192.168.1.12','10.10.1.2','10.10.6.2','10.10.3.1'],
+		      ips=['192.168.1.12','10.10.1.2','10.10.6.2','10.10.3.1', '10.2.0.7', '10.3.0.7'],
 		      dpid='0000000000000002', cls=HybridNode)
     
     # Possion
@@ -183,6 +180,9 @@ class MyTopo( Topo ):
     
     self.addLink(alice, h0, 7, 0)
     self.addLink(alice, h1, 8, 0)
+    
+    self.addLink(oz, h2, 7, 0)
+    self.addLink(oz, h3, 8, 0)
 
 
 
