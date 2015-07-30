@@ -20,6 +20,13 @@ class HostController(Host):
   def start(self):
     self.cmd('ifconfig %s-eth0 %s netmask 255.255.255.0' %(self.name, self.ip))
     self.cmd('sh ryu_start.sh &')
+    
+  def terminate( self ):
+    # Usar con cuidado
+    # Parametrizar
+    self.cmd("pkill -f ryu_start.sh")
+    self.cmd("pkill -f simple_switch_13.py")
+    Host.terminate(self)
 
 class HybridNode(Host):
   zebra_exec = '/usr/lib/quagga/zebra'
@@ -125,6 +132,8 @@ class HybridNode(Host):
       i = i + 1
 
   def terminate( self ):
+    # Cuidado con este comando
+    self.cmd("pkill -f %s/%s/" %(self.baseDIR, self.name))
     Host.terminate(self)
     shutil.rmtree("%s/%s" %(self.baseDIR, self.name), ignore_errors=True)
 
