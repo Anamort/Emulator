@@ -31,6 +31,7 @@ class HostController(Host):
 class HybridNode(Host):
   zebra_exec = '/usr/lib/quagga/zebra'
   ospfd_exec = '/usr/lib/quagga/ospfd'
+  snmpd_exec = '/usr/sbin/snmpd'
   quaggaPath = '/usr/lib/quagga/'
   ovs_initd = "/etc/init.d/openvswitchd"
   baseDIR = "/tmp"
@@ -44,6 +45,7 @@ class HybridNode(Host):
     self.ips = ips
     self.dpid = dpid
     self.path_quagga = "%s/%s/quagga" %(self.baseDIR, self.name)
+    self.path_snmpd = "%s/%s/snmpd" %(self.baseDIR, self.name)
 		
   def start(self):
     info("%s " % self.name)
@@ -124,6 +126,16 @@ class HybridNode(Host):
     self.cmd("%s -f %s/zebra.conf -A 127.0.0.1 -i %s/zebra.pid &" %(self.zebra_exec, self.path_quagga, self.path_quagga))
     self.cmd("%s -f %s/ospfd.conf -A 127.0.0.1 -i %s/ospfd.pid &" %(self.ospfd_exec, self.path_quagga, self.path_quagga))
     self.cmd('sysctl -w net.ipv4.ip_forward=1')
+    
+    
+    # Configuracion de SNMP
+    os.mkdir(self.path_snmpd)
+    shutil.copyfile("snmpd.conf", self.path_snmpd + "/snmpd.conf")
+    #snmpd_pid = open(self.path_snmpd + "/snmpd.pid","w")
+    #snmpd_pid.write("4001\n")
+    #snmpd_pid.close()
+    self.cmd("chmod -R 777 %s/snmpd.pid" % self.path_snmpd)
+    self.cmd("%s -Lsd -Lf /dev/null -p /var/run/snmpd.pid -C -c %s/snmpd.conf -a" %(self.snmpd_exec, self.path_snmpd))
       
     # Otras configs
     i = START_INTERFACE
