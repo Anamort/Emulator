@@ -19,7 +19,7 @@ class HostController(Host):
 		
   def start(self):
     self.cmd('ifconfig %s-eth0 %s netmask 255.255.255.0' %(self.name, self.ip))
-    self.cmd('sh ryu_start.sh &')
+    #self.cmd('sh ryu_start.sh &')
     
   def terminate( self ):
     # Usar con cuidado
@@ -131,9 +131,13 @@ class HybridNode(Host):
     # Configuracion de SNMP
     os.mkdir(self.path_snmpd)
     shutil.copyfile("snmpd.conf", self.path_snmpd + "/snmpd.conf")
-    #snmpd_pid = open(self.path_snmpd + "/snmpd.pid","w")
-    #snmpd_pid.write("4001\n")
-    #snmpd_pid.close()
+    snmpd_conf = open(self.path_snmpd + "/snmpd.conf", "a")
+    snmpd_conf.write("sysLocation	%s\n" % self.name)
+    snmpd_conf.write("sysContact	svidal91@hotmail.com\n")
+    snmpd_conf.write("sysName	%s\n" % self.name)
+    snmpd_conf.write("config agent\n")
+    snmpd_conf.write("	option agentaddress %s:161\n" % self.ips[0])
+    snmpd_conf.close()
     self.cmd("chmod -R 777 %s/snmpd.pid" % self.path_snmpd)
     self.cmd("%s -Lsd -Lf /dev/null -p /var/run/snmpd.pid -C -c %s/snmpd.conf -a" %(self.snmpd_exec, self.path_snmpd))
       
