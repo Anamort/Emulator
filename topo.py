@@ -51,6 +51,10 @@ class HybridNode(Host):
     info("%s " % self.name)
     # Se numera a partir de eth3 (eth1 y eth2 no parecen funcionar del todo, investigar)
     START_INTERFACE = 3
+    # if_names: arreglo que contiene los nombres de las interfaces del router
+    if_names = []
+    for x in range(START_INTERFACE, START_INTERFACE + len(self.ips)):
+      if_names.append("%s-eth%s" %(self.name, str(x)))
 		
     shutil.rmtree("%s/%s" %(self.baseDIR, self.name), ignore_errors=True)
     os.mkdir("%s/%s" %(self.baseDIR, self.name))
@@ -76,8 +80,8 @@ class HybridNode(Host):
     self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait set-controller %s tcp:192.168.1.10:6633" %(self.path_ovs, self.name))
     
     # Agregar puertos
-    for x in range(START_INTERFACE+1, START_INTERFACE + len(self.ips)):
-      self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait add-port %s %s-eth%s" %(self.path_ovs, self.name, self.name, str(x)))
+    for interfaceName in if_names[1:]:
+      self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait add-port %s %s" %(self.path_ovs, self.name, interfaceName))
     #self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait add-port %s %s -- set Interface %s type=internal" %(self.path_ovs, self.name, 
     #vi_name, vi_name))
     
@@ -129,22 +133,22 @@ class HybridNode(Host):
     
     
     # Configuracion de SNMP
-    os.mkdir(self.path_snmpd)
-    shutil.copyfile("snmpd.conf", self.path_snmpd + "/snmpd.conf")
-    snmpd_conf = open(self.path_snmpd + "/snmpd.conf", "a")
-    snmpd_conf.write("sysLocation	%s\n" % self.name)
-    snmpd_conf.write("sysContact	svidal91@hotmail.com\n")
-    snmpd_conf.write("sysName	%s\n" % self.name)
-    snmpd_conf.write("config agent\n")
-    snmpd_conf.write("	option agentaddress %s:161\n" % self.ips[0])
-    snmpd_conf.close()
-    self.cmd("chmod -R 777 %s/snmpd.pid" % self.path_snmpd)
-    self.cmd("%s -Lsd -Lf /dev/null -p /var/run/snmpd.pid -C -c %s/snmpd.conf -a" %(self.snmpd_exec, self.path_snmpd))
+    #os.mkdir(self.path_snmpd)
+    #shutil.copyfile("snmpd.conf", self.path_snmpd + "/snmpd.conf")
+    #snmpd_conf = open(self.path_snmpd + "/snmpd.conf", "a")
+    #snmpd_conf.write("sysLocation	%s\n" % self.name)
+    #snmpd_conf.write("sysContact	svidal91@hotmail.com\n")
+    #snmpd_conf.write("sysName	%s\n" % self.name)
+    #snmpd_conf.write("config agent\n")
+    #snmpd_conf.write("	option agentaddress %s:161\n" % self.ips[0])
+    #snmpd_conf.close()
+    #self.cmd("chmod -R 777 %s/snmpd.pid" % self.path_snmpd)
+    #self.cmd("%s -Lsd -Lf /dev/null -p /var/run/snmpd.pid -C -c %s/snmpd.conf -a" %(self.snmpd_exec, self.path_snmpd))
       
     # Otras configs
-    i = START_INTERFACE
+    i = 0
     for ip in self.ips:
-      self.cmd('ifconfig %s-eth%s %s netmask 255.255.255.0' %(self.name, str(i), ip))
+      self.cmd('ifconfig %s %s netmask 255.255.255.0' %(if_names[i], ip))
       i = i + 1
 
   def terminate( self ):
