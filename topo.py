@@ -36,6 +36,7 @@ class HybridNode(Host):
   ovs_initd = "/etc/init.d/openvswitchd"
   baseDIR = "/tmp"
   OF_V = "OpenFlow13"
+  OVS_MANAGEMENT_PORT = "6640"
   
   def __init__(self, name, loopback, ips, dpid, *args, **kwargs ):
     dirs = ['/var/log/', '/var/log/quagga', '/var/run', '/var/run/quagga', '/var/run/openvswitch']
@@ -83,10 +84,20 @@ class HybridNode(Host):
     self.cmd('ovs-vsctl --db=unix:%s/db.sock --no-wait set bridge %s datapath_type=netdev' %(self.path_ovs, self.name))
     self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait set controller %s connection-mode=out-of-band" %(self.path_ovs, self.name))
    
-    self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait -- set Bridge %s other_config:datapath-id=%s" %(self.path_ovs, self.name, self.dpid))
+    # Configurar other_config, que va a incluir las IP
+    ip_addr_config_field = "other_config:ip_addresses="
+    for ip_addr in self.ips[:-1]:
+      ip_addr_config_field += ip_addr
+      ip_addr_config_field += "/"
+    ip_addr_config_field += self.ips[-1] 
+    
+    self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait -- set Bridge %s other_config:datapath-id=%s %s" %(self.path_ovs, self.name, self.dpid, ip_addr_config_field))
     
     # Agregar controlador
     self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait set-controller %s tcp:192.168.1.10:6633" %(self.path_ovs, self.name))
+    
+    # Gestion remota
+    self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait set-manager ptcp:%s" %(self.path_ovs, self.OVS_MANAGEMENT_PORT))
     
     # Agregar puertos
     for interfaceName in if_names[1:]:
