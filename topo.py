@@ -55,6 +55,15 @@ class HybridNode(Host):
     if_names = []
     for x in range(START_INTERFACE, START_INTERFACE + len(self.ips)):
       if_names.append("%s-eth%s" %(self.name, str(x)))
+      
+    #i = 0
+    #new_ifs = []
+    #for interfaceVar in self.intfList():
+      #new_ifs.append("e%s.%s" % (str(i),self.ips[i]))
+      #interfaceVar.rename("e%s.%s" % (str(i),self.ips[i]))
+      #i = i + 1
+      
+    #print new_ifs
 		
     shutil.rmtree("%s/%s" %(self.baseDIR, self.name), ignore_errors=True)
     os.mkdir("%s/%s" %(self.baseDIR, self.name))
