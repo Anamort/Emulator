@@ -93,8 +93,8 @@ class HybridNode(Host):
     ospfd_conf.write("hostname ospfd\n")
     ospfd_conf.write("password zebra\n")
     ospfd_conf.write("log file /var/log/quagga/ospfd.log\n\n")
-    for x in range(START_INTERFACE, START_INTERFACE + len(self.ips)):
-      ospfd_conf.write("interface %s-eth%s \n" % (self.name, str(x)))
+    for interfaceName in if_names:
+      ospfd_conf.write("interface %s \n" % interfaceName)
     ospfd_conf.write("router ospf\n")
     ospfd_conf.write("ospf router-id %s\n" % self.ips[0])
     for ip in self.ips:
