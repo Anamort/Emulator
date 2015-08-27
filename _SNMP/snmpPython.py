@@ -33,10 +33,10 @@ class Puerto:
      def printme(self):
      	print 'Puerto ' + self.numeroOVS + ' mac: ' + self.mac + ' nombreINterfaz: ' + self.nombreInterfaz
 
-tempBridgeName = commands.getstatusoutput('/usr/local/bin/ovs-vsctl show')
+tempBridgeName = commands.getstatusoutput('sudo ovs-vsctl show')
 
 tempBridgeArray = tempBridgeName[1].split('\n')
-bridgeNameTemp = tempBridgeArray[1]
+bridgeNameTemp = tempBridgeArray[2]
 bridgeNameArray = bridgeNameTemp.split('Bridge')
 bridgeName = bridgeNameArray[1].strip()
 
@@ -44,8 +44,10 @@ bridgeName = bridgeNameArray[1].strip()
 #print bridgeName
 
 
-salidaOVS = commands.getstatusoutput('/usr/local/bin/ovs-ofctl -O openflow13 show ' + bridgeName)[1]
+#salidaOVS = commands.getstatusoutput('sudo ovs-ofctl -O openflow13 show ' + bridgeName)[1]
+salidaOVS = commands.getstatusoutput('sudo ovs-ofctl show ' + bridgeName)[1]
 dpidTemp = salidaOVS.split('dpid:')
+
 dpid = dpidTemp[1][0:16]
 
 #print "El dpid es:  "
@@ -104,10 +106,3 @@ for aSacar in sacar:
 print ".1.3.6.1.4.1.8888"
 print "string"
 print router.to_JSON()
-
-
-
-
-
-
-

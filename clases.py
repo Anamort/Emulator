@@ -46,12 +46,17 @@ class OVSQuaggaRouter(Host):
 		
   def start(self):
     info("%s " % self.name)
-    # Se numera a partir de eth3 (eth1 y eth2 no parecen funcionar del todo, investigar)
-    START_INTERFACE = 0
     # if_names: arreglo que contiene los nombres de las interfaces del router
     if_names = []
-    for x in range(START_INTERFACE, START_INTERFACE + len(self.ips)):
-      if_names.append("%s-eth%s" %(self.name, str(x)))
+    for intf in self.intfList():
+      if_names.append(intf.name)
+      
+    # Se asignan las direcciones IP
+    i = 0
+    for intf in self.intfList():
+      intf.setIP(self.ips[i],24)
+      i = i + 1
+
 		
     shutil.rmtree("%s/%s" %(self.baseDIR, self.name), ignore_errors=True)
     os.mkdir("%s/%s" %(self.baseDIR, self.name))
@@ -71,12 +76,21 @@ class OVSQuaggaRouter(Host):
     self.cmd('ovs-vsctl --db=unix:%s/db.sock --no-wait set bridge %s datapath_type=netdev' %(self.path_ovs, self.name))
     self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait set controller %s connection-mode=out-of-band" %(self.path_ovs, self.name))
    
-    # Configurar other_config, que va a incluir las IP
+    # Configurar other_config, que va a incluir datos de los puertos
     ip_addr_config_field = "other_config:ip_addresses="
-    for ip_addr in self.ips[:-1]:
-      ip_addr_config_field += ip_addr
+    for interface in self.intfList()[:-1]:
+      ip_addr_config_field += interface.name
+      ip_addr_config_field += "_"
+      ip_addr_config_field += interface.ip
+      ip_addr_config_field += "_"
+      ip_addr_config_field += interface.mac
       ip_addr_config_field += "/"
-    ip_addr_config_field += self.ips[-1] 
+    ult_intf = self.intfList()[-1]
+    ip_addr_config_field += ult_intf.name
+    ip_addr_config_field += "_"
+    ip_addr_config_field += ult_intf.ip
+    ip_addr_config_field += "_"
+    ip_addr_config_field += ult_intf.mac
     
     self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait -- set Bridge %s other_config:datapath-id=%s %s" %(self.path_ovs, self.name, self.dpid, ip_addr_config_field))
     
@@ -149,12 +163,6 @@ class OVSQuaggaRouter(Host):
     #snmpd_conf.close()
     #self.cmd("chmod -R 777 %s/snmpd.pid" % self.path_snmpd)
     #self.cmd("%s -Lsd -Lf /dev/null -p /var/run/snmpd.pid -C -c %s/snmpd.conf -a" %(self.snmpd_exec, self.path_snmpd))
-      
-    # Otras configs
-    i = 0
-    for ip in self.ips:
-      self.cmd('ifconfig %s %s netmask 255.255.255.0' %(if_names[i], ip))
-      i = i + 1
 
   def terminate( self ):
     # Cuidado con este comando
