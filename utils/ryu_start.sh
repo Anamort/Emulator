@@ -1,4 +1,4 @@
 #!/bin/bash
 
 cd /home/santiago/ryu
-PYTHONPATH=. ./bin/ryu-manager ryu/app/simple_switch_13.py
+PYTHONPATH=. ./bin/ryu-manager ryu/app/my_app.py

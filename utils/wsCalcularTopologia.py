@@ -8,7 +8,7 @@ app = Flask(__name__)
 @app.route('/topo/calc/')
 def calcularTopo():
 	print 'HI : '
-	temp = commands.getstatusoutput('/home/mina/work/telnetRouters.py')
+	temp = commands.getstatusoutput('python telnetRouters.py')
 	print 'SENDING TOPOLOGY : '
 	print temp
 	return 'ok'
