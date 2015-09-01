@@ -13,6 +13,13 @@
  * OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+ /*
+  Editado por {jorge.amaro|efviodo}@fing.edu.uy
+  se agrega llamada a webservice 
+  (donde la direccion del ws se pasa por parametro cuando se invoca este ejecutable )
+  en caso de deteccion
+  de convergencia de topologia
+  */ 
 
 #include <stdint.h>
 #include <memory.h>
@@ -30,8 +37,14 @@
 
 #include <linux/netlink.h>
 #include <linux/rtnetlink.h>
+#include <string.h>
 
-#include "fpm/fpm.h"
+#include "fpm.h"
+
+char * ip = "127.0.0.1"; // valor por defecto si no se paso ip por parametro
+char * port = "5001"; // valor por defecto si no se paso puerto por parametro
+char * wsName = "/topo/calc/"; //// valor por defecto si no se paso nombre de webservice por parametro
+char * fullDir;
 
 
 struct arg_struct{
@@ -39,13 +52,25 @@ struct arg_struct{
 	int processTopology;
 };
 
+
+char* buildAddress() {
+  
+      char * str3 = (char *) malloc(1 + strlen(ip)+ strlen(port)+ strlen(wsName) + 8);
+      strcpy(str3,"http://");
+      strcat(str3, ip);
+      strcat(str3, ":");
+      strcat(str3, port);
+      strcat(str3, wsName);
+      return str3;
+  }
+
 void consumeRest(int i){
   CURL *curl;
   CURLcode res;
 
   curl = curl_easy_init();
   if(curl) {
-    curl_easy_setopt(curl, CURLOPT_URL, "http://127.0.0.1:5001/topo/calc/");
+    curl_easy_setopt(curl, CURLOPT_URL, fullDir);
     /* example.com is redirected, so we tell libcurl to follow redirection */
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
 
@@ -681,11 +706,26 @@ fpm_serve ()
   }
 }
 
-int main (void)
+int main (int argc, const char *argv[])
 {
   int sock;
-  
+  int i = 0;
 
+  if (argc >1){
+    ip = malloc(sizeof(char) * strlen(argv[1]));
+    strcpy(ip,argv[1]);
+      if (argc >2){
+        port = malloc(sizeof(char) * strlen(argv[2]));
+        strcpy(port,argv[2]);
+        if (argc >3){
+
+          wsName = malloc(sizeof(char) * strlen(argv[3]));
+          strcpy(wsName,argv[3]);
+        }
+      }
+  }
+  fullDir = buildAddress();
+  trace(1, fullDir);
   memset(glob, 0, sizeof(*glob));
 
   if (!create_listen_sock(FPM_DEFAULT_PORT, &glob->server_sock)) {

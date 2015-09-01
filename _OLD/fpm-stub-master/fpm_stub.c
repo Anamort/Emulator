@@ -33,10 +33,6 @@
 
 #include "fpm/fpm.h"
 
-char * ip;
-char * port;
-char * wsName;
-
 
 struct arg_struct{
 	int time;
@@ -685,27 +681,10 @@ fpm_serve ()
   }
 }
 
-int main (int argc, const char *argv[])
+int main (void)
 {
   int sock;
-  int i = 0;
-
-
   
-  for (; i < argc; ++i) {
-  	trace(1, "argv[%d] = '%s'\n", i, argv[i]);
-  }
-
-  if (argc > 2){
-
-ip = malloc(sizeof(char) * strlen(argv[1]));
-
-strcpy(my_copy,my_str);
-  
-   }  char * ip;
-  char * port;
-  char * wsName;
-
 
   memset(glob, 0, sizeof(*glob));
 
