@@ -77,7 +77,7 @@ class OVSQuaggaRouter(Host):
     self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait set controller %s connection-mode=out-of-band" %(self.path_ovs, self.name))
    
     # Configurar other_config, que va a incluir datos de los puertos
-    ip_addr_config_field = "other_config:ip_addresses="
+    ip_addr_config_field = "other_config:ports_info="
     for interface in self.intfList()[:-1]:
       ip_addr_config_field += interface.name
       ip_addr_config_field += "_"
