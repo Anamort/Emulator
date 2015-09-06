@@ -33,10 +33,10 @@ class Puerto:
      def printme(self):
      	print 'Puerto ' + self.numeroOVS + ' mac: ' + self.mac + ' nombreINterfaz: ' + self.nombreInterfaz
 
-tempBridgeName = commands.getstatusoutput('/usr/local/bin/ovs-vsctl show')
+tempBridgeName = commands.getstatusoutput('ovs-vsctl --db=tcp:127.0.0.1:6640 show')
 
 tempBridgeArray = tempBridgeName[1].split('\n')
-bridgeNameTemp = tempBridgeArray[1]
+bridgeNameTemp = tempBridgeArray[2]
 bridgeNameArray = bridgeNameTemp.split('Bridge')
 bridgeName = bridgeNameArray[1].strip()
 
@@ -44,9 +44,10 @@ bridgeName = bridgeNameArray[1].strip()
 #print bridgeName
 
 
-salidaOVS = commands.getstatusoutput('/usr/local/bin/ovs-ofctl -O openflow13 show ' + bridgeName)[1]
-dpidTemp = salidaOVS.split('dpid:')
-dpid = dpidTemp[1][0:16]
+salidaOVS = commands.getstatusoutput('ovs-ofctl dump-ports-desc -O OpenFlow13 ' + bridgeName)[1]
+#dpidTemp = salidaOVS.split('dpid:')
+#dpid = dpidTemp[1][0:16]
+dpid = "0"
 
 #print "El dpid es:  "
 #print dpid

@@ -99,17 +99,15 @@ class OVSQuaggaRouter(Host):
 		
   def start(self):
     info("%s " % self.name)
-    # if_names: arreglo que contiene los nombres de las interfaces del router
+    # if_names: lista que contiene los nombres de las interfaces del router
     if_names = []
     for intf in self.intfList():
       if_names.append(intf.name)
-      
-    # Se asignan las direcciones IP
-    i = 0
-    for intf in self.intfList():
-      intf.setIP(self.ips[i],24)
-      i = i + 1
-
+    
+    # vif_names: lista con los nombres interfaces virtuales del router
+    vif_names = []
+    for intf in self.intfList()[1:]:
+      vif_names.append('v'+intf.name)
 		
     shutil.rmtree("%s/%s" %(self.baseDIR, self.name), ignore_errors=True)
     os.mkdir("%s/%s" %(self.baseDIR, self.name))
@@ -127,7 +125,15 @@ class OVSQuaggaRouter(Host):
     self.name, self.OF_V))
     self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait set-fail-mode %s secure" %(self.path_ovs, self.name))
     self.cmd('ovs-vsctl --db=unix:%s/db.sock --no-wait set bridge %s datapath_type=netdev' %(self.path_ovs, self.name))
-    self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait set controller %s connection-mode=out-of-band" %(self.path_ovs, self.name))
+    #self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait set controller %s connection-mode=out-of-band" %(self.path_ovs, self.name))
+    
+    
+    # Se asignan las direcciones IP a las interfaces fisicas
+    # Esto es provisorio solo para facilitar la implementacion de "ports_info"
+    i = 0
+    for intf in self.intfList():
+      intf.setIP(self.ips[i],24)
+      i = i + 1
    
     # Configurar other_config, que va a incluir datos de los puertos
     ip_addr_config_field = "other_config:ports_info="
@@ -156,8 +162,33 @@ class OVSQuaggaRouter(Host):
     # Agregar puertos
     for interfaceName in if_names[1:]:
       self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait add-port %s %s" %(self.path_ovs, self.name, interfaceName))
-    #self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait add-port %s %s -- set Interface %s type=internal" %(self.path_ovs, self.name, 
-    #vi_name, vi_name))
+      
+    # Agregar puertos virtuales
+    for interfaceName in vif_names:
+      self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait add-port %s %s -- set Interface %s type=internal" %(self.path_ovs, self.name, interfaceName, interfaceName))
+      
+    # Instala flujos para las interfaces virtuales
+    # AGREGAR DL_TYPE !!!!!
+    i = 1
+    for interfaceName in vif_names:
+      nro_puerto_virtual = i + len(vif_names)
+      self.cmd('ovs-ofctl -O %s add-flow "%s" table=0,priority=0,hard_timeout=0,idle_timeout=0,in_port=%s,actions=output:%s' %(self.OF_V, self.name, str(i), str(nro_puerto_virtual)))
+      self.cmd('ovs-ofctl -O %s add-flow "%s" table=0,priority=0,hard_timeout=0,idle_timeout=0,in_port=%s,actions=output:%s' %(self.OF_V, self.name, str(nro_puerto_virtual), str(i)))
+      i = i + 1
+      
+
+    # Asignacion de direcciones IP
+    # se asigna 0.0.0.0 a las interfaces fisicas exceptuando la de gestion 
+    for interfaceName in if_names[1:]:
+      self.cmd("ifconfig %s 0.0.0.0 up" % interfaceName)
+      
+    # Se asignan las direcciones IP reales a las interfaces virtuales
+    i = 1
+    for interfaceName in vif_names:
+      self.cmd("ifconfig %s %s netmask 255.255.255.0 up" %(interfaceName, self.ips[i]))
+      i = i + 1
+      
+    
     
     # Configuracion de Quagga
     os.mkdir(self.path_quagga)
@@ -201,8 +232,7 @@ class OVSQuaggaRouter(Host):
 
     self.cmd("%s -f %s/zebra.conf -A 127.0.0.1 -i %s/zebra.pid &" %(self.zebra_exec, self.path_quagga, self.path_quagga))
     self.cmd("%s -f %s/ospfd.conf -A 127.0.0.1 -i %s/ospfd.pid &" %(self.ospfd_exec, self.path_quagga, self.path_quagga))
-    self.cmd('sysctl -w net.ipv4.ip_forward=1')
-    
+    self.cmd('sysctl -w net.ipv4.ip_forward=1')   
     
     # Configuracion de SNMP
     #os.mkdir(self.path_snmpd)
