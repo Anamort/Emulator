@@ -26,9 +26,9 @@ class Puerto:
     self.nombreInterfaz = nombreInterfaz
     self.ip = ip
 
-#app = Flask(__name__)
+app = Flask(__name__)
 
-#@app.route('/snmp/atp/<address>')
+@app.route('/snmp/atp/<address>')
 def getInfo(address):
   print address
   tempArray = commands.getstatusoutput('ovs-vsctl --db=tcp:%s:6640 list bridge' % address)
@@ -67,7 +67,7 @@ def getInfo(address):
   return router.to_JSON()
 
 if __name__ == '__main__':
-  getInfo("192.168.1.14")
-    #app.run(host='0.0.0.0')
+  #getInfo("192.168.1.14")
+    app.run(host='0.0.0.0', port=5000)
 	#default port: 5000
 	

@@ -9,72 +9,19 @@ from mininet.topo import Topo
 from mininet.log import info, error
 
 class HostController(Host):
-  zebra_exec = '/usr/lib/quagga/zebra'
-  ospfd_exec = '/usr/lib/quagga/ospfd'
-  quaggaPath = '/usr/lib/quagga/'
-  baseDIR = "/tmp"
-  
   def __init__(self, name, ip, *args, **kwargs ):
-    dirs = ['/var/log/', '/var/log/quagga', '/var/run', '/var/run/quagga']
-    Host.__init__(self, name, privateDirs=dirs, *args, **kwargs )
+    Host.__init__(self, name, *args, **kwargs )
     self.ip = ip
-    self.path_quagga = "%s/%s/quagga" %(self.baseDIR, self.name)
 		
   def start(self):
-    self.cmd('ifconfig %s-eth0 %s netmask 255.255.255.0' %(self.name, self.ip))
-    shutil.rmtree("%s/%s" %(self.baseDIR, self.name), ignore_errors=True)
-    os.mkdir("%s/%s" %(self.baseDIR, self.name))
-    
-    # Configuracion de Quagga
-    os.mkdir(self.path_quagga)
-    zebra_conf = open(self.path_quagga + "/zebra.conf","w")
-    ospfd_conf = open(self.path_quagga + "/ospfd.conf","w")
-    
-    ospfd_conf.write("hostname ospfd\n")
-    ospfd_conf.write("password zebra\n")
-    ospfd_conf.write("log file /var/log/quagga/ospfd.log\n\n")
-    ospfd_conf.write("interface %s-eth0 \n" % self.name)
-    ospfd_conf.write("router ospf\n")
-    ospfd_conf.write("ospf router-id %s\n" % self.ip)
-    ospfd_conf.write("network %s/24 area 0\n" % self.ip)
-    
-    zebra_conf.write("hostname zebra\n")
-    zebra_conf.write("password zebra\n")
-    zebra_conf.write("enable password zebra\n")
-    zebra_conf.write("log file /var/log/quagga/zebra.log\n\n")
-    
-    ospfd_conf.close()
-    zebra_conf.close()
-    
-    self.cmd("chmod -R 777 /var/log/quagga")
-    self.cmd("chmod -R 777 /var/run/quagga")
-    self.cmd("chmod -R 777 %s" %(self.path_quagga))
-    self.cmd("chown quagga.quaggavty %s/zebra.conf" % self.path_quagga)
-    self.cmd("chown quagga.quaggavty %s/ospfd.conf" % self.path_quagga)
-    
-    #
-    zebra_pid = open(self.path_quagga + "/zebra.pid","w")
-    ospfd_pid = open(self.path_quagga + "/ospfd.pid","w")
-    zebra_pid.close()
-    ospfd_pid.close()
-    self.cmd("chmod -R 777 %s/zebra.pid" % self.path_quagga)
-    self.cmd("chmod -R 777 %s/ospfd.pid" % self.path_quagga)
-    self.cmd("chown quagga.quaggavty %s/zebra.pid" % self.path_quagga)
-    self.cmd("chown quagga.quaggavty %s/ospfd.pid" % self.path_quagga)
-    #
-
-    self.cmd("%s -f %s/zebra.conf -A 127.0.0.1 -i %s/zebra.pid &" %(self.zebra_exec, self.path_quagga, self.path_quagga))
-    self.cmd("%s -f %s/ospfd.conf -A 127.0.0.1 -i %s/ospfd.pid &" %(self.ospfd_exec, self.path_quagga, self.path_quagga))
-    self.cmd('sysctl -w net.ipv4.ip_forward=1')
-    
-    #self.cmd('sh ryu_start.sh &')
+    self.cmd('ifconfig %s-eth0 %s netmask 255.255.255.0 up' %(self.name, self.ip))
+    #self.cmd('sh utils/ryu_start.sh &')
     
   def terminate( self ):
     # Usar con cuidado
     # Parametrizar
     self.cmd("pkill -f ryu_start.sh")
-    self.cmd("pkill -f simple_switch_13.py")
-    shutil.rmtree("%s/%s" %(self.baseDIR, self.name), ignore_errors=True)
+    self.cmd("pkill -f rauflowapp.py")
     Host.terminate(self)
 
 class OVSQuaggaRouter(Host):
