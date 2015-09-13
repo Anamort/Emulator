@@ -168,6 +168,8 @@ class OVSQuaggaRouter(Host):
     ospfd_conf.close()
     zebra_conf.close()
     
+    shutil.copy("utils/daemons","%s/daemons" % self.path_quagga)
+    
     self.cmd("chmod -R 777 /var/log/quagga")
     self.cmd("chmod -R 777 /var/run/quagga")
     self.cmd("chmod -R 777 %s" %(self.path_quagga))
