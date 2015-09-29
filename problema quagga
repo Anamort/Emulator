@@ -1,0 +1,5 @@
+https://lists.quagga.net/pipermail/quagga-users/2006-April/006715.html
+
+show ip ospf interface muestra interfaces de otro nodo
+
+zserv.api es lo que usa ospfd para obtener info de las interfaces (?)
