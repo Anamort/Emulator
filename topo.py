@@ -6,40 +6,44 @@ Topologia de ejemplo
 """
 
 from mininet.topo import Topo
-from clases import OVSQuaggaRouter, HostController
+from clases import RAUSwitch, RAUController, RAUHost
 
 class MyTopo( Topo ):
   def __init__( self ):
     Topo.__init__( self )
 
     # Hosts
-    h0 = self.addHost('h0')
-    h1 = self.addHost('h1')
-    h2 = self.addHost('h2')
-    h3 = self.addHost('h3')
+    h0 = self.addHost('h0', ip='10.0.0.1/24', gw='10.0.0.7', cls=RAUHost)
+    h1 = self.addHost('h1', ip='10.1.0.1/24', gw='10.1.0.7', cls=RAUHost)
+    h2 = self.addHost('h2', ip='10.2.0.1/24', gw='10.2.0.7', cls=RAUHost)
+    h3 = self.addHost('h3', ip='10.3.0.1/24', gw='10.3.0.7', cls=RAUHost)
     
     # Galois
     galois = self.addHost('galois', loopback="127.0.0.1",
-			  ips=['192.168.1.11','10.10.1.1','10.10.5.1','10.10.4.1'],
-			  dpid='0000000000000001', cls=OVSQuaggaRouter)
+			  ips=['192.168.1.11/24','10.10.1.1/24','10.10.5.1/24','10.10.4.1/24'],
+			  dpid='0000000000000001', controller_ip="192.168.1.10",
+			  cls=RAUSwitch)
     # Oz
     oz = self.addHost('oz', loopback="127.0.0.1",
-		      ips=['192.168.1.12','10.10.1.2','10.10.6.2','10.10.3.1', '10.2.0.7', '10.3.0.7'],
-		      dpid='0000000000000002', cls=OVSQuaggaRouter)
+		      ips=['192.168.1.12/24','10.10.1.2/24','10.10.6.2/24','10.10.3.1/24', '10.2.0.7/24', '10.3.0.7/24'],
+		      dpid='0000000000000002', controller_ip="192.168.1.10",
+		      cls=RAUSwitch)
     
     # Possion
     possion = self.addHost('possion', loopback="127.0.0.1",
-			  ips=['192.168.1.13','10.10.2.1','10.10.6.1','10.10.4.2'],
-			  dpid='0000000000000003', cls=OVSQuaggaRouter)
+			  ips=['192.168.1.13/24','10.10.2.1/24','10.10.6.1/24','10.10.4.2/24'],
+			  dpid='0000000000000003', controller_ip="192.168.1.10",
+			  cls=RAUSwitch)
     
     # Alice
     alice = self.addHost('alice', loopback="127.0.0.1",
-			  ips=['192.168.1.14','10.10.2.2','10.10.5.2','10.10.3.2', '10.0.0.7', '10.1.0.7'],
-			  dpid='0000000000000004', cls=OVSQuaggaRouter)
+			  ips=['192.168.1.14/24','10.10.2.2/24','10.10.5.2/24','10.10.3.2/24', '10.0.0.7/24', '10.1.0.7/24'],
+			  dpid='0000000000000004', controller_ip="192.168.1.10",
+			  cls=RAUSwitch)
     
     # Controlador
-    root = self.addHost('controller', cls=HostController,
-			ip='192.168.1.10')
+    root = self.addHost('controller', cls=RAUController,
+			ip='192.168.1.10/24')
     
     # Switch de la red de gestion
     man_switch = self.addSwitch('s1', protocols='OpenFlow13', failMode='standalone')
