@@ -28,7 +28,7 @@ def getMaskLength(ip_address):
 # Solo se soporta 8, 16, 24 para facilitar implementacion
 # Retorna 255.255.255.255 en otros casos
 def getNetmask(ip_address):
-  mask_length = getMaskLength(ip_address)
+  mask_length = int(getMaskLength(ip_address))
   if (mask_length == 8):
     return "255.0.0.0"
   if (mask_length == 16):
@@ -186,7 +186,7 @@ class RAUSwitch(Host):
     i = 1
     for interfaceName in vif_names:
       ip = getIP(self.ips[i])
-      mask = getMaskLength(self.ips[i])
+      mask = getNetmask(self.ips[i])
       self.cmd("ifconfig %s %s netmask %s up" %(interfaceName, ip, mask))
       i = i + 1
       
