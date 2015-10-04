@@ -1,48 +1,99 @@
+# Este archivo contiene todas las clases necesarias para el entorno de emulacion
+# Estas clases son: RAUHost, RAUController, RAUSwitch, QuaggaRouter
+# Para utilizarlas se debe incluirlas y instanciarlas con todos los parametros
+# necesarios
+
 import inspect
 import os
 import sys
 import shutil
 import time
 from subprocess import Popen,PIPE
-from mininet.node import Host, OVSKernelSwitch, Node
-from mininet.topo import Topo
+from mininet.node import Host
 from mininet.log import info, error
 
-class HostController(Host):
+# Los siguientes metodos son metodos auxiliares para obtener
+# direcciones IP y mascaras de red a partir del formato X.X.X.X/X
+# ya que con ese formato se pasan las direcciones a los constructores
+
+# Retorna direccion IP
+def getIP(ip_address):
+  return ip_address.split("/")[0]
+
+# Retorna mask length
+def getMaskLength(ip_address):
+  return ip_address.split("/")[1]
+
+# Retorna netmask
+# Solo se soporta 8, 16, 24 para facilitar implementacion
+# Retorna 255.255.255.255 en otros casos
+def getNetmask(ip_address):
+  mask_length = getMaskLength(ip_address)
+  if (mask_length == 8):
+    return "255.0.0.0"
+  if (mask_length == 16):
+    return "255.255.0.0"
+  if (mask_length == 24):
+    return "255.255.255.0"
+  return "255.255.255.255"  
+
+class RAUHost(Host):
+  def __init__(self, name, ip, gw, *args, **kwargs ):
+    Host.__init__(self, name, *args, **kwargs )
+    self.ip = ip
+    self.gw = gw
+		
+  def start(self):
+    info("%s " % self.name)
+    # Configuro la ip
+    ip = getIP(self.ip)
+    mask = getMaskLength(self.ip)
+    self.intfList()[0].setIP(ip,mask)
+    # Configuro el default GW
+    self.cmd("route add default gw %s %s" %(self.gw, self.intfList()[0]))
+    
+  def terminate( self ):
+    Host.terminate(self)
+
+class RAUController(Host):
   def __init__(self, name, ip, *args, **kwargs ):
     Host.__init__(self, name, *args, **kwargs )
     self.ip = ip
 		
   def start(self):
-    self.cmd('ifconfig %s-eth0 %s netmask 255.255.255.0 up' %(self.name, self.ip))
+    info("%s " % self.name)
+    # Configuro la ip
+    ip = getIP(self.ip)
+    mask = getMaskLength(self.ip)
+    self.intfList()[0].setIP(ip,mask)
+    # Se levanta el controlador
     #self.cmd('sh utils/ryu_start.sh &')
     
   def terminate( self ):
     # Usar con cuidado
     # Parametrizar
     self.cmd("pkill -f ryu_start.sh")
-    self.cmd("pkill -f rauflowapp.py")
+    self.cmd("pkill -f gui_topology.py")
     Host.terminate(self)
 
-class OVSQuaggaRouter(Host):
+class RAUSwitch(Host):
   zebra_exec = '/usr/lib/quagga/zebra'
   ospfd_exec = '/usr/lib/quagga/ospfd'
-  snmpd_exec = '/usr/sbin/snmpd'
   quaggaPath = '/usr/lib/quagga/'
   ovs_initd = "/etc/init.d/openvswitchd"
   baseDIR = "/tmp"
   OF_V = "OpenFlow13"
   OVS_MANAGEMENT_PORT = "6640"
   
-  def __init__(self, name, loopback, ips, dpid, *args, **kwargs ):
+  def __init__(self, name, loopback, controller_ip, ips, dpid, *args, **kwargs ):
     dirs = ['/var/log/', '/var/log/quagga', '/var/run', '/var/run/quagga', '/var/run/openvswitch']
     Host.__init__(self, name, privateDirs=dirs, *args, **kwargs )   
     self.loopback = loopback
     self.path_ovs = "%s/%s/ovs" %(self.baseDIR, self.name)
     self.ips = ips
     self.dpid = dpid
+    self.controller_ip = controller_ip
     self.path_quagga = "%s/%s/quagga" %(self.baseDIR, self.name)
-    self.path_snmpd = "%s/%s/snmpd" %(self.baseDIR, self.name)
 		
   def start(self):
     info("%s " % self.name)
@@ -79,7 +130,9 @@ class OVSQuaggaRouter(Host):
     # Esto es provisorio solo para facilitar la implementacion de "ports_info"
     i = 0
     for intf in self.intfList():
-      intf.setIP(self.ips[i],24)
+      ip = getIP(self.ips[i])
+      mask = getMaskLength(self.ips[i])
+      intf.setIP(ip,mask)
       i = i + 1
    
     # Configurar other_config, que va a incluir datos de los puertos
@@ -101,7 +154,7 @@ class OVSQuaggaRouter(Host):
     self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait -- set Bridge %s other_config:datapath-id=%s %s" %(self.path_ovs, self.name, self.dpid, ip_addr_config_field))
     
     # Agregar controlador
-    self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait set-controller %s tcp:192.168.1.10:6633" %(self.path_ovs, self.name))
+    self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait set-controller %s tcp:%s:6633" %(self.path_ovs, self.name, self.controller_ip))
     
     # Gestion remota
     self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait set-manager ptcp:%s" %(self.path_ovs, self.OVS_MANAGEMENT_PORT))
@@ -132,7 +185,9 @@ class OVSQuaggaRouter(Host):
     # Se asignan las direcciones IP reales a las interfaces virtuales
     i = 1
     for interfaceName in vif_names:
-      self.cmd("ifconfig %s %s netmask 255.255.255.0 up" %(interfaceName, self.ips[i]))
+      ip = getIP(self.ips[i])
+      mask = getMaskLength(self.ips[i])
+      self.cmd("ifconfig %s %s netmask %s up" %(interfaceName, ip, mask))
       i = i + 1
       
     
@@ -150,9 +205,12 @@ class OVSQuaggaRouter(Host):
     for interfaceName in vif_names:
       ospfd_conf.write("interface %s \n" % interfaceName)
     ospfd_conf.write("router ospf\n")
-    ospfd_conf.write("ospf router-id %s\n" % self.ips[0])
-    for ip in self.ips:
-       ospfd_conf.write("network %s/24 area 0\n" % ip)
+    ip = getIP(self.ips[0])
+    ospfd_conf.write("ospf router-id %s\n" % ip)
+    for full_ip in self.ips:
+      ip = getIP(full_ip)
+      mask = getMaskLength(full_ip)
+      ospfd_conf.write("network %s/%s area 0\n" % (ip, mask))
     
     zebra_conf.write("hostname zebra\n")
     zebra_conf.write("password zebra\n")
@@ -185,24 +243,16 @@ class OVSQuaggaRouter(Host):
     self.cmd("chmod -R 777 %s/ospfd.pid" % self.path_quagga)
     self.cmd("chown quagga.quaggavty %s/zebra.pid" % self.path_quagga)
     self.cmd("chown quagga.quaggavty %s/ospfd.pid" % self.path_quagga)
+    
+    #zserv = open(self.path_quagga + "/zserv.api","w")
+    #zserv.close()
+    #self.cmd("chmod -R 777 %s/zserv.api" % self.path_quagga)
+    #self.cmd("chown quagga.quagga %s/zserv.api" % self.path_quagga)
     #
 
     self.cmd("%s -f %s/zebra.conf -A 127.0.0.1 -i %s/zebra.pid &" %(self.zebra_exec, self.path_quagga, self.path_quagga))
     self.cmd("%s -f %s/ospfd.conf -A 127.0.0.1 -i %s/ospfd.pid &" %(self.ospfd_exec, self.path_quagga, self.path_quagga))
-    self.cmd('sysctl -w net.ipv4.ip_forward=1')   
-    
-    # Configuracion de SNMP
-    #os.mkdir(self.path_snmpd)
-    #shutil.copyfile("snmpd.conf", self.path_snmpd + "/snmpd.conf")
-    #snmpd_conf = open(self.path_snmpd + "/snmpd.conf", "a")
-    #snmpd_conf.write("sysLocation	%s\n" % self.name)
-    #snmpd_conf.write("sysContact	svidal91@hotmail.com\n")
-    #snmpd_conf.write("sysName	%s\n" % self.name)
-    #snmpd_conf.write("config agent\n")
-    #snmpd_conf.write("	option agentaddress %s:161\n" % self.ips[0])
-    #snmpd_conf.close()
-    #self.cmd("chmod -R 777 %s/snmpd.pid" % self.path_snmpd)
-    #self.cmd("%s -Lsd -Lf /dev/null -p /var/run/snmpd.pid -C -c %s/snmpd.conf -a" %(self.snmpd_exec, self.path_snmpd))
+    self.cmd('sysctl -w net.ipv4.ip_forward=1')
 
   def terminate( self ):
     # Cuidado con este comando
@@ -210,8 +260,101 @@ class OVSQuaggaRouter(Host):
     Host.terminate(self)
     shutil.rmtree("%s/%s" %(self.baseDIR, self.name), ignore_errors=True)
     
+class QuaggaRouter(Host):
+  zebra_exec = '/usr/lib/quagga/zebra'
+  ospfd_exec = '/usr/lib/quagga/ospfd'
+  quaggaPath = '/usr/lib/quagga/'
+  baseDIR = "/tmp"
+  
+  def __init__(self, name, loopback, controller_ip, ips, dpid, *args, **kwargs ):
+    dirs = ['/var/log/', '/var/log/quagga', '/var/run', '/var/run/quagga']
+    Host.__init__(self, name, privateDirs=dirs, *args, **kwargs )   
+    self.loopback = loopback
+    self.ips = ips
+    self.path_quagga = "%s/%s/quagga" %(self.baseDIR, self.name)
+		
+  def start(self):
+    info("%s " % self.name)
+    # if_names: lista que contiene los nombres de las interfaces del router
+    if_names = []
+    for intf in self.intfList():
+      if_names.append(intf.name)
     
+    # Se asignan las direcciones IP a las interfaces
+    i = 0
+    for intf in self.intfList():
+      ip = getIP(self.ips[i])
+      mask = getMaskLength(self.ips[i])
+      intf.setIP(ip,mask)
+      i = i + 1      
     
+    # Configuracion de Quagga
+    shutil.rmtree("%s/%s" %(self.baseDIR, self.name), ignore_errors=True)
+    os.mkdir("%s/%s" %(self.baseDIR, self.name))
+    os.mkdir(self.path_quagga)
+    zebra_conf = open(self.path_quagga + "/zebra.conf","w")
+    ospfd_conf = open(self.path_quagga + "/ospfd.conf","w")
     
+    ospfd_conf.write("hostname ospfd\n")
+    ospfd_conf.write("password zebra\n")
+    ospfd_conf.write("log file /var/log/quagga/ospfd.log\n\n")
+    ospfd_conf.write("interface %s \n" % if_names[0])
+    ospfd_conf.write("ip ospf cost 65535 \n")
+    for interfaceName in vif_names:
+      ospfd_conf.write("interface %s \n" % interfaceName)
+    ospfd_conf.write("router ospf\n")
+    ip = getIP(self.ips[0])
+    ospfd_conf.write("ospf router-id %s\n" % ip)
+    for full_ip in self.ips:
+      ip = getIP(full_ip)
+      mask = getMaskLength(full_ip)
+      ospfd_conf.write("network %s/%s area 0\n" % (ip, mask))
     
+    zebra_conf.write("hostname zebra\n")
+    zebra_conf.write("password zebra\n")
+    zebra_conf.write("enable password zebra\n")
+    zebra_conf.write("log file /var/log/quagga/zebra.log\n\n")
     
+    zebra_conf.write("interface %s \n" % if_names[0])
+    zebra_conf.write("ipv6 nd suppress-ra \n")
+    for interfaceName in vif_names:
+      zebra_conf.write("interface %s \n" % interfaceName)
+      zebra_conf.write("ipv6 nd suppress-ra \n")
+    
+    ospfd_conf.close()
+    zebra_conf.close()
+    
+    shutil.copy("utils/daemons","%s/daemons" % self.path_quagga)
+    
+    self.cmd("chmod -R 777 /var/log/quagga")
+    self.cmd("chmod -R 777 /var/run/quagga")
+    self.cmd("chmod -R 777 %s" %(self.path_quagga))
+    self.cmd("chown quagga.quaggavty %s/zebra.conf" % self.path_quagga)
+    self.cmd("chown quagga.quaggavty %s/ospfd.conf" % self.path_quagga)
+    
+    #
+    zebra_pid = open(self.path_quagga + "/zebra.pid","w")
+    ospfd_pid = open(self.path_quagga + "/ospfd.pid","w")
+    zebra_pid.close()
+    ospfd_pid.close()
+    self.cmd("chmod -R 777 %s/zebra.pid" % self.path_quagga)
+    self.cmd("chmod -R 777 %s/ospfd.pid" % self.path_quagga)
+    self.cmd("chown quagga.quaggavty %s/zebra.pid" % self.path_quagga)
+    self.cmd("chown quagga.quaggavty %s/ospfd.pid" % self.path_quagga)
+    
+    #zserv = open(self.path_quagga + "/zserv.api","w")
+    #zserv.close()
+    #self.cmd("chmod -R 777 %s/zserv.api" % self.path_quagga)
+    #self.cmd("chown quagga.quagga %s/zserv.api" % self.path_quagga)
+    #
+
+    self.cmd("%s -f %s/zebra.conf -A 127.0.0.1 -i %s/zebra.pid &" %(self.zebra_exec, self.path_quagga, self.path_quagga))
+    self.cmd("%s -f %s/ospfd.conf -A 127.0.0.1 -i %s/ospfd.pid &" %(self.ospfd_exec, self.path_quagga, self.path_quagga))
+    self.cmd('sysctl -w net.ipv4.ip_forward=1')
+
+  def terminate( self ):
+    # Cuidado con este comando
+    self.cmd("pkill -f %s/%s/" %(self.baseDIR, self.name))
+    Host.terminate(self)
+    shutil.rmtree("%s/%s" %(self.baseDIR, self.name), ignore_errors=True)
+
