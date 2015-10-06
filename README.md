@@ -1,4 +1,4 @@
-# P2015_44-MininetExtensions
+# P2015_44
 
 Aquí se encontrará todo el código necesario para levantar el entorno de emulación del prototipo.
 
