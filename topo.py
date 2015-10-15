@@ -49,11 +49,11 @@ class MyTopo( Topo ):
     man_switch = self.addSwitch('s1', protocols='OpenFlow13', failMode='standalone')
 
     # Enlaces
-    self.addLink(man_switch, galois, 1, 0)
-    self.addLink(man_switch, oz, 2, 0)
-    self.addLink(man_switch, possion, 3, 0)
-    self.addLink(man_switch, alice, 4, 0)
-    self.addLink(man_switch, root, 0, 0)
+    self.addLink(man_switch, galois, 2, 0)
+    self.addLink(man_switch, oz, 3, 0)
+    self.addLink(man_switch, possion, 4, 0)
+    self.addLink(man_switch, alice, 5, 0)
+    self.addLink(man_switch, root, 1, 0)
     
     self.addLink(galois, alice, 2, 2)
     self.addLink(galois, possion, 3, 3)
