@@ -17,7 +17,7 @@ from mininet.log import setLogLevel, info
 from mininet.cli import CLI
 from mininet.net import Mininet
 
-from topo import MyTopo
+from topo import CustomTopology
 
 net = None
 
@@ -25,7 +25,7 @@ def startNetwork():
   # Se levanta la topologia
 
   info('** Creating test topology\n')
-  topo = MyTopo()
+  topo = CustomTopology()
 
   info('** Starting the network\n')
   global net
@@ -33,7 +33,7 @@ def startNetwork():
   
   net.start()
   
-  for node in ['alice','oz','galois','possion','controller', 'h0', 'h1', 'h2', 'h3']:
+  for node in topo.startList:
     n = net.get(node)
     n.start()
 

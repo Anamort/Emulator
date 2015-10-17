@@ -8,7 +8,8 @@ Topologia de ejemplo
 from mininet.topo import Topo
 from clases import RAUSwitch, RAUController, RAUHost
 
-class MyTopo( Topo ):
+class CustomTopology( Topo ):
+  startList = ['alice','oz','galois','possion','controller', 'h0', 'h1', 'h2', 'h3']
   def __init__( self ):
     Topo.__init__( self )
 
@@ -67,10 +68,6 @@ class MyTopo( Topo ):
     
     self.addLink(oz, h2, 4, 0)
     self.addLink(oz, h3, 5, 0)
-
-
-
-
 
 
 
