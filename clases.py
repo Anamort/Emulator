@@ -266,7 +266,7 @@ class QuaggaRouter(Host):
   quaggaPath = '/usr/lib/quagga/'
   baseDIR = "/tmp"
   
-  def __init__(self, name, loopback, controller_ip, ips, dpid, *args, **kwargs ):
+  def __init__(self, name, loopback, ips, *args, **kwargs ):
     dirs = ['/var/log/', '/var/log/quagga', '/var/run', '/var/run/quagga']
     Host.__init__(self, name, privateDirs=dirs, *args, **kwargs )   
     self.loopback = loopback
@@ -298,26 +298,20 @@ class QuaggaRouter(Host):
     ospfd_conf.write("hostname ospfd\n")
     ospfd_conf.write("password zebra\n")
     ospfd_conf.write("log file /var/log/quagga/ospfd.log\n\n")
-    ospfd_conf.write("interface %s \n" % if_names[0])
-    ospfd_conf.write("ip ospf cost 65535 \n")
-    for interfaceName in vif_names:
+    for interfaceName in if_names:
       ospfd_conf.write("interface %s \n" % interfaceName)
     ospfd_conf.write("router ospf\n")
     ip = getIP(self.ips[0])
     ospfd_conf.write("ospf router-id %s\n" % ip)
-    for full_ip in self.ips:
-      ip = getIP(full_ip)
-      mask = getMaskLength(full_ip)
-      ospfd_conf.write("network %s/%s area 0\n" % (ip, mask))
+    for ip in self.ips:
+      ospfd_conf.write("network %s area 0\n" % ip)
     
     zebra_conf.write("hostname zebra\n")
     zebra_conf.write("password zebra\n")
     zebra_conf.write("enable password zebra\n")
     zebra_conf.write("log file /var/log/quagga/zebra.log\n\n")
     
-    zebra_conf.write("interface %s \n" % if_names[0])
-    zebra_conf.write("ipv6 nd suppress-ra \n")
-    for interfaceName in vif_names:
+    for interfaceName in if_names:
       zebra_conf.write("interface %s \n" % interfaceName)
       zebra_conf.write("ipv6 nd suppress-ra \n")
     
