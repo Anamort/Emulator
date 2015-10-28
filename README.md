@@ -11,7 +11,7 @@ A continuación se explican los componentes principales:
     - RAUSwitch
     - RAUController
     - QuaggaRouter
-  * **topo.py**: Archivo Python que declara una topología ejemplo.
+  * **topoVPN2.py**: Archivo Python que declara una topología ejemplo.
   * **start.py**: Script que incluye la topología que desea levantar y la inicia.
  
  
@@ -42,10 +42,3 @@ Parámetros necesarios para instanciar los objetos:
     - ips: Direcciones IP de todas las interfaces (formato A.B.C.D/E)
       - La primera direccion IP debe ser la de la interfaz que lo conecta con el backbone
     - ce_mac_address: Direccion MAC de la interfaz que lo conecta con el backbone
-    
-    
-IMPORTANTE: En el caso de RAUSwitch, donde se debe indicar un conjunto de direcciones IP, se debe pasarlas como un arreglo
-y el orden de dicho arreglo debe cumplir las siguientes restricciones:
-
-  * La primera dirección IP debe ser la de la red de gestión
-  * El orden debe ser coherente con la numeración de las interfaces al agregar los links (ver en topo.py como se agregan los links)
