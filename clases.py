@@ -8,6 +8,7 @@ import os
 import sys
 import shutil
 import time
+import json
 from subprocess import Popen,PIPE
 from mininet.node import Host
 from mininet.log import info, error
@@ -67,7 +68,7 @@ class RAUController(Host):
     mask = getMaskLength(self.ip)
     self.intfList()[0].setIP(ip,mask)
     # Se levanta el controlador
-    #self.cmd('sh utils/ryu_start.sh &')
+    self.cmd('sh utils/ryu_start.sh &')
     
   def terminate( self ):
     # Usar con cuidado
@@ -85,7 +86,7 @@ class RAUSwitch(Host):
   OF_V = "OpenFlow13"
   OVS_MANAGEMENT_PORT = "6640"
   
-  def __init__(self, name, loopback, controller_ip, ips, dpid, *args, **kwargs ):
+  def __init__(self, name, loopback, controller_ip, ips, dpid, border=0, ce_ip_address=None, ce_mac_address=None, *args, **kwargs ):
     dirs = ['/var/log/', '/var/log/quagga', '/var/run', '/var/run/quagga', '/var/run/openvswitch']
     Host.__init__(self, name, privateDirs=dirs, *args, **kwargs )   
     self.loopback = loopback
@@ -93,6 +94,9 @@ class RAUSwitch(Host):
     self.ips = ips
     self.dpid = dpid
     self.controller_ip = controller_ip
+    self.border = border
+    self.ce_ip_address = ce_ip_address
+    self.ce_mac_address = ce_mac_address
     self.path_quagga = "%s/%s/quagga" %(self.baseDIR, self.name)
 		
   def start(self):
@@ -254,6 +258,30 @@ class RAUSwitch(Host):
     self.cmd("%s -f %s/ospfd.conf -A 127.0.0.1 -i %s/ospfd.pid &" %(self.ospfd_exec, self.path_quagga, self.path_quagga))
     self.cmd('sysctl -w net.ipv4.ip_forward=1')
 
+
+    # A continuacion se agrega la informacion de este router al json de inicializacion
+    init_json = open('utils/init_json.json','a')
+    datos = {}
+    datos['node_name'] = self.name
+    datos['node_top_type'] = self.border
+    datos['router_id'] = getIP(self.ips[0])
+    json_data = json.dumps(datos)
+    init_json.write(json_data + '\n')
+
+    if self.border == 1 and self.ce_ip_address is not None and self.ce_mac_address is not None:
+      datos = {}
+      datos['iface_top_type'] = 1
+      datos['ip_address'] = getIP(self.ips[-1])
+      datos['router_id'] = getIP(self.ips[0])
+      datos['ce_mac_address'] = self.ce_mac_address
+      datos['ce_ip_address'] = self.ce_ip_address
+      json_data = json.dumps(datos)
+      init_json.write(json_data + '\n')
+
+    # El router con la ip 192.168.1.12 levanta el WS con la informacion de los routers
+    if (self.ips[0] == '192.168.1.12/24'):
+      self.cmd('python utils/wsOVS.py &')
+
   def terminate( self ):
     # Cuidado con este comando
     self.cmd("pkill -f %s/%s/" %(self.baseDIR, self.name))
@@ -266,15 +294,20 @@ class QuaggaRouter(Host):
   quaggaPath = '/usr/lib/quagga/'
   baseDIR = "/tmp"
   
-  def __init__(self, name, loopback, ips, *args, **kwargs ):
+  def __init__(self, name, loopback, ips, ce_mac_address, *args, **kwargs ):
     dirs = ['/var/log/', '/var/log/quagga', '/var/run', '/var/run/quagga']
     Host.__init__(self, name, privateDirs=dirs, *args, **kwargs )   
     self.loopback = loopback
     self.ips = ips
+    self.ce_mac_address = ce_mac_address
     self.path_quagga = "%s/%s/quagga" %(self.baseDIR, self.name)
 		
   def start(self):
     info("%s " % self.name)
+
+    # Se configura la MAC de la interfaz con la red backbone
+    self.intfList()[0].setMAC(self.ce_mac_address)
+
     # if_names: lista que contiene los nombres de las interfaces del router
     if_names = []
     for intf in self.intfList():
@@ -349,6 +382,7 @@ class QuaggaRouter(Host):
   def terminate( self ):
     # Cuidado con este comando
     self.cmd("pkill -f %s/%s/" %(self.baseDIR, self.name))
+    self.cmd("pkill -f wsOVS.py")
     Host.terminate(self)
     shutil.rmtree("%s/%s" %(self.baseDIR, self.name), ignore_errors=True)
 

@@ -1,5 +1,5 @@
 """
-Topologia de ejemplo
+Topologia de ejemplo para VPN de capa 2
 4 routers SDN
 2 routers Quagga
 2 hosts
@@ -19,10 +19,10 @@ class CustomTopology( Topo ):
     h1 = self.addHost('h1', ip='10.2.0.2/24', gw='10.2.0.1', cls=RAUHost)
 
     routerLan1 = self.addHost('routerLan1', ips=['10.0.0.1/24', '10.1.0.1/24'],
-                                loopback='127.0.0.1', cls=QuaggaRouter)
+                                loopback='127.0.0.1', ce_mac_address='00:00:00:00:00:01', cls=QuaggaRouter)
 
     routerLan2 = self.addHost('routerLan2', ips=['10.0.0.3/24', '10.2.0.1/24'],
-                                loopback='127.0.0.1', cls=QuaggaRouter)
+                                loopback='127.0.0.1', ce_mac_address='00:00:00:00:00:02', cls=QuaggaRouter)
     
     # Galois
     galois = self.addHost('galois', loopback="127.0.0.1",
@@ -33,6 +33,7 @@ class CustomTopology( Topo ):
     oz = self.addHost('oz', loopback="127.0.0.1",
 		      ips=['192.168.1.12/24','10.10.1.2/24','10.10.6.2/24','10.10.3.1/24', '10.0.0.4/24'],
 		      dpid='0000000000000002', controller_ip="192.168.1.10",
+              border=1, ce_ip_address='10.0.0.3', ce_mac_address='00:00:00:00:00:02',
 		      cls=RAUSwitch)
     
     # Possion
@@ -45,6 +46,7 @@ class CustomTopology( Topo ):
     alice = self.addHost('alice', loopback="127.0.0.1",
 			  ips=['192.168.1.14/24','10.10.2.2/24','10.10.5.2/24','10.10.3.2/24', '10.0.0.2/24'],
 			  dpid='0000000000000004', controller_ip="192.168.1.10",
+              border=1, ce_ip_address='10.0.0.1', ce_mac_address='00:00:00:00:00:01',
 			  cls=RAUSwitch)
     
     # Controlador

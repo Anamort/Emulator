@@ -17,7 +17,7 @@ from mininet.log import setLogLevel, info
 from mininet.cli import CLI
 from mininet.net import Mininet
 
-from topo import CustomTopology
+from topoVPN2 import CustomTopology
 
 net = None
 
@@ -32,15 +32,21 @@ def startNetwork():
   net = Mininet(topo, controller=None)
   
   net.start()
+
+  # Se borra el archivo json de inicializacion viejo
+  if os.path.exists('utils/init_json.json'):
+    os.remove('utils/init_json.json')
   
+  # Invocar el metodo start en cada nodo en 'startList'
+  info('** Starting RAU nodes\n')
   for node in topo.startList:
     n = net.get(node)
     n.start()
 
-  info('** Dumping host connections\n')
-  dumpNodeConnections(net.hosts)
+  # info('** Dumping host connections\n')
+  # dumpNodeConnections(net.hosts)
 
-  info('** Running CLI\n')
+  info('\n** Running CLI\n')
   CLI(net)
 
 
