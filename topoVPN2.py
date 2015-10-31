@@ -33,7 +33,7 @@ class CustomTopology( Topo ):
     oz = self.addHost('oz', loopback="127.0.0.1",
 		      ips=['192.168.1.12/24','10.10.1.2/24','10.10.6.2/24','10.10.3.1/24', '10.1.0.2/24'],
 		      dpid='0000000000000002', controller_ip="192.168.1.10",
-              border=1, ce_ip_address='10.0.0.3', ce_mac_address='00:00:00:00:00:02',
+              border=1, ce_ip_address='10.1.0.1', ce_mac_address='00:00:00:00:00:02',
 		      cls=RAUSwitch)
     
     # Possion

@@ -307,11 +307,6 @@ class QuaggaRouter(Host):
 
     # Se configura la MAC de la interfaz con la red backbone
     self.intfList()[0].setMAC(self.ce_mac_address)
-
-    # if_names: lista que contiene los nombres de las interfaces del router
-    if_names = []
-    for intf in self.intfList():
-      if_names.append(intf.name)
     
     # Se asignan las direcciones IP a las interfaces
     i = 0
@@ -331,22 +326,19 @@ class QuaggaRouter(Host):
     ospfd_conf.write("hostname ospfd\n")
     ospfd_conf.write("password zebra\n")
     ospfd_conf.write("log file /var/log/quagga/ospfd.log\n\n")
-    for interfaceName in if_names:
-      ospfd_conf.write("interface %s \n" % interfaceName)
+    ospfd_conf.write("interface %s \n" % self.intfList()[0].name)
     ospfd_conf.write("router ospf\n")
     ip = getIP(self.ips[0])
     ospfd_conf.write("ospf router-id %s\n" % ip)
-    for ip in self.ips:
-      ospfd_conf.write("network %s area 0\n" % ip)
+    ospfd_conf.write("network %s area 0\n" % self.ips[0])
     
     zebra_conf.write("hostname zebra\n")
     zebra_conf.write("password zebra\n")
     zebra_conf.write("enable password zebra\n")
     zebra_conf.write("log file /var/log/quagga/zebra.log\n\n")
-    
-    for interfaceName in if_names:
-      zebra_conf.write("interface %s \n" % interfaceName)
-      zebra_conf.write("ipv6 nd suppress-ra \n")
+
+    zebra_conf.write("interface %s \n" % self.intfList()[0].name)
+    zebra_conf.write("ipv6 nd suppress-ra \n")
     
     ospfd_conf.close()
     zebra_conf.close()
@@ -375,8 +367,8 @@ class QuaggaRouter(Host):
     #self.cmd("chown quagga.quagga %s/zserv.api" % self.path_quagga)
     #
 
-    # self.cmd("%s -f %s/zebra.conf -A 127.0.0.1 -i %s/zebra.pid &" %(self.zebra_exec, self.path_quagga, self.path_quagga))
-    # self.cmd("%s -f %s/ospfd.conf -A 127.0.0.1 -i %s/ospfd.pid &" %(self.ospfd_exec, self.path_quagga, self.path_quagga))
+    self.cmd("%s -f %s/zebra.conf -A 127.0.0.1 -i %s/zebra.pid &" %(self.zebra_exec, self.path_quagga, self.path_quagga))
+    self.cmd("%s -f %s/ospfd.conf -A 127.0.0.1 -i %s/ospfd.pid &" %(self.ospfd_exec, self.path_quagga, self.path_quagga))
     self.cmd('sysctl -w net.ipv4.ip_forward=1')
 
   def terminate( self ):
