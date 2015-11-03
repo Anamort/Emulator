@@ -172,12 +172,18 @@ class RAUSwitch(Host):
       self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait add-port %s %s -- set Interface %s type=internal" %(self.path_ovs, self.name, interfaceName, interfaceName))
       
     # Instala flujos para las interfaces virtuales
-    # AGREGAR DL_TYPE !!!!!
     i = 1
     for interfaceName in vif_names:
       nro_puerto_virtual = i + len(vif_names)
-      self.cmd('ovs-ofctl -O %s add-flow "%s" table=0,priority=0,hard_timeout=0,idle_timeout=0,in_port=%s,actions=output:%s' %(self.OF_V, self.name, str(i), str(nro_puerto_virtual)))
-      self.cmd('ovs-ofctl -O %s add-flow "%s" table=0,priority=0,hard_timeout=0,idle_timeout=0,in_port=%s,actions=output:%s' %(self.OF_V, self.name, str(nro_puerto_virtual), str(i)))
+      if self.border == 1 and i == len(vif_names):
+        # Si es un router de borde y es la ultima interfaz, entonces es la interfaz con el CE
+        # Por lo tanto le agrego dl_type=0x0806
+        self.cmd('ovs-ofctl -O %s add-flow "%s" table=0,priority=0,hard_timeout=0,idle_timeout=0,in_port=%s,dl_type=0x0806,actions=output:%s' %(self.OF_V, self.name, str(i), str(nro_puerto_virtual)))
+        self.cmd('ovs-ofctl -O %s add-flow "%s" table=0,priority=0,hard_timeout=0,idle_timeout=0,in_port=%s,dl_type=0x0806,actions=output:%s' %(self.OF_V, self.name, str(nro_puerto_virtual), str(i)))
+      else:        
+        self.cmd('ovs-ofctl -O %s add-flow "%s" table=0,priority=0,hard_timeout=0,idle_timeout=0,in_port=%s,actions=output:%s' %(self.OF_V, self.name, str(i), str(nro_puerto_virtual)))
+        self.cmd('ovs-ofctl -O %s add-flow "%s" table=0,priority=0,hard_timeout=0,idle_timeout=0,in_port=%s,actions=output:%s' %(self.OF_V, self.name, str(nro_puerto_virtual), str(i)))
+        
       i = i + 1
       
 
@@ -367,8 +373,8 @@ class QuaggaRouter(Host):
     #self.cmd("chown quagga.quagga %s/zserv.api" % self.path_quagga)
     #
 
-    self.cmd("%s -f %s/zebra.conf -A 127.0.0.1 -i %s/zebra.pid &" %(self.zebra_exec, self.path_quagga, self.path_quagga))
-    self.cmd("%s -f %s/ospfd.conf -A 127.0.0.1 -i %s/ospfd.pid &" %(self.ospfd_exec, self.path_quagga, self.path_quagga))
+    # self.cmd("%s -f %s/zebra.conf -A 127.0.0.1 -i %s/zebra.pid &" %(self.zebra_exec, self.path_quagga, self.path_quagga))
+    # self.cmd("%s -f %s/ospfd.conf -A 127.0.0.1 -i %s/ospfd.pid &" %(self.ospfd_exec, self.path_quagga, self.path_quagga))
     self.cmd('sysctl -w net.ipv4.ip_forward=1')
 
   def terminate( self ):
