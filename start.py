@@ -17,7 +17,7 @@ from mininet.log import setLogLevel, info
 from mininet.cli import CLI
 from mininet.net import Mininet
 
-from topoVPN2 import CustomTopology
+from topoBasica import CustomTopology
 
 net = None
 

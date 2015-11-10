@@ -19,10 +19,12 @@ class CustomTopology( Topo ):
     h1 = self.addHost('h1', ip='10.1.1.2/24', gw='10.1.1.1', cls=RAUHost)
 
     routerLan1 = self.addHost('routerLan1', ips=['10.0.0.1/24', '10.0.1.1/24'],
-                                loopback='127.0.0.1', ce_mac_address='00:00:00:00:00:01', cls=QuaggaRouter)
+                                loopback='127.0.0.1', ce_mac_address='00:00:00:00:00:01',
+                                gw='10.0.0.2', cls=QuaggaRouter)
 
     routerLan2 = self.addHost('routerLan2', ips=['10.1.0.1/24', '10.1.1.1/24'],
-                                loopback='127.0.0.1', ce_mac_address='00:00:00:00:00:02', cls=QuaggaRouter)
+                                loopback='127.0.0.1', ce_mac_address='00:00:00:00:00:02',
+                                gw='10.1.0.2', cls=QuaggaRouter)
     
     # Galois
     galois = self.addHost('galois', loopback="127.0.0.1",

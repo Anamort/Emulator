@@ -300,12 +300,13 @@ class QuaggaRouter(Host):
   quaggaPath = '/usr/lib/quagga/'
   baseDIR = "/tmp"
   
-  def __init__(self, name, loopback, ips, ce_mac_address, *args, **kwargs ):
+  def __init__(self, name, loopback, ips, ce_mac_address, gw, *args, **kwargs ):
     dirs = ['/var/log/', '/var/log/quagga', '/var/run', '/var/run/quagga']
     Host.__init__(self, name, privateDirs=dirs, *args, **kwargs )   
     self.loopback = loopback
     self.ips = ips
     self.ce_mac_address = ce_mac_address
+    self.gw = gw
     self.path_quagga = "%s/%s/quagga" %(self.baseDIR, self.name)
 		
   def start(self):
@@ -376,6 +377,9 @@ class QuaggaRouter(Host):
     # self.cmd("%s -f %s/zebra.conf -A 127.0.0.1 -i %s/zebra.pid &" %(self.zebra_exec, self.path_quagga, self.path_quagga))
     # self.cmd("%s -f %s/ospfd.conf -A 127.0.0.1 -i %s/ospfd.pid &" %(self.ospfd_exec, self.path_quagga, self.path_quagga))
     self.cmd('sysctl -w net.ipv4.ip_forward=1')
+
+    # Configuro el default GW
+    self.cmd("route add default gw %s %s" %(self.gw, self.intfList()[0]))
 
   def terminate( self ):
     # Cuidado con este comando
