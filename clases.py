@@ -87,7 +87,7 @@ class RAUSwitch(Host):
   OVS_MANAGEMENT_PORT = "6640"
   
   def __init__(self, name, loopback, controller_ip, ips, dpid, border=0, ce_ip_address=None, ce_mac_address=None, *args, **kwargs ):
-    dirs = ['/var/log/', '/var/log/quagga', '/var/run', '/var/run/quagga', '/var/run/openvswitch']
+    dirs = ['/var/log/', '/var/log/quagga', '/var/run', '/var/run/quagga', '/var/run/openvswitch', '/usr/local/var/run/openvswitch']
     Host.__init__(self, name, privateDirs=dirs, *args, **kwargs )   
     self.loopback = loopback
     self.path_ovs = "%s/%s/ovs" %(self.baseDIR, self.name)
@@ -119,8 +119,8 @@ class RAUSwitch(Host):
     self.cmd("ovsdb-tool create %s/conf.db" % self.path_ovs)
     self.cmd("ovsdb-server %s/conf.db --remote=punix:%s/db.sock --remote=db:Open_vSwitch,Open_vSwitch,manager_options --no-chdir --unixctl=%s/ovsdb-server.sock --detach" %(self.path_ovs, self.path_ovs, self.path_ovs))
     self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait init" % self.path_ovs)
-    self.cmd("ovs-vswitchd unix:%s/db.sock -vinfo --log-file=%s/ovs-vswitchd.log --no-chdir --detach" %(self.path_ovs, self.path_ovs))
-    
+    self.cmd("ovs-vswitchd unix:%s/db.sock --unixctl=%s/ovs-vswitchd.9999.ctl -vinfo --log-file=%s/ovs-vswitchd.log --pidfile=%s/ovs-vswitchd.pid --no-chdir --detach" %(self.path_ovs, self.path_ovs, self.path_ovs, self.path_ovs))
+
     # Creacion y configuracion del bridge
     self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait add-br %s" %(self.path_ovs, self.name))
     self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait set bridge %s protocols=%s 2> /dev/null" %(self.path_ovs, 
@@ -129,6 +129,8 @@ class RAUSwitch(Host):
     self.cmd('ovs-vsctl --db=unix:%s/db.sock --no-wait set bridge %s datapath_type=netdev' %(self.path_ovs, self.name))
     #self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait set controller %s connection-mode=out-of-band" %(self.path_ovs, self.name))
     
+    # Configuracion de sFlow
+    # self.cmd("sudo ovs-vsctl --db=unix:%s/db.sock --no-wait -- --id=@sflow create sflow agent=%s  target=\"%s\" sampling=10 polling=10 -- -- set bridge %s sflow=@sflow" %(self.path_ovs, if_names[0], self.controller_ip, self.name))
     
     # Se asignan las direcciones IP a las interfaces fisicas
     # Esto es provisorio solo para facilitar la implementacion de "ports_info"
@@ -291,6 +293,7 @@ class RAUSwitch(Host):
   def terminate( self ):
     # Cuidado con este comando
     self.cmd("pkill -f %s/%s/" %(self.baseDIR, self.name))
+    self.cmd("pkill -f wsOVS.py")
     Host.terminate(self)
     shutil.rmtree("%s/%s" %(self.baseDIR, self.name), ignore_errors=True)
     
@@ -384,7 +387,6 @@ class QuaggaRouter(Host):
   def terminate( self ):
     # Cuidado con este comando
     self.cmd("pkill -f %s/%s/" %(self.baseDIR, self.name))
-    self.cmd("pkill -f wsOVS.py")
     Host.terminate(self)
     shutil.rmtree("%s/%s" %(self.baseDIR, self.name), ignore_errors=True)
 
