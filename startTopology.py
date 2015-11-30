@@ -1,9 +1,13 @@
 #!/usr/bin/python
 
+"""
+Script para levantar el entorno
+"""
+
 import os
 import sys
 import atexit
-import imp
+
 import mininet.util
 sys.modules['mininet.util'] = mininet.util
 
@@ -13,14 +17,16 @@ from mininet.log import setLogLevel, info
 from mininet.cli import CLI
 from mininet.net import Mininet
 
+from topologyLoader import CustomTopology
+
 net = None
 
 def startNetwork():
   # Se levanta la topologia
 
   info('** Creating test topology\n')
-  topology = imp.load_source('CustomTopology', 'topologies/'+sys.argv[1])
-  topo = topology.CustomTopology()
+  topology_file_path = 'topologies/' + sys.argv[0]
+  topo = CustomTopology(topology_file_path)
 
   info('** Starting the network\n')
   global net
@@ -37,9 +43,6 @@ def startNetwork():
   for node in topo.startList:
     n = net.get(node)
     n.start()
-
-  # info('** Dumping host connections\n')
-  # dumpNodeConnections(net.hosts)
 
   info('\n** Running CLI\n')
   CLI(net)

@@ -1,0 +1,179 @@
+loading app ryu/app/proyecto/businessLogic/gui_topology.py
+loading app ryu.app.rest_topology
+loading app ryu.app.ws_topology
+loading app ryu.app.ofctl_rest
+loading app ryu.controller.ofp_handler
+instantiating app None of Switches
+creating context switches
+instantiating app None of DPSet
+creating context dpset
+creating context wsgi
+instantiating app ryu.app.rest_topology of TopologyAPI
+instantiating app ryu.app.ws_topology of WebSocketTopology
+instantiating app ryu.app.ofctl_rest of RestStatsApi
+instantiating app ryu/app/proyecto/businessLogic/gui_topology.py of GUIServerApp
+instantiating app ryu.controller.ofp_handler of OFPHandler
+(16909) wsgi starting up on http://0.0.0.0:8080/
+(16909) accepted ('192.168.1.14', 49251)
+Starting new HTTP connection (1): 192.168.1.12
+Starting new HTTP connection (1): 192.168.1.12
+Starting new HTTP connection (1): 192.168.1.12
+Starting new HTTP connection (1): 192.168.1.12
+192.168.1.14 - - [29/Nov/2015 20:51:29] "PUT /topology HTTP/1.1" 200 149 0.056321
+(16909) accepted ('192.168.1.14', 49260)
+192.168.1.14 - - [29/Nov/2015 20:51:31] "POST /topology/node/192.168.1.14 HTTP/1.1" 200 112 0.000753
+(16909) accepted ('192.168.1.14', 49261)
+Starting new HTTP connection (1): 192.168.1.12
+192.168.1.14 - - [29/Nov/2015 20:51:31] "POST /topology/node/interfaces/192.168.1.14 HTTP/1.1" 200 112 0.011208
+(16909) accepted ('192.168.1.14', 49264)
+192.168.1.14 - - [29/Nov/2015 20:51:31] "POST /topology/node/192.168.1.12 HTTP/1.1" 200 112 0.002024
+(16909) accepted ('192.168.1.14', 49265)
+Starting new HTTP connection (1): 192.168.1.12
+192.168.1.14 - - [29/Nov/2015 20:51:31] "POST /topology/node/interfaces/192.168.1.12 HTTP/1.1" 200 112 0.010244
+(16909) accepted ('192.168.1.14', 49268)
+192.168.1.14 - - [29/Nov/2015 20:51:31] "POST /topology/node/192.168.1.11 HTTP/1.1" 200 112 0.002137
+(16909) accepted ('192.168.1.14', 49269)
+192.168.1.14 - - [29/Nov/2015 20:51:31] "POST /topology/node/192.168.1.13 HTTP/1.1" 200 112 0.004078
+(16909) accepted ('127.0.0.1', 55425)
+127.0.0.1 - - [29/Nov/2015 20:51:44] "GET / HTTP/1.1" 200 59154 0.022638
+(16909) accepted ('127.0.0.1', 55426)
+127.0.0.1 - - [29/Nov/2015 20:51:44] "GET /foundation-5.5.1/css/foundation.css HTTP/1.1" 200 196392 0.023108
+(16909) accepted ('127.0.0.1', 55427)
+(16909) accepted ('127.0.0.1', 55428)
+(16909) accepted ('127.0.0.1', 55429)
+(16909) accepted ('127.0.0.1', 55430)
+127.0.0.1 - - [29/Nov/2015 20:51:44] "GET /css/colpick.css HTTP/1.1" 200 9697 0.018418
+127.0.0.1 - - [29/Nov/2015 20:51:44] "GET /foundation-5.5.1/js/vendor/modernizr.js HTTP/1.1" 200 11479 0.023801
+127.0.0.1 - - [29/Nov/2015 20:51:44] "GET /foundation-5.5.1/foundation-icons/foundation-icons/foundation-icons.css HTTP/1.1" 200 19718 0.009820
+127.0.0.1 - - [29/Nov/2015 20:51:44] "GET /ryu-topology/ryu.topology.css HTTP/1.1" 200 544 0.006495
+127.0.0.1 - - [29/Nov/2015 20:51:44] "GET /ryu-topology/d3.v3.min.js HTTP/1.1" 200 151343 0.023057
+127.0.0.1 - - [29/Nov/2015 20:51:44] "GET /css/master.css HTTP/1.1" 200 2234 0.010803
+127.0.0.1 - - [29/Nov/2015 20:51:44] "GET /foundation-5.5.1/js/vendor/jquery.js HTTP/1.1" 200 84922 0.012616
+127.0.0.1 - - [29/Nov/2015 20:51:44] "GET /foundation-5.5.1/js/foundation.min.js HTTP/1.1" 200 198960 0.012188
+127.0.0.1 - - [29/Nov/2015 20:51:44] "GET /ryu-topology/ryu.topology.js HTTP/1.1" 200 10265 0.006633
+127.0.0.1 - - [29/Nov/2015 20:51:44] "GET /js/server.js HTTP/1.1" 200 54687 0.002778
+127.0.0.1 - - [29/Nov/2015 20:51:44] "GET /js/colpick.js HTTP/1.1" 200 21015 0.021086
+127.0.0.1 - - [29/Nov/2015 20:51:44] "GET /js/jquery.color.js HTTP/1.1" 200 16468 0.008028
+127.0.0.1 - - [29/Nov/2015 20:51:44] "GET /js/color_mixer.js HTTP/1.1" 200 1812 0.010158
+127.0.0.1 - - [29/Nov/2015 20:51:44] "GET /foundation-5.5.1/foundation-icons/foundation-icons/foundation-icons.woff HTTP/1.1" 200 32230 0.007996
+127.0.0.1 - - [29/Nov/2015 20:51:44] "GET /v1.0/topology/switches HTTP/1.1" 200 3317 0.000664
+(16909) accepted ('127.0.0.1', 55431)
+127.0.0.1 - - [29/Nov/2015 20:51:44] "GET /topology HTTP/1.1" 200 7141 0.001061
+127.0.0.1 - - [29/Nov/2015 20:51:44] "GET /services/lsps HTTP/1.1" 200 148 0.000337
+127.0.0.1 - - [29/Nov/2015 20:51:44] "GET /services HTTP/1.1" 200 148 0.000312
+127.0.0.1 - - [29/Nov/2015 20:51:44] "GET /v1.0/topology/links HTTP/1.1" 200 2909 0.000586
+127.0.0.1 - - [29/Nov/2015 20:51:44] "GET /router.png HTTP/1.1" 200 33923 0.001524
+127.0.0.1 - - [29/Nov/2015 20:51:44] "GET /favicon.ico HTTP/1.1" 404 414 0.000812
+127.0.0.1 - - [29/Nov/2015 20:51:53] "GET /v1.0/topology/ws HTTP/1.1" 200 0 8.704292
+127.0.0.1 - - [29/Nov/2015 20:51:53] "GET /topology HTTP/1.1" 200 7141 0.001920
+loading app ryu/app/proyecto/businessLogic/gui_topology.py
+loading app ryu.app.rest_topology
+loading app ryu.app.ws_topology
+loading app ryu.app.ofctl_rest
+loading app ryu.controller.ofp_handler
+instantiating app None of Switches
+creating context switches
+instantiating app None of DPSet
+creating context dpset
+creating context wsgi
+instantiating app ryu.app.rest_topology of TopologyAPI
+instantiating app ryu.app.ws_topology of WebSocketTopology
+instantiating app ryu.app.ofctl_rest of RestStatsApi
+instantiating app ryu/app/proyecto/businessLogic/gui_topology.py of GUIServerApp
+instantiating app ryu.controller.ofp_handler of OFPHandler
+(18626) wsgi starting up on http://0.0.0.0:8080/
+loading app ryu/app/proyecto/businessLogic/gui_topology.py
+loading app ryu.app.rest_topology
+loading app ryu.app.ws_topology
+loading app ryu.app.ofctl_rest
+loading app ryu.controller.ofp_handler
+instantiating app None of Switches
+creating context switches
+instantiating app None of DPSet
+creating context dpset
+creating context wsgi
+instantiating app ryu.app.rest_topology of TopologyAPI
+instantiating app ryu.app.ws_topology of WebSocketTopology
+instantiating app ryu.app.ofctl_rest of RestStatsApi
+instantiating app ryu/app/proyecto/businessLogic/gui_topology.py of GUIServerApp
+instantiating app ryu.controller.ofp_handler of OFPHandler
+(19772) wsgi starting up on http://0.0.0.0:8080/
+loading app ryu/app/proyecto/businessLogic/gui_topology.py
+loading app ryu.app.rest_topology
+loading app ryu.app.ws_topology
+loading app ryu.app.ofctl_rest
+loading app ryu.controller.ofp_handler
+instantiating app None of Switches
+creating context switches
+instantiating app None of DPSet
+creating context dpset
+creating context wsgi
+instantiating app ryu.app.rest_topology of TopologyAPI
+instantiating app ryu.app.ws_topology of WebSocketTopology
+instantiating app ryu.app.ofctl_rest of RestStatsApi
+instantiating app ryu/app/proyecto/businessLogic/gui_topology.py of GUIServerApp
+instantiating app ryu.controller.ofp_handler of OFPHandler
+(20911) wsgi starting up on http://0.0.0.0:8080/
+(20911) accepted ('192.168.1.14', 49465)
+Starting new HTTP connection (1): 192.168.1.12
+Starting new HTTP connection (1): 192.168.1.12
+Starting new HTTP connection (1): 192.168.1.12
+Starting new HTTP connection (1): 192.168.1.12
+192.168.1.14 - - [29/Nov/2015 21:45:26] "PUT /topology HTTP/1.1" 200 149 0.057814
+(20911) accepted ('192.168.1.14', 49474)
+192.168.1.14 - - [29/Nov/2015 21:45:28] "POST /topology/node/192.168.1.14 HTTP/1.1" 200 112 0.000676
+(20911) accepted ('192.168.1.14', 49475)
+Starting new HTTP connection (1): 192.168.1.12
+192.168.1.14 - - [29/Nov/2015 21:45:28] "POST /topology/node/interfaces/192.168.1.14 HTTP/1.1" 200 112 0.010448
+(20911) accepted ('192.168.1.14', 49478)
+192.168.1.14 - - [29/Nov/2015 21:45:28] "POST /topology/node/192.168.1.12 HTTP/1.1" 200 112 0.001955
+(20911) accepted ('192.168.1.14', 49479)
+Starting new HTTP connection (1): 192.168.1.12
+192.168.1.14 - - [29/Nov/2015 21:45:28] "POST /topology/node/interfaces/192.168.1.12 HTTP/1.1" 200 112 0.011444
+(20911) accepted ('192.168.1.14', 49482)
+192.168.1.14 - - [29/Nov/2015 21:45:28] "POST /topology/node/192.168.1.11 HTTP/1.1" 200 112 0.001650
+(20911) accepted ('192.168.1.14', 49483)
+192.168.1.14 - - [29/Nov/2015 21:45:28] "POST /topology/node/192.168.1.13 HTTP/1.1" 200 112 0.001606
+(20911) accepted ('127.0.0.1', 55639)
+127.0.0.1 - - [29/Nov/2015 21:45:35] "GET / HTTP/1.1" 200 59154 0.001041
+(20911) accepted ('127.0.0.1', 55640)
+127.0.0.1 - - [29/Nov/2015 21:45:35] "GET /foundation-5.5.1/css/foundation.css HTTP/1.1" 200 196392 0.001198
+127.0.0.1 - - [29/Nov/2015 21:45:35] "GET /foundation-5.5.1/js/vendor/modernizr.js HTTP/1.1" 200 11479 0.000617
+127.0.0.1 - - [29/Nov/2015 21:45:35] "GET /foundation-5.5.1/foundation-icons/foundation-icons/foundation-icons.css HTTP/1.1" 200 19718 0.000967
+(20911) accepted ('127.0.0.1', 55641)
+(20911) accepted ('127.0.0.1', 55642)
+(20911) accepted ('127.0.0.1', 55643)
+(20911) accepted ('127.0.0.1', 55644)
+127.0.0.1 - - [29/Nov/2015 21:45:35] "GET /ryu-topology/ryu.topology.css HTTP/1.1" 200 544 0.000945
+127.0.0.1 - - [29/Nov/2015 21:45:35] "GET /foundation-5.5.1/js/vendor/jquery.js HTTP/1.1" 200 84922 0.002710
+127.0.0.1 - - [29/Nov/2015 21:45:35] "GET /ryu-topology/d3.v3.min.js HTTP/1.1" 200 151343 0.002353
+127.0.0.1 - - [29/Nov/2015 21:45:35] "GET /foundation-5.5.1/js/foundation.min.js HTTP/1.1" 200 198960 0.003677
+127.0.0.1 - - [29/Nov/2015 21:45:35] "GET /css/colpick.css HTTP/1.1" 200 9697 0.001116
+127.0.0.1 - - [29/Nov/2015 21:45:35] "GET /ryu-topology/ryu.topology.js HTTP/1.1" 200 10265 0.001671
+127.0.0.1 - - [29/Nov/2015 21:45:35] "GET /css/master.css HTTP/1.1" 200 2234 0.001051
+127.0.0.1 - - [29/Nov/2015 21:45:35] "GET /js/server.js HTTP/1.1" 200 54687 0.001965
+127.0.0.1 - - [29/Nov/2015 21:45:35] "GET /js/colpick.js HTTP/1.1" 200 21015 0.003611
+127.0.0.1 - - [29/Nov/2015 21:45:35] "GET /js/jquery.color.js HTTP/1.1" 200 16468 0.000582
+127.0.0.1 - - [29/Nov/2015 21:45:35] "GET /js/color_mixer.js HTTP/1.1" 200 1812 0.000487
+127.0.0.1 - - [29/Nov/2015 21:45:35] "GET /foundation-5.5.1/foundation-icons/foundation-icons/foundation-icons.woff HTTP/1.1" 200 32230 0.000623
+127.0.0.1 - - [29/Nov/2015 21:45:35] "GET /v1.0/topology/switches HTTP/1.1" 200 3317 0.000732
+(20911) accepted ('127.0.0.1', 55645)
+127.0.0.1 - - [29/Nov/2015 21:45:35] "GET /topology HTTP/1.1" 200 7141 0.001027
+127.0.0.1 - - [29/Nov/2015 21:45:35] "GET /services/lsps HTTP/1.1" 200 148 0.000322
+127.0.0.1 - - [29/Nov/2015 21:45:35] "GET /services HTTP/1.1" 200 148 0.000312
+127.0.0.1 - - [29/Nov/2015 21:45:35] "GET /v1.0/topology/links HTTP/1.1" 200 2909 0.000786
+127.0.0.1 - - [29/Nov/2015 21:45:35] "GET /router.png HTTP/1.1" 200 33923 0.000574
+127.0.0.1 - - [29/Nov/2015 21:45:35] "GET /favicon.ico HTTP/1.1" 404 414 0.000806
+127.0.0.1 - - [29/Nov/2015 21:45:35] "GET /favicon.ico HTTP/1.1" 404 414 0.001596
+127.0.0.1 - - [29/Nov/2015 21:45:38] "GET /services HTTP/1.1" 200 148 0.000393
+127.0.0.1 - - [29/Nov/2015 21:45:38] "GET /topology/datapaths HTTP/1.1" 200 244 0.000349
+127.0.0.1 - - [29/Nov/2015 21:45:41] "GET /topology/node/interfaces/192.168.1.14 HTTP/1.1" 200 211 0.000371
+127.0.0.1 - - [29/Nov/2015 21:45:43] "GET /topology/node/interfaces/192.168.1.12 HTTP/1.1" 200 211 0.000348
+127.0.0.1 - - [29/Nov/2015 21:45:51] "POST /services HTTP/1.1" 200 136 0.001591
+127.0.0.1 - - [29/Nov/2015 21:45:51] "GET /services HTTP/1.1" 200 1423 0.000458
+127.0.0.1 - - [29/Nov/2015 21:45:52] "GET /topology/datapaths HTTP/1.1" 200 244 0.000462
+127.0.0.1 - - [29/Nov/2015 21:46:00] "GET /topology/node/interfaces/192.168.1.12 HTTP/1.1" 200 211 0.000359
+127.0.0.1 - - [29/Nov/2015 21:46:01] "GET /topology/node/interfaces/192.168.1.14 HTTP/1.1" 200 211 0.000357
+127.0.0.1 - - [29/Nov/2015 21:46:06] "POST /services HTTP/1.1" 200 136 0.001374
+127.0.0.1 - - [29/Nov/2015 21:46:06] "GET /services HTTP/1.1" 200 2696 0.000539
+127.0.0.1 - - [29/Nov/2015 21:46:12] "GET /v1.0/topology/ws HTTP/1.1" 200 0 36.281177
