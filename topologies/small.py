@@ -8,7 +8,7 @@ Fuente: http://www.topology-zoo.org/maps/HiberniaCanada.jpg
 """
 
 from mininet.topo import Topo
-from clases import RAUSwitch, QuaggaRouter, RAUController, RAUHost
+from rau_nodes import RAUSwitch, QuaggaRouter, RAUController, RAUHost
 
 class CustomTopology( Topo ):
   def __init__( self ):
