@@ -19,7 +19,7 @@ def startNetwork():
   # Se levanta la topologia
 
   info('** Creating test topology\n')
-  topology = imp.load_source('CustomTopology', 'topologies/'+sys.argv[1])
+  topology = imp.load_source('CustomTopology', 'topologies/'+sys.argv[1]+'.py')
   topo = topology.CustomTopology()
 
   info('** Starting the network\n')
@@ -34,7 +34,7 @@ def startNetwork():
   
   # Invocar el metodo start en cada nodo en 'startList'
   info('** Starting RAU nodes\n')
-  for node in topo.startList:
+  for node in topo.hosts():
     n = net.get(node)
     n.start()
 
