@@ -34,7 +34,7 @@ def startNetwork():
   
   # Invocar el metodo start en cada nodo en 'startList'
   info('** Starting RAU nodes\n')
-  for node in topo.startList:
+  for node in topo.hosts():
     n = net.get(node)
     n.start()
 

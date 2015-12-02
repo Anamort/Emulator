@@ -10,7 +10,6 @@ from mininet.topo import Topo
 from clases import RAUSwitch, QuaggaRouter, RAUController, RAUHost
 
 class CustomTopology( Topo ):
-  startList = ['alice','oz','galois','possion','controller', 'h0', 'h1', 'routerLan1', 'routerLan2']
   def __init__( self ):
     Topo.__init__( self )
 
