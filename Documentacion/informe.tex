@@ -3,7 +3,7 @@
 \begin{document}
 
 \tableofcontents
-\chapter{Pruebas de escala}
+\chapter{Pruebas}
 \section{Motivación}
 Uno de los principales objetivos del proyecto es realizar pruebas funcionales y de escala sobre la arquitectura del prototipo. Es de interés generar realidades distintas, y así detectar puntos de falla o variables clave en la performance de la arquitectura. Para esto se puede utilizar dos parámetros: topología y servicios. Es importante poder aplicar topologías complejas y relativamente grandes a la arquitectura, así como cantidades grandes de servicios para probar qué niveles de tráfico o flujos soporta el sistema antes de fallar o ver su performance reducida drásticamente. Dado que no es realista hacer este tipo de pruebas con un prototipo físico, por temas económicos y prácticos, se observó la necesidad de un entorno virtual capaz de simular las características del prototipo.
 
@@ -53,28 +53,17 @@ Insertar imagen de arquitectura de archivos de Mininet****
 \section{Pruebas realizadas}
 
 \subsection{Stress de servicios y flujos}
-Es probable que si un arquitectura de este estilo fuera desplegada en la Red Académica Uruguaya, sería sujeta a grandes cantidades de tráfico y, en particular, grandes cantidades de servicios. Por eso es de un gran interés realizar pruebas sobre la misma que analicen su comportamiento cuando debe manejar decenas de miles, o incluso millones de flujos distintos. De esta forma se podrían identificar posibles puntos de falla, o umbrales bajo los cuales debe mantenerse la red para funcionar con buen rendimiento.
-Desde un punto de vista más técnico, interesa estudiar dos aspectos clave: el impacto que causa una gran cantidad de flujos en los routers, y el impacto de una gran cantidad de flujos sobre la arquitectura en su conjunto.
+Es probable que si un arquitectura de este estilo fuera desplegada en la Red Académica Uruguaya, sería sujeta a grandes cantidades de tráfico y, en particular, grandes cantidades de servicios. Por eso es de gran interés realizar pruebas sobre la misma que analicen su comportamiento cuando debe manejar decenas de miles, o incluso millones de flujos distintos. De esta forma se podrían identificar posibles puntos de falla, o umbrales bajo los cuales debe mantenerse la red para funcionar con buen rendimiento.
+En particular, interesa realizar estas pruebas estudiando dos aspectos clave: el comportamiento de los routers por sí mismos, y el de la arquitectura de la red en su conjunto.
 
-\textbf{Stress de servicios}
-Desde este punto de vista, interesa analizar que tipo de limitaciones tiene la aplicación en el controlador con respecto al volumen de servicios que puede ofrecer.
-Para la siguientes prueba se utilizó una topología básica de 4 routers, 2 routers CE y dos hosts como muestra la imagen (INSERTAR), y se agregaron servicios entre los nodos 2 y 4. Se observó que a partir de los 800 servicios de capa 2 aproximadamente (alrededor de 32000 flujos, INVESTIGAR SI ES POR LOS FLUJOS O LOS SERVICIOS, AGREGAR SERVICIOS DE CAPA 3), consultar los flujos de uno de esos nodos desde la interfaz web de la aplicación causa que los nodos de la red manden una señal al controlador indicando que abandonan la red.
+Para estas pruebas se utilizó una topología básica de 4 routers, 2 routers CE y dos hosts como muestra la imagen (INSERTAR). Se crearon 15.000 VPNs de capa 2 entre los nodos 2 y 4, variando los cabezales OpenFlow para que toda VPN sea distinta de las demás. Además, se creó una VPN de capa 3 entre los mismos nodos, para permitir pasar el tráfico IP entre los hosts, que será el que se utilizará en las pruebas.
 
-\textbf{Stress de flujos}
-Desde este ángulo, lo que interesa es analizar el impacto de una gran cantidad de flujos sobre el funcionamiento interno del router. En teoría, cuantos más flujos en la tabla, más demora el router en encontrar el flujo que corresponde con el tráfico que está analizando, y por lo tanto el paquete demora más en ser forwardeado. Esto debería tener un impacto directo en el throughput.\\
+El comportamiento de la arquitectura fue consistente, apesar de la gran cantidad de servicios. Sólo se observó un error, que consiste en que luego de insertar algunas decenas de miles de flujos, puede haber fallas en la comunicación entre el controlador y los nodos de la red, llevando a que estos indiquen que abandonan la red. No se pudo determinar la causa exacta de este error, pero posiblemente se trate de un error en el ambiente de prueba, y no en la arquitectura. Sin considerar esto, es posible afirmar que la arquitectura de la red no tiene limitaciones con respecto a la cantidad de servicios. Sin ser una limitación, pero sí un factor importante, hay que recordar que los datos que maneja el controlador (entre ellos, los servicios) están en memoria. Por lo tanto se podrá agregar servicios mientras la computadora subyacente tenga suficiente memoria. La creación de 15.000 servicios aumentó el consumo de memoria del controlador en 205 Mb, por lo que un servicio ocupa alrededor de 14 Kb. Si extrapolamos ese número a un computador que puede dedicar 4 Gb de RAM al controlador, llegamos a que dicho controlador podrá almacenar alrededor de 300.000 servicios, un número más que suficiente.
+
+
+El otro enfoque, el estudio de los routers de forma aislada, arrojó resultados interesantes. En teoría, cuantos más flujos en la tabla, más debería demorar el router en encontrar el flujo que corresponde con el tráfico que está analizando, y por lo tanto el paquete demora más en ser forwardeado. Esto debería tener un impacto directo en el throughput. Como ya fue explicado, se crearon 15.000 VPNs de capa 2 entre los nodos 2 y 4. Esto implica alrededor de 1.260.000 flujos en ambos nodos. Con la herramienta 'iperfudp', se creó tráfico UDP entre los hosts h1 y h2 y se midió el throughput promedio sin las VPNs y con ellas. Los resultados fueron exactamente los mismos. El impacto de más de un millón de flujos fue nulo.
+La explicación de este resultado se encuentra en la especificación de la herramienta OpenvSwitch, que utiliza la arquitectura para implementar OpenFlow. OpenvSwitch incluye un módulo en el kernel que actúa como caché para los últimos flujos utilizados. Cuando el paquete de un determinado flujo llega por primera vez a un router, este paquete es enviado al pipeline de OpenFlow para determinar que acción se debe tomar. Luego de realizada, esta acción es escrita en la caché, y tiene un tiempo de vida de entre 5 y 10 segundos. Si en ese período de tiempo llega otro paquete del mismo flujo, no hay necesidad de consultar las tablas de OpenFlow, ya que ya se sabe que se debe hacer con ese paquete. Por lo tanto, si un flujo de datos es constante y rápido, no importa cuántos flujos OpenFlow tenga el nodo, ya que sólo el primer paquete de ese flujo deberá pasar por el pipeline, y por ende, solo él se verá demorado por la existencia de muchos flujos en el nodo.
 \\
-En esencia, lo que se debe hacer para lograr esto es lo siguiente: se debe crear un servicio que permita pasar el tráfico que se utilizará en la prueba, y, se debe crear una cierta cantidad de servicios "dummy", es decir, que no coincidirán con el tipo de tráfico que pasará por los routers. Esa cantidad dependrá de la magnitud de la prueba que se quiera hacer. Esto causará que el router pierda tiempo buscando en sus tablas el flujo que coincide con el tráfico.\\
-
-En las pruebas los servicios que se utilizaron fueron de tipo VPN de capa 2. Una VPN está compuesta por 2 servicios, uno de ida y uno de vuelta. Un servicio de capa 2 implica 42 flujos (uno por cada ethertype posible) insertados en cada router por el que pasa la VPN. Por lo tanto, una VPN equivale a 84 flujos insertados en los routers involucrados.
-Para crear las VPNs "dummy" se usaron distintos valores de identificador de VLAN y prioridad de VLAN (protocolo 802.1Q). Dado que hay 8 valores posibles para la prioridad, y 4096 para el identificador, se pueden crear 32.768 posibles combinaciones, y por ende la misma cantidad de VPNs distintas. Como el tráfico utilizado no tenía estos campos, ninguno de esos flujos coincidirá.
-Se utilizó la herramienta 'iperfudp' para medir el throughput entre los nodos. Esta herramienta envía paquetes UDP entre un nodo y otro y mide el throughput promedio.
-
-
-La primera prueba realizada fue: aplicar una gran cantidad de VPNs de capa 2 a una topología básica compuesta por 4 RauSwitch, 2 routers legados (funcionando como routers CE) y 2 hosts, cada uno conectado a uno de los routers legados (insertar imagen de topologia).
-Los resultados que arrojó fueron los siguientes:\\
-\textbf{3.500 VPNs - 7.000 servicios - 294.000 flujos - sin cambio en el throughput}\\
-\textbf{15.000 VPNs - 30.000 servicios - 1.260.000 flujos - sin cambio en el throughput}
-
 
 
 
