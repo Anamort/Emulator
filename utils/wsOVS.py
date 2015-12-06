@@ -58,7 +58,7 @@ def getInfo(address):
   dpid = regexp.match(salidaOVS).group(1)
   
   # Se obtiene el nombre del bridge
-  regexp = re.compile('.*name\s*:\s*(\w+)', re.DOTALL)
+  regexp = re.compile('.*name\s*:\s*\"?(\w+)', re.DOTALL)
   bridgeName = regexp.match(salidaOVS).group(1)
 
   router = Router(dpid,"", puertos,bridgeName)
@@ -67,7 +67,7 @@ def getInfo(address):
   return router.to_JSON()
 
 if __name__ == '__main__':
-  #getInfo("192.168.1.14")
+  # getInfo("192.168.1.14")
     app.run(host='0.0.0.0', port=5000)
 	#default port: 5000
 	
