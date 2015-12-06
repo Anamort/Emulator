@@ -54,7 +54,7 @@ def getInfo(address):
     # CUIDADO!!
 
   # Se obtiene el datapath_id
-  regexp = re.compile('.*datapath_id\s*:\s*"(\d+)', re.DOTALL)
+  regexp = re.compile('.*datapath_id\s*:\s*"(\w+)', re.DOTALL)
   dpid = regexp.match(salidaOVS).group(1)
   
   # Se obtiene el nombre del bridge

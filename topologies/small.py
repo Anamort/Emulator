@@ -15,76 +15,78 @@ class CustomTopology( Topo ):
     Topo.__init__( self )
 
     # Hosts
-    # h0 = self.addHost('h0', ip='10.0.1.2/24', gw='10.0.1.1', cls=RAUHost)
-    # h1 = self.addHost('h1', ip='10.1.1.2/24', gw='10.1.1.1', cls=RAUHost)
+    h0 = self.addHost('h0', ip='10.0.1.2/24', gw='10.0.1.1', cls=RAUHost)
+    h1 = self.addHost('h1', ip='10.1.1.2/24', gw='10.1.1.1', cls=RAUHost)
 
-    # routerLan1 = self.addHost('routerLan1', ips=['10.0.0.1/24', '10.0.1.1/24'],
-    #                             loopback='127.0.0.1', ce_mac_address='00:00:00:00:00:01',
-    #                             gw='10.0.0.2', cls=QuaggaRouter)
+    routerLan1 = self.addHost('routerLan1', ips=['10.0.0.1/24', '10.0.1.1/24'],
+                                loopback='127.0.0.1', ce_mac_address='00:00:00:00:00:01',
+                                gw='10.0.0.2', cls=QuaggaRouter)
 
-    # routerLan2 = self.addHost('routerLan2', ips=['10.1.0.1/24', '10.1.1.1/24'],
-    #                             loopback='127.0.0.1', ce_mac_address='00:00:00:00:00:02',
-    #                             gw='10.1.0.2', cls=QuaggaRouter)
+    routerLan2 = self.addHost('routerLan2', ips=['10.1.0.1/24', '10.1.1.1/24'],
+                                loopback='127.0.0.1', ce_mac_address='00:00:00:00:00:02',
+                                gw='10.1.0.2', cls=QuaggaRouter)
     
 
     router1 = self.addHost('router1', loopback="127.0.0.1",
-			  ips=['192.168.1.11/24','10.10.1.1/24'],
-			  dpid='0000000000000001', controller_ip="192.168.1.10",
+			  ips=['192.168.1.11/24','10.10.1.1/24','10.0.0.2/24'],
+			  controller_ip="192.168.1.10",
+              border=1, ce_ip_address='10.0.0.1', ce_mac_address='00:00:00:00:00:01',
 			  cls=RAUSwitch)
 
     router2 = self.addHost('router2', loopback="127.0.0.1",
 	      ips=['192.168.1.12/24','10.10.4.1/24','10.10.5.1/24'],
-	      dpid='0000000000000002', controller_ip="192.168.1.10",
+	      controller_ip="192.168.1.10",
 	      cls=RAUSwitch)
     
 
     router3 = self.addHost('router3', loopback="127.0.0.1",
 			  ips=['192.168.1.13/24','10.10.1.2/24','10.10.3.1/24','10.10.2.1/24'],
-			  dpid='0000000000000003', controller_ip="192.168.1.10",
+			  controller_ip="192.168.1.10",
 			  cls=RAUSwitch)
     
 
     router4 = self.addHost('router4', loopback="127.0.0.1",
 			  ips=['192.168.1.14/24','10.10.3.2/24','10.10.6.1/24'],
-			  dpid='0000000000000004', controller_ip="192.168.1.10",
+			  controller_ip="192.168.1.10",
 			  cls=RAUSwitch)
 
     router5 = self.addHost('router5', loopback="127.0.0.1",
         ips=['192.168.1.15/24','10.10.4.2/24','10.10.7.1/24'],
-        dpid='0000000000000005', controller_ip="192.168.1.10",
+        controller_ip="192.168.1.10",
         cls=RAUSwitch)
 
     router6 = self.addHost('router6', loopback="127.0.0.1",
         ips=['192.168.1.16/24','10.10.7.2/24','10.10.8.1/24','10.10.9.1/24'],
-        dpid='0000000000000006', controller_ip="192.168.1.10",
+        controller_ip="192.168.1.10",
         cls=RAUSwitch)
     
 
     router7 = self.addHost('router7', loopback="127.0.0.1",
         ips=['192.168.1.17/24','10.10.8.2/24','10.10.10.1/24'],
-        dpid='0000000000000007', controller_ip="192.168.1.10",
+        controller_ip="192.168.1.10",
         cls=RAUSwitch)
     
 
     router8 = self.addHost('router8', loopback="127.0.0.1",
         ips=['192.168.1.18/24','10.10.10.2/24','10.10.11.1/24'],
-        dpid='0000000000000008', controller_ip="192.168.1.10",
+        controller_ip="192.168.1.10",
         cls=RAUSwitch)
 
     router9 = self.addHost('router9', loopback="127.0.0.1",
         ips=['192.168.1.19/24','10.10.6.2/24','10.10.11.2/24','10.10.12.1/24'],
-        dpid='0000000000000009', controller_ip="192.168.1.10",
+        controller_ip="192.168.1.10",
         cls=RAUSwitch)
 
     router10 = self.addHost('router10', loopback="127.0.0.1",
-        ips=['192.168.1.20/24','10.10.5.2/24','10.10.9.2/24'],
-        dpid='0000000000000010', controller_ip="192.168.1.10",
+        ips=['192.168.1.20/24','10.10.5.2/24','10.10.9.2/24','10.1.0.2/24'],
+        controller_ip="192.168.1.10",
+        border=1, ce_ip_address='10.1.0.1', ce_mac_address='00:00:00:00:00:02',
         cls=RAUSwitch)
     
 
     router11 = self.addHost('router11', loopback="127.0.0.1",
         ips=['192.168.1.21/24','10.10.2.2/24','10.10.12.2/24'],
-        dpid='0000000000000011', controller_ip="192.168.1.10",
+        controller_ip="192.168.1.10",
         cls=RAUSwitch)
     
 
@@ -122,7 +124,10 @@ class CustomTopology( Topo ):
     self.addLink(router8, router9, 2, 2)
     self.addLink(router9, router11, 3, 2)
 
-
-
+    ## Enlaces CE
+    self.addLink(router1, routerLan1, 2, 0)
+    self.addLink(router10, routerLan2, 3, 0)
+    self.addLink(h0, routerLan1, 0, 1)
+    self.addLink(h1, routerLan2, 0, 1)
 
 

@@ -3,6 +3,7 @@
 # Para utilizarlas se debe incluirlas y instanciarlas con todos los parametros
 # necesarios
 
+import re
 import inspect
 import os
 import sys
@@ -86,12 +87,16 @@ class RAUSwitch(Host):
   OF_V = "OpenFlow13"
   OVS_MANAGEMENT_PORT = "6640"
   
-  def __init__(self, name, loopback, controller_ip, ips, dpid, border=0, ce_ip_address=None, ce_mac_address=None, *args, **kwargs ):
+  def __init__(self, name, loopback, controller_ip, ips, dpid=None, border=0, ce_ip_address=None, ce_mac_address=None, *args, **kwargs ):
     dirs = ['/var/log/', '/var/log/quagga', '/var/run', '/var/run/quagga', '/var/run/openvswitch', '/usr/local/var/run/openvswitch']
     Host.__init__(self, name, privateDirs=dirs, *args, **kwargs )   
     self.loopback = loopback
     self.path_ovs = "%s/%s/ovs" %(self.baseDIR, self.name)
     self.ips = ips
+
+    if dpid is None:
+      dpid = format((int(re.search(r'\d+', name).group())), '#018x')[2:]
+
     self.dpid = dpid
     self.controller_ip = controller_ip
     self.border = border
