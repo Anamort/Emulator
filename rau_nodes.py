@@ -132,7 +132,7 @@ class RAUSwitch(Host):
     self.name, self.OF_V))
     self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait set-fail-mode %s secure" %(self.path_ovs, self.name))
     self.cmd('ovs-vsctl --db=unix:%s/db.sock --no-wait set bridge %s datapath_type=netdev' %(self.path_ovs, self.name))
-    #self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait set controller %s connection-mode=out-of-band" %(self.path_ovs, self.name))
+    # self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait set controller %s connection-mode=out-of-band" %(self.path_ovs, self.name))
     
     # Configuracion de sFlow
     # self.cmd("sudo ovs-vsctl --db=unix:%s/db.sock --no-wait -- --id=@sflow create sflow agent=%s  target=\"%s\" sampling=10 polling=10 -- -- set bridge %s sflow=@sflow" %(self.path_ovs, if_names[0], self.controller_ip, self.name))
