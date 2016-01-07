@@ -3,6 +3,7 @@
 # Para utilizarlas se debe incluirlas y instanciarlas con todos los parametros
 # necesarios
 
+import re
 import inspect
 import os
 import sys
@@ -86,12 +87,16 @@ class RAUSwitch(Host):
   OF_V = "OpenFlow13"
   OVS_MANAGEMENT_PORT = "6640"
   
-  def __init__(self, name, loopback, controller_ip, ips, dpid, border=0, ce_ip_address=None, ce_mac_address=None, *args, **kwargs ):
+  def __init__(self, name, loopback, controller_ip, ips, dpid=None, border=0, ce_ip_address=None, ce_mac_address=None, *args, **kwargs ):
     dirs = ['/var/log/', '/var/log/quagga', '/var/run', '/var/run/quagga', '/var/run/openvswitch', '/usr/local/var/run/openvswitch']
     Host.__init__(self, name, privateDirs=dirs, *args, **kwargs )   
     self.loopback = loopback
     self.path_ovs = "%s/%s/ovs" %(self.baseDIR, self.name)
     self.ips = ips
+
+    if dpid is None:
+      dpid = format((int(re.search(r'\d+', name).group())), '#018x')[2:]
+
     self.dpid = dpid
     self.controller_ip = controller_ip
     self.border = border
@@ -127,7 +132,7 @@ class RAUSwitch(Host):
     self.name, self.OF_V))
     self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait set-fail-mode %s secure" %(self.path_ovs, self.name))
     self.cmd('ovs-vsctl --db=unix:%s/db.sock --no-wait set bridge %s datapath_type=netdev' %(self.path_ovs, self.name))
-    #self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait set controller %s connection-mode=out-of-band" %(self.path_ovs, self.name))
+    # self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait set controller %s connection-mode=out-of-band" %(self.path_ovs, self.name))
     
     # Configuracion de sFlow
     # self.cmd("sudo ovs-vsctl --db=unix:%s/db.sock --no-wait -- --id=@sflow create sflow agent=%s  target=\"%s\" sampling=10 polling=10 -- -- set bridge %s sflow=@sflow" %(self.path_ovs, if_names[0], self.controller_ip, self.name))
