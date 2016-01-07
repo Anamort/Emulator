@@ -3,6 +3,10 @@
 \begin{document}
 
 \tableofcontents
+
+Mencionar:
+Cambiar SNMP por OVS
+
 \chapter{Pruebas}
 \section{Motivación}
 Uno de los principales objetivos del proyecto es realizar pruebas funcionales y de escala sobre la arquitectura del prototipo. Es de interés generar realidades distintas, y así detectar puntos de falla o variables clave en la performance de la arquitectura. Para esto se puede utilizar dos parámetros: topología y servicios. Es importante poder aplicar topologías complejas y relativamente grandes a la arquitectura, así como cantidades grandes de servicios para probar qué niveles de tráfico o flujos soporta el sistema antes de fallar o ver su performance reducida drásticamente. Dado que no es realista hacer este tipo de pruebas con un prototipo físico, por temas económicos y prácticos, se observó la necesidad de un entorno virtual capaz de simular las características del prototipo.
@@ -50,7 +54,33 @@ Insertar imagen de arquitectura de archivos de Mininet****
 
 
 
-\section{Pruebas realizadas}
+\section{Laboratorio de pruebas}
+Dado que en el momento de la creación del prototipo no se contaba con un entorno de emulación, existía una fuerte limitación sobre la cantidad y calidad de pruebas que se podían realizar sobre la aplicación.
+
+\subsection{Funcionamiento básico para distintas topologias}
+
+\subsubsection{Descripción del escenario}
+Las pruebas son realizadas con las siguientes topologias:
+\begin{itemize}
+	\item Básica: igual a la del prototipo físico (4 nodos).
+	\item Chica: arbitraria de 11 nodos (fuente: topology zoo)
+	\item Mediana: arbitraria de 45 nodos (fuente: topology zoo)
+	\item Grande: arborescente de 100 nodos (TODO!!)
+\end{itemize}
+INSERTAR IMAGENES DE LAS TOPOLOGIAS!!
+Todas las topologias consisten de un conjunto de RAUSwitch, y dos subredes CE que se conectan a través de la red SDN, utilizando una VPN de capa 3 que permite tráfico de ethertype \textbf{0x0800}, es decir, tráfico del protocolo IPv4.
+
+Los aspectos que se desean probar para cada una de las topologias son:
+\begin{itemize}
+	\item Algoritmo de ruteo. Se verifican dos aspectos claves: que el camino se corresponde con el camino esperado (calculado previamente de forma manual), y que el camino es correctamente instalado en forma de reglas de reenvío (en base a conmutación de etiquetas MPLS) en las respectivas tablas de flujos OpenFlow de cada nodo del camino. Todo esto se puede comprobar analizando las tablas de flujos de cada nodo, que se pueden ver utilizando el comando \textbf{dump-flows} de OpenVSwitch. También se puede utilizar la interfaz gráfica de RAUFlow. Desde las tablas de flujos se puede reconstruir el camino que computó la aplicación, y también comprobar que los flujos configuran correctamente las etiquetas MPLS.
+	
+	\item Clasificación de tráfico. La idea es verificar que realmente se están asignando las etiquetas MPLS al tráfico entrante, así como comprobar que el mismo es reenviado por los nodos correctos. Para ello se genera tráfico utilizando el comando \textbf{ping} y la herramienta \textbf{iperf}. Con la herramienta tcpdump, se verifica el tráfico que pasa por cada nodo del camino.
+\end{itemize}
+
+\subsubsection{Resultados y observaciones}
+\textbf{Problema del MTU al usar iperf} \\
+\textbf{Bug en codigo (ruta)} \\
+\textbf{Bug en codigo (Dijkstra)} \\
 
 \subsection{Stress de servicios y flujos}
 Es probable que si un arquitectura de este estilo fuera desplegada en la Red Académica Uruguaya, sería sujeta a grandes cantidades de tráfico y, en particular, grandes cantidades de servicios. Por eso es de gran interés realizar pruebas sobre la misma que analicen su comportamiento cuando debe manejar decenas de miles, o incluso millones de flujos distintos. De esta forma se podrían identificar posibles puntos de falla, o umbrales bajo los cuales debe mantenerse la red para funcionar con buen rendimiento.
