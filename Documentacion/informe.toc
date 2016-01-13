@@ -1,11 +1,13 @@
 \contentsline {chapter}{\numberline {1}Pruebas}{2}
 \contentsline {section}{\numberline {1.1}Motivaci\IeC {\'o}n}{2}
-\contentsline {section}{\numberline {1.2}Entorno virtual}{2}
-\contentsline {subsection}{\numberline {1.2.1}Requerimientos del entorno virtual}{2}
+\contentsline {section}{\numberline {1.2}Entorno virtual}{3}
+\contentsline {subsection}{\numberline {1.2.1}Requerimientos del entorno virtual}{3}
 \contentsline {subsection}{\numberline {1.2.2}Herramientas}{3}
 \contentsline {subsection}{\numberline {1.2.3}Dise\IeC {\~n}o e implementaci\IeC {\'o}n del entorno}{4}
-\contentsline {section}{\numberline {1.3}Laboratorio de pruebas}{4}
-\contentsline {subsection}{\numberline {1.3.1}Funcionamiento b\IeC {\'a}sico para distintas topologias}{5}
-\contentsline {subsubsection}{Descripci\IeC {\'o}n del escenario}{5}
-\contentsline {subsubsection}{Resultados y observaciones}{5}
-\contentsline {subsection}{\numberline {1.3.2}Stress de servicios y flujos}{6}
+\contentsline {chapter}{\numberline {2}Laboratorio de pruebas de escala}{6}
+\contentsline {section}{\numberline {2.1}Funcionamiento b\IeC {\'a}sico para distintas topologias}{6}
+\contentsline {subsection}{\numberline {2.1.1}Descripci\IeC {\'o}n del escenario}{6}
+\contentsline {subsection}{\numberline {2.1.2}Resultados y observaciones}{8}
+\contentsline {section}{\numberline {2.2}Escala de servicios y flujos}{8}
+\contentsline {subsection}{\numberline {2.2.1}Descripci\IeC {\'o}n del escenario}{8}
+\contentsline {subsection}{\numberline {2.2.2}Resultados y observaciones}{9}
