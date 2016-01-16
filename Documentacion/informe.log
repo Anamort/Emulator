@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (MiKTeX 2.9) (preloaded format=pdflatex 2015.11.16)  16 JAN 2016 19:08
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (MiKTeX 2.9) (preloaded format=pdflatex 2015.11.16)  16 JAN 2016 19:43
 entering extended mode
 **informe.tex
 (informe.tex
@@ -331,11 +331,36 @@ Chapter 1.
 
 ] (estadodelarte.tex
 Chapter 2.
-) [3
+
+Underfull \hbox (badness 10000) in paragraph at lines 2--3
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 4--6
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 7--9
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 14--16
+
+ []
+
+[3
 
 
 
-] (entorno.tex
+])
+Underfull \hbox (badness 10000) in paragraph at lines 18--16
+
+ []
+
+[4] (entorno.tex
 Chapter 3.
 LaTeX Font Info:    Try loading font information for OMS+cmr on input line 8.
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\omscmr.fd"
@@ -343,7 +368,7 @@ File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <12> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 8.
- [4
+ [5
 
 
 
@@ -352,51 +377,26 @@ Underfull \hbox (badness 10000) in paragraph at lines 17--18
 
  []
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 27--28
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 29--31
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 32--34
-
- []
-
-[5]
-Underfull \hbox (badness 10000) in paragraph at lines 39--41
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 43--46
-
- []
-
 [6] <Imagenes/Entorno/clases_entorno.png, id=24, 429.10312pt x 202.50656pt>
 File: Imagenes/Entorno/clases_entorno.png Graphic file (type png)
 
 <use Imagenes/Entorno/clases_entorno.png>
 Package pdftex.def Info: Imagenes/Entorno/clases_entorno.png used on input line
- 54.
+ 36.
 (pdftex.def)             Requested size: 278.91371pt x 131.62769pt.
 
-Overfull \hbox (7.0806pt too wide) in paragraph at lines 63--64
+Overfull \hbox (7.0806pt too wide) in paragraph at lines 45--46
 \OT1/cmr/m/n/12 tiene los sigu-ientes di-rec-to-rios pri-va-dos: /var/log/, /va
 r/log/quagga, /var/run,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 63--64
+Underfull \hbox (badness 10000) in paragraph at lines 45--46
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 63--64
+Underfull \hbox (badness 10000) in paragraph at lines 45--46
 
  []
 
@@ -406,9 +406,9 @@ File: Imagenes/Entorno/ovs_dataplane.png Graphic file (type png)
 
 <use Imagenes/Entorno/ovs_dataplane.png>
 Package pdftex.def Info: Imagenes/Entorno/ovs_dataplane.png used on input line 
-70.
+52.
 (pdftex.def)             Requested size: 231.61256pt x 188.5522pt.
-) [8 <./Imagenes/Entorno/ovs_dataplane.png>] [9] (pruebas.tex
+) [8] [9 <./Imagenes/Entorno/ovs_dataplane.png>] (pruebas.tex
 Chapter 4.
 
 Overfull \hbox (26.80373pt too wide) in paragraph at lines 4--4
@@ -489,13 +489,13 @@ Here is how much of TeX's memory you used:
  5055 multiletter control sequences out of 15000+200000
  8847 words of font info for 31 fonts, out of 3000000 for 9000
  1025 hyphenation exceptions out of 8191
- 27i,7n,30p,974b,236s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 27i,7n,30p,1008b,233s stack positions out of 5000i,500n,10000p,200000b,50000s
 <C:/Program Files (x86)/MiKTeX 2.9/fonts/typ
 e1/public/amsfonts/cm/cmbx12.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1
 /public/amsfonts/cm/cmr12.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/pu
 blic/amsfonts/cm/cmsy10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/publ
 ic/amsfonts/cm/cmti12.pfb>
-Output written on informe.pdf (16 pages, 401601 bytes).
+Output written on informe.pdf (16 pages, 402948 bytes).
 PDF statistics:
  80 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
