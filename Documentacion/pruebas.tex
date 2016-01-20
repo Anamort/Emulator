@@ -1,23 +1,27 @@
 \chapter{Pruebas de escala}
-En esta sección se listarán las distintas pruebas de escala realizadas. Se explicará el propósito de cada prueba, las características de cada una de ellas (topologias, tipos de tráfico, etc) y por último, los resultados que arrojan.
+Con el entorno de simulación construido, el siguiente objetivo es realizar pruebas de escala sobre la arquitectura. Este trabajo consiste de dos etapas. La primera sección explica la primera de ellas, que es verificar que la arquitectura funciona para topologias de escala. Habiendo completado esta etapa, se pasa a realizar estudios de escala sobre la cantidad de servicios. En este capítulo se explicará el propósito de cada prueba, las condiciones bajo las cuales se ejecuta cada una de ellas (topologias, tipos de tráfico, etc) y por último, los resultados que arrojan. Todas las pruebas fueron realizadas en una máquina virtual con 3590 MB de RAM, procesador Intel Core i5-5200u y Lubuntu 14.04 como sistema operativo.
 
-\section{Funcionamiento básico para distintas topologias}
-La idea de esta prueba es en cierta manera extender las pruebas que ya fueron realizadas por el proyecto RRAP, y corroborar el funcionamiento básico de la arquitectura y de la aplicación para topologias de diferentes tamaños y características.
+\section{Topologias de escala}
+Es importante poder asegurar que la arquitectura puede ser fácilmente migrada a redes reales. Para poder asegurar esto, es necesario comprobar que topologias con grandes cantidades de nodos no generan problemas inesperados. Dado que en el proyecto RRAP se contaba con cuatro dispositivos, este tipo de pruebas no han sido realizadas hasta el momento.
+
 \subsection{Descripción del escenario}
-El objetivo es crear una VPN de capa 3 entre dos subredes CE, que permita tráfico de ethertype \textbf{0x0800}, es decir, tráfico del protocolo IPv4. Luego se generan datos y se envían por la VPN. De esta forma, se prueba que funcionan correctamente las siguientes funcionalidades.
-
+Este escenario consiste de una VPN punto a punto de capa 3. Dicha VPN permite tráfico de ethertype \textbf{0x0800}, es decir, tráfico del protocolo IPv4. Se utilizarán distintas topologias, pero la estructura de la prueba será similar siempre:
 \begin{itemize}
-	\item Algoritmo de ruteo. Se verifican dos aspectos claves: que el camino se corresponde con el camino esperado (calculado previamente de forma manual), y que el camino es correctamente instalado en forma de reglas de reenvío (en base a conmutación de etiquetas MPLS) en las respectivas tablas de flujos OpenFlow de cada nodo del camino. Todo esto se puede comprobar analizando las tablas de flujos de cada nodo, que se pueden ver utilizando el comando \textbf{dump-flows} de OpenVSwitch. También se puede utilizar la interfaz gráfica de RAUFlow. Desde las tablas de flujos se puede reconstruir el camino que computó la aplicación, y también comprobar que los flujos configuran correctamente las etiquetas MPLS.
-	
-	\item Clasificación de tráfico. La idea es verificar que realmente se están asignando las etiquetas MPLS al tráfico entrante, así como comprobar que el mismo es reenviado por los nodos correctos. Para ello se genera tráfico utilizando el comando \textbf{ping} y la herramienta \textbf{iperf}. Con la herramienta tcpdump, se verifica el tráfico que pasa por cada nodo del camino.
+	\item Dos subredes cliente. Serán implementadas por un QuaggaRouter y un RAUHost cada una (recordar las clases del entorno virtual). Los RAUHost serán los remitentes y destinatarios del tráfico que pasará por la VPN. Esos datos se generarán con el comando \textit{ping} y la herramienta \textit{iperf}.
+	\item El controlador, implementado por el RAUController. Éste se conectará con un switch genérico (gracias a la clase Switch de Mininet, en el modo \textit{standalone}), que a su vez se conectará con los RAUSwitch. Esta será la red de gestión. Por simplicidad, dicha red se omitirá en las futuras imágenes.
+	\item La red de RAUSwitch, conectados de acuerdo a lo que dicte cada topología.
 \end{itemize}
-
-Para comprobar que el comportamiento es consistente, las pruebas son realizadas con las siguientes topologias:
+Los aspectos que se buscan verificar con esta prueba son los siguientes: \\ \\
+\textbf{Algoritmo de ruteo} \\
+ Se verifican dos aspectos claves: que el camino se corresponde con el camino esperado (calculado previamente de forma manual), y que el camino es correctamente instalado en forma de reglas de reenvío (en base a conmutación de etiquetas MPLS) en las respectivas tablas de flujos OpenFlow de cada nodo del camino. Todo esto se puede comprobar analizando las tablas de flujos de cada nodo, que se pueden ver utilizando el comando \textbf{dump-flows} de OpenVSwitch. También se puede utilizar la interfaz gráfica de RAUFlow. Desde las tablas de flujos se puede reconstruir el camino que computó la aplicación, y también comprobar que los flujos configuran correctamente las etiquetas MPLS. \\ \\
+\textbf{Clasificación de tráfico} \\
+La idea es verificar que realmente se están asignando las etiquetas MPLS al tráfico entrante, así como comprobar que el mismo es reenviado por los nodos correctos. Se genera tráfico utilizando el comando \textbf{ping} y la herramienta \textbf{iperf}. Con la herramienta tcpdump, se verifica el tráfico que pasa por cada nodo del camino. \\ \\
+Las topologias que se usarán son:
 \begin{itemize}
-	\item Básica: 4 RAUSwitch, en topología de full mesh. Es la utilizada en el prototipo físico.
-	\item Chica: topología arbitraria de 11 nodos (fuente: Topology Zoo). Figura \ref{fig:topo_chica}.
-	\item Mediana: topología arbitraria de 45 nodos (fuente: Topology Zoo). Figura \ref{fig:topo_mediana}.
-	\item Grande: topología arborescente de 100 nodos
+	\item \textbf{Básica}: 4 nodos en topología de full mesh. Es la utilizada en el prototipo físico.
+	\item \textbf{Chica}: topología arbitraria de 11 nodos (fuente: Topology Zoo). Figura \ref{fig:topo_chica}.
+	\item \textbf{Mediana}: topología arbitraria de 45 nodos (fuente: Topology Zoo). Figura \ref{fig:topo_mediana}.
+	\item \textbf{Grande}: topología de tipo arborescente compuesta por 100 nodos.
 \end{itemize}
 
 \begin{figure}[t]
@@ -35,34 +39,79 @@ Para comprobar que el comportamiento es consistente, las pruebas son realizadas 
 \end{figure}
 
 \subsection{Resultados y observaciones}
-\textbf{Problema del MTU al usar iperf} \\
-Hay que reducir 5 o 10 bytes (dependiendo de si el servicio usa 1 o 2 niveles de etiquetas MPLS) al MTU para que el tráfico pase.\\
+En general, se observa que la aplicación no tiene problemas para manejar grandes cantidades de nodos, pero sí caminos largos. A continuación se desglosa el resultado de la prueba con cada topología. El mismo también se puede ver en la tabla \ref{table:problemas_por_topologia}. En ella se indica con una X los aspectos que funcionaron correctamente para cada caso. Los aspectos que se estudian son: se crea con éxito el servicio desde la interfaz web, el camino que se instala es correcto, los flujos de cada nodo del camino son correctos, y se clasifica correctamente el tráfico. Si se cumplen todos ellos, se puede concluir que la topología pasa la prueba.
+
+\begin{table}[ht]
+\caption{Resultados por topología.}
+% title of Table
+\centering 
+% used for centering table
+\begin{tabular}{c c c c c}
+\hline\hline
+Largo del camino & Servicio & Camino & Flujos  & Clasificación de tráfico \\ [0.5ex]
+\hline
+1 & X & X & X & X \\
+7 & X & X &  &  \\
+10 &  &  &  &  \\
+X &  &  &  &  \\ [1ex]
+\hline
+\end{tabular}
+\label{table:problemas_por_topologia}
+\end{table}
+
+\begin{itemize}
+	\item \textbf{VPN con camino de 1 salto, en la topología básica}. La VPN se establece correctamente y el tráfico ICMP y TCP pasa sin problemas.
+	\item \textbf{VPN con camino de 7 saltos, en la topología chica}. Los servicios se crean, y se instalan flujos en los nodos correctos, osea que el camino calculado es el más corto. Sin embargo, los flujos instalados en los nodos son incorrectos.
+	\item \textbf{VPN con camino de 10 saltos, en la topología mediana}. La aplicación sufre una excepción de Python al crear los servicios.
+	\item \textbf{VPN con camino de X saltos, en la topología grande}. La aplicación sufre una excepción de Python al crear los servicios, igual que el caso anterior (???).
+\end{itemize}
 \textbf{Bug en codigo (ruta)} \\
-Error en el código que hacía que se instalaran mal los flujos en los nodos. Tenian incorrectos puertos de entrada y salida.\\
+EXPLICAR: Error en el código que hacía que se instalaran mal los flujos en los nodos. Tenian incorrectos puertos de entrada y salida.\\
 \textbf{Bug en codigo (Dijkstra)} \\
-Error en el código del algoritmo de Dijkstra que hacia que se calcularan mal los costos, ya que se sumaba como strings (concatenación) en vez de sumar enteros.
+EXPLICAR: Error en el código del algoritmo de Dijkstra que hacia que se calcularan mal los costos, ya que se sumaba como strings (concatenación) en vez de sumar enteros. \\
+\textbf{Problema del MTU al usar iperf} \\
+EXPLICAR: Hay que reducir 5 o 10 bytes (dependiendo de si el servicio usa 1 o 2 niveles de etiquetas MPLS) al MTU para que el tráfico pase.\\
 
 \section{Escala de servicios y flujos}
-Es probable que si un arquitectura de este estilo fuera desplegada en la Red Académica Uruguaya, sería sujeta a grandes cantidades de tráfico y, en particular, grandes cantidades de servicios. Por eso es de gran interés realizar pruebas sobre la misma que analicen su comportamiento cuando debe manejar decenas de miles, o incluso millones de flujos distintos. De esta forma se podrían identificar posibles puntos de falla, o umbrales bajo los cuales debe mantenerse la red para funcionar con buen rendimiento.
+Entre los requerimientos de la RAU2 se encuentra el de la escalabilidad de usuarios. En particular, se espera alcanzar en un mediano plazo un total de 11.000 docentes, 7.000 funcionarios y 140.000 estudiantes. Esto implica que la red será sujeta a importantes cantidades de servicios y flujos distintos. He aquí la relevancia de las pruebas en la presente sección. Mediante el entorno virtual, se someterá la arquitectura a una cantidad de servicios relativamente grande y de esta forma se podrán identificar posibles puntos de falla, o umbrales bajo los cuales debe mantenerse la red para funcionar con buen rendimiento. Dado que en esta prueba también se utilizarán topologias grandes, hay que recordar la misma es posible gracias a la corrección de los errores que se explicó en la sección anterior. También es importante recordar que aunque el entorno de simulación permite hacer un valioso estudio de escalabilidad, no generará resultados en lo que refiere a la performance de la arquitectura. Recordar sección 3.3.2, donde se explica que cada instancia de Open vSwitch se ejecuta en modo user-space, y por ende procesa los paquetes de forma bastante lenta.
 
 \subsection{Descripción del escenario}
-Para estas pruebas se utiliza una topología básica de 4 RAUSwitch y dos subredes, como indica la figura \ref{fig:stress_servicios_topologia}. Se crean 15.000 VPNs de capa 2 entre las subredes, variando los cabezales OpenFlow para que toda VPN sea distinta de las demás. Además, se crea una VPN de capa 3 entre los mismos nodos, para permitir pasar el tráfico IP entre los hosts, que es el que se utiliza en las pruebas.
-
+Este escenario es muy similar al anterior. Se utiliza una VPN punto a punto de capa 3 para conectar dos subredes cliente, y se utiliza \textit{iperf} para generar tráfico TCP y medir el ancho de banda entre los dos RAUHost. Para cargar a la arquitectura con servicios, se crean múltiples VPN de capa 2 entre las subredes, variando los cabezales OpenFlow para que toda VPN sea distinta de las demás. De esta forma, existirán múltiples VPN pero solo una (la de capa 3) será utilizada. \\
+Dado que cargar todas las VPN a mano en la interfaz web llevaría demasiado tiempo, se creó un servicio web que recibe como parámetro la cantidad de VPN que se desean y se encarga de crearlas. \\ \\
 \begin{figure}[t]
 	\caption{Topología para prueba de escala de servicios.}
 	\includegraphics[scale=0.15]{Pruebas/stress_servicios_topologia}
 	\centering
 	\label{fig:stress_servicios_topologia}
 \end{figure}
-
-Interesa realizar estas pruebas estudiando dos aspectos claves:
-\begin{itemize}
-	\item Escalabilidad interna del RAUSwitch. Se estudian posibles limitaciones internas que puedan tener los dispositivos, cuando deben manejar grandes cantidades de flujos.
-	\item Escalabilidad en servicios. Se estudian posibles problemas que puedan tener la arquitectura de la red o la aplicación del controlador para manejar grandes cantidades de servicios e información.
-\end{itemize}
-
+El objetivo es verificar los siguientes dos aspectos claves: \\ \\
+\textbf{Escalabilidad interna del RAUSwitch} \\
+Se estudian posibles limitaciones internas que puedan tener los dispositivos, cuando deben manejar grandes cantidades de flujos. Es posible que a medida que crece su tabla de flujos, demoren más en encontrar el flujo que se corresponde con cada paquete que reciben. Si pasa esto, el ancho de banda debería ser directamente afectado por la cantidad de flujos en sus tablas.  \\ \\
+\textbf{Escalabilidad en servicios} \\
+Se estudian posibles problemas que puedan tener la arquitectura de la red o la aplicación del controlador para manejar grandes cantidades de servicios e información. \\ \\
+Esta prueba se repite para las mismas topologias que la prueba anterior, es decir: básica (4 nodos), chica (11 nodos), mediana (45 nodos) y grande (100 nodos).
 
 \subsection{Resultados y observaciones}
+
+\begin{table}[ht]
+	\caption{Anchos de banda medidos para cada caso.}
+	\centering 
+	\begin{tabular}{c c c c c}
+		\hline\hline
+		\# de VPN & Básica & Chica & Mediana  & Grande \\ [0.5ex]
+		\hline
+		1 & X & Y & W & Z \\
+		1000 & X & Y & W & Z  \\
+		5000 & X & Y & W & Z \\
+		10000 & X & Y & W & Z \\
+		15000 & X & Y & W & Z \\ [1ex]
+		\hline
+	\end{tabular}
+	\label{table:escala_de_servicios}
+\end{table}
+
+Como indica la tabla \ref{table:escala_de_servicios}.
+
 El comportamiento de la arquitectura al manejar esa cantidad de servicios es consistente, por lo tanto, es posible afirmar que la arquitectura de la red no tiene limitaciones con respecto a la cantidad de servicios. Sin ser una limitación, pero sí un factor importante, hay que recordar que los datos que maneja el controlador (entre ellos, los servicios) están en memoria. Por lo tanto se podrá agregar servicios mientras la computadora subyacente tenga suficiente memoria. La creación de 15.000 servicios aumenta el consumo de memoria del controlador en 205 Mb (CONFIRMAR), por lo que un servicio ocupa alrededor de 14 Kb. A modo de ejemplo, si extrapolamos ese número a una computadora que puede dedicar 4 Gb de RAM al controlador, llegamos a que dicho controlador podrá mantener alrededor de 300.000 servicios.
 
 

@@ -10,11 +10,11 @@
 \contentsline {subsection}{\numberline {3.3.4}RAUHost}{8}
 \contentsline {section}{\numberline {3.4}Modo de uso del entorno}{9}
 \contentsline {chapter}{\numberline {4}Pruebas de escala}{10}
-\contentsline {section}{\numberline {4.1}Funcionamiento b\IeC {\'a}sico para distintas topologias}{10}
+\contentsline {section}{\numberline {4.1}Topologias de escala}{10}
 \contentsline {subsection}{\numberline {4.1.1}Descripci\IeC {\'o}n del escenario}{10}
 \contentsline {subsection}{\numberline {4.1.2}Resultados y observaciones}{12}
-\contentsline {section}{\numberline {4.2}Escala de servicios y flujos}{12}
-\contentsline {subsection}{\numberline {4.2.1}Descripci\IeC {\'o}n del escenario}{12}
-\contentsline {subsection}{\numberline {4.2.2}Resultados y observaciones}{13}
-\contentsline {chapter}{\numberline {5}Conclusiones}{16}
-\contentsline {section}{\numberline {5.1}Trabajo futuro}{16}
+\contentsline {section}{\numberline {4.2}Escala de servicios y flujos}{13}
+\contentsline {subsection}{\numberline {4.2.1}Descripci\IeC {\'o}n del escenario}{14}
+\contentsline {subsection}{\numberline {4.2.2}Resultados y observaciones}{15}
+\contentsline {chapter}{\numberline {5}Conclusiones}{18}
+\contentsline {section}{\numberline {5.1}Trabajo futuro}{18}
