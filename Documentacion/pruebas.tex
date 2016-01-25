@@ -94,16 +94,17 @@ Esta prueba se repite para las mismas topologias que la prueba anterior, es deci
 \subsection{Resultados y observaciones}
 
 \begin{table}[ht]
-	\caption{Anchos de banda medidos para cada caso.}
+	\caption{Anchos de banda, en Kbits/s, medidos para cada caso.}
 	\centering 
 	\begin{tabular}{c c c c c}
 		\hline\hline
 		\# de VPN & Básica & Chica & Mediana  & Grande \\ [0.5ex]
 		\hline
 		1 & X & Y & W & Z \\
-		1000 & X & Y & W & Z  \\
-		5000 & X & Y & W & Z \\
-		10000 & X & Y & W & Z \\
+		3000 & X & Y & W & Z  \\
+		6000 & X & Y & W & Z \\
+		9000 & X & Y & W & Z \\
+		12000 & X & Y & W & Z \\
 		15000 & X & Y & W & Z \\ [1ex]
 		\hline
 	\end{tabular}
@@ -115,7 +116,91 @@ Los resultados de la prueba con cada topología se puede ver en la tabla \ref{ta
 El otro resultado que se puede observar en la tabla \ref{table:escala_de_servicios}, es que el ancho de banda es constante para una topología, sin importar la cantidad de VPN existentes en el momento. Como se explica en el primer objetivo de esta prueba, se busca determinar si la existencia de muchos flujos en la tabla, implica que el switch OpenFlow demora más tiempo en encontrar el flujo que corresponde con un paquete entrante, y por lo tanto el mismo demora más en ser forwardeado. Si esto fuera así, debería haber un impacto directo en el throughput. El máximo de VPN con el que se probó fueron 15.000. Cada VPN de capa 2 está compuesta por dos servicios de capa 2, y cada uno de esos servicios introduce 42 flujos en cada nodo del camino. Esto quiere decir que cada uno contiene alrededor de 1.260.000 flujos en su tabla. \\
 La explicación de porqué esa cantidad de flujos no afecta el ancho de banda se encuentra en la especificación de la herramienta Open vSwitch, que utiliza la arquitectura y el entorno virtual para implementar OpenFlow. Dicha herramienta realiza cacheo de flujos. Eso quiere decir que cuando un paquete de datos de un determinado flujo llega por primera vez a un nodo, este paquete es enviado al pipeline de OpenFlow para determinar qué acción se debe tomar. Luego de realizada, esta acción es escrita en la caché, y tiene un tiempo de vida de entre 5 y 10 segundos. Si en ese período de tiempo llega otro paquete del mismo flujo, no hay necesidad de enviar el paquete al pipeline, porque ya se sabe cuales son las acciones a tomar para ese paquete. Por lo tanto, si un flujo de datos es constante y rápido, el tamaño de la tabla de OpenFlow no afectará el tiempo de decisión, ya que sólo el primer paquete de ese flujo deberá pasar por el pipeline. \\
 Mediante el comando 'ovs-appctl dpctl/show' de Open vSwitch, podemos examinar las estadísticas de la cache del datapath. Con el parámetro opcional \textit{target} se apunta el comando a cada instancia de Open vSwitch, y por ende, a cada nodo. En las figuras \ref{fig:iperf_sample} y \ref{fig:cache_sample} se observa, por un lado, la salida de 'iperf' luego de hacer tres ejecuciones, y por otro, las estadísticas del nodo 'alice' luego de dichas ejecuciones. En la sección 'lookups' se detallan cuantos 'hits' y 'miss' de caché han ocurrido hasta el momento, y 'flows' indica cuantos flujos activos hay en el momento en la caché. \\ \\
-Otro objetivo de la prueba es determinar si la arquitectura, y en particular la aplicación, tienen algún problema para manejar muchos servicios. No se detectó ninguna problema de esa índole. Sin ser una limitación, pero sí un factor importante, hay que recordar que los datos que maneja el controlador (entre ellos, los servicios) están en memoria. Por lo tanto se podrá agregar servicios mientras la computadora subyacente tenga suficiente memoria. La creación de 15.000 servicios aumenta el consumo de memoria del controlador en 205 Mb (CONFIRMAR), por lo que un servicio ocupa alrededor de 14 Kb. A modo de ejemplo, si extrapolamos ese número a una computadora que puede dedicar 4 Gb de RAM al controlador, llegamos a que dicho controlador podrá mantener alrededor de 300.000 servicios.
+Otro objetivo de la prueba es determinar si la arquitectura, y en particular la aplicación, tienen algún problema para manejar muchos servicios. No se detectó ninguna problema de esa índole. Sin ser una limitación, pero sí un factor importante, hay que recordar que los datos que maneja el controlador (entre ellos, los servicios) están en memoria. Por lo tanto se podrá agregar servicios mientras la computadora subyacente tenga suficiente memoria. La creación de 15.000 VPN (30.000 servicios) aumenta el consumo de memoria del controlador en 412 Mb (CONFIRMAR), por lo que un servicio ocupa alrededor de 14 Kb. A modo de ejemplo, si extrapolamos ese número a una computadora que puede dedicar 4 Gb de RAM al controlador, llegamos a que dicho controlador podrá mantener alrededor de 300.000 servicios.
+
+
+\begin{tikzpicture}
+\begin{axis}[
+	title={Efecto de la cantidad de VPN sobre el tiempo de carga de una VPN nueva},
+	xlabel={\# de VPN},
+	ylabel={Tiempo (en ms)},
+	xtick={0,3000,6000,9000,12000,15000},
+	ytick={0,200,400,600,800,1000,1200},
+	scaled x ticks = false,
+	x tick label style={/pgf/number format/fixed},
+	legend pos=north west,
+	ymajorgrids=true,
+	grid style=dashed,
+]
+\addplot[
+	color=blue,
+	mark=square,
+	]
+	coordinates {
+		(1,68.2)(3000,270.9)(6000,440.7)(9000,622.4)(12000,804.8)(15000,990.5)
+	};
+	\addlegendentry{VPN de capa 2}
+\addplot[
+	color=red,
+	mark=square,
+	]
+	coordinates {
+		(1,10.0)(3000,192.6)(6000,370.9)(9000,569.6)(12000,746.0)(15000,989.3)
+	};
+	\addlegendentry{VPN de capa 3}
+\end{axis}
+\end{tikzpicture}
+
+
+
+Tiempo de carga de las VPNs aumenta a medida que hay mas VPNs?
+Tiempo de carga de las VPNs aumenta a medida que hay mas nodos?
+
+NUEVOS:
+
+================================
+Topo Basica
+-
+Memoria sin servicios: 0.9%
+Uso de la CPU sin VPN: 3.0%
+Ancho de banda sin VPN: 886 903 889 (receptor) 937 956 941 (emisor)
+Tiempo de carga de una VPN de capa 3, sin VPN: 0.002513 segundos (ida) 0.007488 (vuelta)
+Tiempo de carga de una VPN de capa 2, sin VPN: 0.033592 segundos (ida) 0.034675 (vuelta)
+-
+Memoria con 15.000 VPN: 11.5%
+Uso de la CPU con 15.000 VPN: 67.8%
+Tiempo para crear 15.000 VPN: 8238 segundos
+Ancho de banda con 15.000 VPN: 884 886 887 (receptor) 936 939 938 (emisor)
+Tiempo de carga de una VPN de capa 3, con 15.000 VPN: 0.499023 segundos (ida) 0.490338 (vuelta)
+Tiempo de carga de una VPN de capa 2, con 15.000 VPN: 0.484804 segundos (ida) 0.505755 (vuelta)
+-
+Memoria con 3.000 VPN: 3.0%
+Uso de la CPU con 3.000 VPN: 25.0%
+Tiempo para crear 0-3.000 VPN: 500 segundos
+Ancho de banda con 3.000 VPN: 899 882 880 (receptor) 900 932 931 (emisor)
+Tiempo de carga de una VPN de capa 3, con 3.000 VPN: 0.096597 segundos (ida) 0.096071 (vuelta)
+Tiempo de carga de una VPN de capa 2, con 3.000 VPN: 0.124546 segundos (ida) 0.146423 (vuelta)
+-
+Memoria con 6.000 VPN: 5.2%
+Uso de la CPU con 6.000 VPN: 38.0%
+Tiempo para crear 3.000-6.000 VPN: 1086 segundos
+Ancho de banda con 6.000 VPN: 882 897 881 (receptor) 934 949 931 (emisor)
+Tiempo de carga de una VPN de capa 3, con 6.000 VPN: 0.182752 segundos (ida) 0.188211 (vuelta)
+Tiempo de carga de una VPN de capa 2, con 6.000 VPN: 0.220683 segundos (ida) 0.220042 (vuelta)
+-
+Memoria con 9.000 VPN: 7.2%
+Uso de la CPU con 9.000 VPN: 47.5%
+Tiempo para crear 6.000-9.000 VPN: 1629 segundos
+Ancho de banda con 9.000 VPN: 896 882 893 (receptor) 898 934 895 (emisor)
+Tiempo de carga de una VPN de capa 3, con 9.000 VPN: 0.279042 segundos (ida) 0.290570 (vuelta)
+Tiempo de carga de una VPN de capa 2, con 9.000 VPN: 0.306835 segundos (ida) 0.315573 (vuelta)
+-
+Memoria con 12.000 VPN: 9.4%
+Uso de la CPU con 12.000 VPN: 55.9%
+Tiempo para crear 9.000-12.000 VPN: 2180 segundos
+Ancho de banda con 12.000 VPN: 880 878 896 (receptor) 932 930 949 (emisor)
+Tiempo de carga de una VPN de capa 3, con 12.000 VPN: 0.362166 segundos (ida) 0.383873 (vuelta)
+Tiempo de carga de una VPN de capa 2, con 12.000 VPN: 0.412899 segundos (ida) 0.391985 (vuelta)
 
 
 \begin{figure}[t]
