@@ -73,9 +73,14 @@ EXPLICAR: Error en el código del algoritmo de Dijkstra que hacia que se calcula
 EXPLICAR: Hay que reducir 5 o 10 bytes (dependiendo de si el servicio usa 1 o 2 niveles de etiquetas MPLS) al MTU para que el tráfico pase.\\
 
 
-
-
-Probar ancho de banda y tiempo de creación de servicios para cada topología y cada largo de camino. Así quedan dos tablas.
+Topologia basica:
+Camino de 1 nodo: 0.033039 0.030542 0.024723 0.028429 (capa 2) ||||| 0.002574 0.002572 0.002505 0.004862 (capa 3) ||||| 886 903 889 ||||| 937 956 941
+Topologia chica:
+Camino de 1 nodo: 0.035848 0.028922 0.032488 0.032765 (capa 2) ||||| 0.002959 0.002905 0.003108 0.004570 (capa 3) ||||| X X X ||||| Y Y Y
+Camino de 2 nodo: 0.049485 0.051403 0.048168 0.052503 (capa 2) ||||| 0.003411 0.003619 0.003453 0.005191 (capa 3) ||||| X X X ||||| Y Y Y
+Camino de 4 nodo: 0.053853 0.052651 0.050458 0.053370 (capa 2) ||||| 0.003941 0.004149 0.004105 0.006505 (capa 3) ||||| X X X ||||| Y Y Y
+Camino de 6 nodo: 0.053222 0.054077 0.051948 0.056445 (capa 2) ||||| 0.005059 0.011031 0.008436 0.005675 (capa 3) ||||| X X X ||||| Y Y Y
+Camino de 8 nodo: 0.053933 0.053616 0.056469 0.055150 (capa 2) ||||| 0.004925 0.005160 0.005035 0.008904 (capa 3) ||||| 240 169 137 y despues como 900 ||||| 1001 903 917
 
 \section{Escala de servicios y flujos}
 Entre los requerimientos de la RAU2 se encuentra el de la escalabilidad de usuarios. En particular, se espera alcanzar en un mediano plazo un total de 11.000 docentes, 7.000 funcionarios y 140.000 estudiantes. Esto implica que la red será sujeta a importantes cantidades de servicios y flujos distintos. He aquí la relevancia de las pruebas en la presente sección. Mediante el entorno virtual, se someterá la arquitectura a una cantidad de servicios relativamente grande y de esta forma se podrán identificar posibles puntos de falla, o umbrales bajo los cuales debe mantenerse la red para funcionar con buen rendimiento. Dado que en esta prueba también se utilizarán topologias grandes, hay que recordar la misma es posible gracias a la corrección de los errores que se explicó en la sección anterior. También es importante recordar que aunque el entorno de simulación permite hacer un valioso estudio de escalabilidad, no generará resultados en lo que refiere a la performance de la arquitectura. Recordar sección 3.3.2, donde se explica que cada instancia de Open vSwitch se ejecuta en modo user-space, y por ende procesa los paquetes de forma bastante lenta.
