@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (MiKTeX 2.9) (preloaded format=pdflatex 2015.11.16)  23 JAN 2016 17:53
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (MiKTeX 2.9) (preloaded format=pdflatex 2015.11.16)  27 JAN 2016 22:35
 entering extended mode
 **informe.tex
 (informe.tex
@@ -830,7 +830,7 @@ Package pdftex.def Info: Imagenes/Entorno/ovs_dataplane.png used on input line
 ) [8] [9 <./Imagenes/Entorno/ovs_dataplane.png>] (pruebas.tex
 Chapter 4.
 
-Overfull \hbox (6.58894pt too wide) in paragraph at lines 5--6
+Overfull \hbox (6.58894pt too wide) in paragraph at lines 12--13
 \OT1/cmr/m/n/12 Es im-por-tante poder ase-gu-rar que la ar-qui-tec-tura puede s
 er facilmente migrada
  []
@@ -840,35 +840,40 @@ er facilmente migrada
 
 
 ]
-Underfull \hbox (badness 10000) in paragraph at lines 14--20
+Underfull \hbox (badness 10000) in paragraph at lines 15--23
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14--20
+Underfull \hbox (badness 10000) in paragraph at lines 15--23
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14--20
+Underfull \hbox (badness 10000) in paragraph at lines 15--23
 
  []
 
 
-Overfull \hbox (2.70415pt too wide) in paragraph at lines 22--23
+Underfull \hbox (badness 10000) in paragraph at lines 15--23
+
+ []
+
+[11]
+Overfull \hbox (2.70415pt too wide) in paragraph at lines 25--26
 []\OT1/cmr/bx/n/12 Chica\OT1/cmr/m/n/12 : topologa ar-bi-traria de 11 no-dos 
 (fuente: Topol-ogy Zoo). Figura
  []
 
-[11] <Imagenes/Pruebas/topo_chica.png, id=45, 990.70125pt x 385.44pt>
+<Imagenes/Pruebas/topo_chica.png, id=45, 990.70125pt x 385.44pt>
 File: Imagenes/Pruebas/topo_chica.png Graphic file (type png)
 
 <use Imagenes/Pruebas/topo_chica.png>
-Package pdftex.def Info: Imagenes/Pruebas/topo_chica.png used on input line 29.
+Package pdftex.def Info: Imagenes/Pruebas/topo_chica.png used on input line 32.
 
 (pdftex.def)             Requested size: 396.27348pt x 154.17326pt.
 
-Overfull \hbox (6.27348pt too wide) in paragraph at lines 29--32
+Overfull \hbox (6.27348pt too wide) in paragraph at lines 32--35
  [][] 
  []
 
@@ -877,77 +882,99 @@ File: Imagenes/Pruebas/topo_mediana.png Graphic file (type png)
 
 <use Imagenes/Pruebas/topo_mediana.png>
 Package pdftex.def Info: Imagenes/Pruebas/topo_mediana.png used on input line 3
-6.
+9.
 (pdftex.def)             Requested size: 420.50293pt x 134.1454pt.
 
-Overfull \hbox (30.50293pt too wide) in paragraph at lines 36--39
+Overfull \hbox (30.50293pt too wide) in paragraph at lines 39--42
  [][] 
  []
 
-[12 <./Imagenes/Pruebas/topo_chica.png> <./Imagenes/Pruebas/topo_mediana.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 68--74
-
- []
-
-[13]
-<Imagenes/Pruebas/stress_servicios_topologia.png, id=56, 1061.9675pt x 754.82pt
->
-File: Imagenes/Pruebas/stress_servicios_topologia.png Graphic file (type png)
- <use Imagenes/Pruebas/stress_servicios_topologia.png>
-Package pdftex.def Info: Imagenes/Pruebas/stress_servicios_topologia.png used o
-n input line 83.
-(pdftex.def)             Requested size: 159.28825pt x 113.21811pt.
-
-Underfull \hbox (badness 10000) in paragraph at lines 79--93
-
+[12 <./Imagenes/Pruebas/topo_chica.png>]
+Overfull \hbox (47.10165pt too wide) in paragraph at lines 52--63
+ [][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 79--93
+Underfull \hbox (badness 10000) in paragraph at lines 68--69
+
+ []
+
+[13 <./Imagenes/Pruebas/topo_mediana.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 115--116
+
+ []
+
+[14]
+Underfull \hbox (badness 10000) in paragraph at lines 121--129
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 79--93
+Underfull \hbox (badness 10000) in paragraph at lines 121--129
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 79--93
+Underfull \hbox (badness 10000) in paragraph at lines 121--129
 
  []
 
-[14 <./Imagenes/Pruebas/stress_servicios_topologia.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 114--115
+
+Underfull \hbox (badness 10000) in paragraph at lines 121--129
 
  []
 
 [15]
-Underfull \hbox (badness 10000) in paragraph at lines 116--120
+Underfull \hbox (badness 10000) in paragraph at lines 132--133
 
  []
 
-[16]
-Overfull \hbox (20.79767pt too wide) in paragraph at lines 152--153
-[][] 
+
+Underfull \hbox (badness 10000) in paragraph at lines 152--156
+
  []
 
-[17] <Imagenes/Pruebas/cache_sample.png, id=71, 365.11406pt x 258.21469pt>
+
+Underfull \hbox (badness 10000) in paragraph at lines 152--156
+
+ []
+
+[16] [17]
+Underfull \hbox (badness 10000) in paragraph at lines 157--190
+
+ []
+
+
+Overfull \hbox (3.17285pt too wide) in paragraph at lines 157--190
+[]
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 157--190
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 157--190
+
+ []
+
+<Imagenes/Pruebas/cache_sample.png, id=68, 365.11406pt x 258.21469pt>
 File: Imagenes/Pruebas/cache_sample.png Graphic file (type png)
 
 <use Imagenes/Pruebas/cache_sample.png>
-Package pdftex.def Info: Imagenes/Pruebas/cache_sample.png used on input line 2
-08.
+Package pdftex.def Info: Imagenes/Pruebas/cache_sample.png used on input line 1
+93.
 (pdftex.def)             Requested size: 365.11316pt x 258.21405pt.
 
-<Imagenes/Pruebas/iperf_sample.png, id=72, 348.55219pt x 258.21469pt>
+<Imagenes/Pruebas/iperf_sample.png, id=69, 348.55219pt x 258.21469pt>
 File: Imagenes/Pruebas/iperf_sample.png Graphic file (type png)
 
 <use Imagenes/Pruebas/iperf_sample.png>
 Package pdftex.def Info: Imagenes/Pruebas/iperf_sample.png used on input line 2
-15.
+00.
 (pdftex.def)             Requested size: 348.55132pt x 258.21405pt.
-) [18 <./Imagenes/Pruebas/cache_sample.png>] [19 <./Imagenes/Pruebas/iperf_samp
+) [18] [19 <./Imagenes/Pruebas/cache_sample.png> <./Imagenes/Pruebas/iperf_samp
 le.png>] (conclusiones.tex
 Chapter 5.
 ) [20
@@ -957,22 +984,22 @@ Chapter 5.
 ] (informe.aux (introduccion.aux) (estadodelarte.aux) (entorno.aux)
 (pruebas.aux) (conclusiones.aux)) ) 
 Here is how much of TeX's memory you used:
- 21358 strings out of 493673
- 560834 string characters out of 3141520
- 734574 words of memory out of 3000000
- 24333 multiletter control sequences out of 15000+200000
+ 21355 strings out of 493673
+ 560623 string characters out of 3141520
+ 737574 words of memory out of 3000000
+ 24331 multiletter control sequences out of 15000+200000
  8847 words of font info for 31 fonts, out of 3000000 for 9000
  1025 hyphenation exceptions out of 8191
- 62i,17n,83p,1218b,2095s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 62i,18n,83p,1284b,2095s stack positions out of 5000i,500n,10000p,200000b,50000s
 <C:/Program Files (x86)/MiKTeX 2.9/fonts/typ
 e1/public/amsfonts/cm/cmbx12.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1
 /public/amsfonts/cm/cmmi12.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/p
 ublic/amsfonts/cm/cmr12.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/publ
 ic/amsfonts/cm/cmsy10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public
 /amsfonts/cm/cmti12.pfb>
-Output written on informe.pdf (20 pages, 424152 bytes).
+Output written on informe.pdf (20 pages, 341734 bytes).
 PDF statistics:
- 100 PDF objects out of 1000 (max. 8388607)
+ 98 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 48 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 43 words of extra memory for PDF output out of 10000 (max. 10000000)
 

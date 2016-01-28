@@ -1,27 +1,30 @@
 \chapter{Pruebas de escala}
-Con el entorno de simulación construido, el siguiente objetivo es realizar pruebas de escala sobre la arquitectura. Este trabajo consiste de dos etapas. La primera sección explica la primera de ellas, que es verificar que la arquitectura funciona para topologias de escala. Habiendo completado esta etapa, se pasa a realizar estudios de escala sobre la cantidad de servicios. En este capítulo se explicará el propósito de cada prueba, las condiciones bajo las cuales se ejecuta cada una de ellas (topologias, tipos de tráfico, etc) y por último, los resultados que arrojan. Todas las pruebas fueron realizadas en una máquina virtual con 3590 MB de RAM, procesador Intel Core i5-5200u y Lubuntu 14.04 como sistema operativo.
+Con el entorno de simulación construido, el siguiente objetivo es realizar pruebas de escala sobre la arquitectura. Este trabajo consiste de dos etapas. La primera sección explica la primera de ellas, que es verificar cómo funciona la arquitectura para topologias de escala. Habiendo completado esta etapa, se pasa a realizar estudios de escala sobre la cantidad de servicios. En este capítulo se explicará el propósito de cada prueba, las condiciones bajo las cuales se ejecuta cada una de ellas (topologias, tipos de tráfico, etc) y por último, los resultados que arrojan. Todas las pruebas fueron realizadas en una máquina virtual con 3590 MB de RAM, procesador Intel Core i5-5200u a 2,2 GHz y Lubuntu 14.04 como sistema operativo.
+
+Como se explicará mas adelante en el capítulo, en estas pruebas se utilizarán ciertas topologias creadas manualmente. Más allá de los detalles de cada topología, los siguientes puntos serán comunes a todas ellas.
+\begin{itemize}
+	\item Habrá un conjunto de RAUSwitch, conectados de acuerdo a lo que dicte cada topología.
+	\item Existirán dos subredes cliente. Serán implementadas por un QuaggaRouter y un RAUHost cada una (recordar las clases del entorno virtual). Los RAUHost serán los remitentes y destinatarios del tráfico que pasará por la red. Esos datos se generarán con el comando \textit{ping} y la herramienta \textit{iperf}. Estas dos subredes tendrán una ubicación variable en cada topología, ya que se probará con distintos caminos entre ellas. Por esta razón, se omiten en las futuras imágenes de las topologias.
+	\item El controlador se conectará con un switch virtual genérico (gracias a la clase Switch de Mininet, en el modo \textit{standalone}), que a su vez se conectará con los RAUSwitch. Esta será la red de gestión. Por simplicidad, dicha red se omitirá en las futuras imágenes.
+\end{itemize}
 
 \section{Topologias de escala}
-Es importante poder asegurar que la arquitectura puede ser fácilmente migrada a redes reales. Para poder asegurar esto, es necesario comprobar que topologias con grandes cantidades de nodos no generan problemas inesperados. Dado que en el proyecto RRAP se contaba con cuatro dispositivos, este tipo de pruebas no han sido realizadas hasta el momento.
+Es importante poder asegurar que la arquitectura puede ser fácilmente migrada a redes reales. Para poder asegurar esto, es necesario comprobar que topologias con grandes cantidades de nodos no generan problemas inesperados. También se busca determinar el impacto de topologias grandes y complejas en el tiempo de cálculo y configuración de una VPN. Dado que en el proyecto RRAP se contaba con cuatro dispositivos, este tipo de pruebas no han sido realizadas hasta el momento.
 
 \subsection{Descripción del escenario}
-Este escenario consiste de una VPN punto a punto de capa 3. Dicha VPN permite tráfico de ethertype \textbf{0x0800}, es decir, tráfico del protocolo IPv4. Se utilizarán distintas topologias, pero la estructura de la prueba será similar siempre:
-\begin{itemize}
-	\item Dos subredes cliente. Serán implementadas por un QuaggaRouter y un RAUHost cada una (recordar las clases del entorno virtual). Los RAUHost serán los remitentes y destinatarios del tráfico que pasará por la VPN. Esos datos se generarán con el comando \textit{ping} y la herramienta \textit{iperf}.
-	\item El controlador, implementado por el RAUController. Éste se conectará con un switch genérico (gracias a la clase Switch de Mininet, en el modo \textit{standalone}), que a su vez se conectará con los RAUSwitch. Esta será la red de gestión. Por simplicidad, dicha red se omitirá en las futuras imágenes.
-	\item La red de RAUSwitch, conectados de acuerdo a lo que dicte cada topología.
-\end{itemize}
-Los aspectos que se buscan verificar con esta prueba son los siguientes: \\ \\
+La idea principal de este escenario consiste simplemente en levantar cierta topología, dar de alta una VPN entre las dos subredes cliente y analizar el comportamiento que esto genera. Los puntos específicos que se estudiarán se detallan a continuación: \\ \\
 \textbf{Algoritmo de ruteo} \\
- Se verifican dos aspectos claves: que el camino se corresponde con el camino esperado (calculado previamente de forma manual), y que el camino es correctamente instalado en forma de reglas de reenvío (en base a conmutación de etiquetas MPLS) en las respectivas tablas de flujos OpenFlow de cada nodo del camino. Todo esto se puede comprobar analizando las tablas de flujos de cada nodo, que se pueden ver utilizando el comando \textbf{dump-flows} de OpenVSwitch. También se puede utilizar la interfaz gráfica de RAUFlow. Desde las tablas de flujos se puede reconstruir el camino que computó la aplicación, y también comprobar que los flujos configuran correctamente las etiquetas MPLS. \\ \\
+ Se verifican dos aspectos claves: que el camino se corresponde con el camino esperado (calculado previamente de forma manual), y que el camino es correctamente instalado en forma de reglas de reenvío (en base a conmutación de etiquetas MPLS) en las respectivas tablas de flujos OpenFlow de cada nodo del camino. Todo esto se puede comprobar analizando las tablas de flujos de cada nodo, que se pueden ver utilizando el comando \textbf{dump-flows} de Open vSwitch. También se puede utilizar la interfaz gráfica de RAUFlow. Desde las tablas de flujos se puede reconstruir el camino que computó la aplicación, y también comprobar que los flujos manipulan correctamente las etiquetas MPLS. \\ \\
 \textbf{Clasificación de tráfico} \\
-La idea es verificar que realmente se están asignando las etiquetas MPLS al tráfico entrante, así como comprobar que el mismo es reenviado por los nodos correctos. Se genera tráfico utilizando el comando \textbf{ping} y la herramienta \textbf{iperf}. Con la herramienta tcpdump, se verifica el tráfico que pasa por cada nodo del camino. \\ \\
-Las topologias que se usarán son:
+La idea es verificar que realmente se están asignando las etiquetas MPLS al tráfico entrante, así como comprobar que el mismo es reenviado por los nodos correctos. Para probar esto se utilizará una VPN de capa 3, que permitirá tráfico con ethertype 0x0800, es decir, del protocolo IPv4. Se generará tráfico de este tipo utilizando el comando \textbf{ping} y la herramienta \textbf{iperf}. Con la herramienta tcpdump, se verificará que el tráfico pasa correctamente por cada nodo del camino. \\ \\
+\textbf{Tiempo de creación de una VPN} \\
+El objetivo aquí es estudiar como impacta el tamaño de la topología y el largo del camino en el tiempo que demora la arquitectura en establecer una VPN. Se espera que ese tiempo sea influenciado en gran medida por dos factores: el tiempo que demora en calcular el camino óptimo y el tiempo que demora en configurar los flujos en cada nodo. Con ayuda de un script en Python, se mandarán pedidos POST al controlador para dar de alta los servicios, y se registrará el tiempo de respuesta con ayuda de los logs del controlador. \\ \\
+Las topologias que se usarán son las siguientes:
 \begin{itemize}
 	\item \textbf{Básica}: 4 nodos en topología de full mesh. Es la utilizada en el prototipo físico.
 	\item \textbf{Chica}: topología arbitraria de 11 nodos (fuente: Topology Zoo). Figura \ref{fig:topo_chica}.
 	\item \textbf{Mediana}: topología arbitraria de 45 nodos (fuente: Topology Zoo). Figura \ref{fig:topo_mediana}.
-	\item \textbf{Grande}: topología de tipo arborescente compuesta por 100 nodos.
+	\item \textbf{Grande}: topología de tipo arborescente compuesta por 105 nodos.
 \end{itemize}
 
 \begin{figure}[t]
@@ -39,7 +42,7 @@ Las topologias que se usarán son:
 \end{figure}
 
 \subsection{Resultados y observaciones}
-En general, se observa que la aplicación no tiene problemas para manejar grandes cantidades de nodos, pero sí caminos largos. A continuación se desglosa el resultado de la prueba con cada topología. El mismo también se puede ver en la tabla \ref{table:problemas_por_topologia}. En ella se indica con una X los aspectos que funcionaron correctamente para cada caso. Los aspectos que se estudian son: se crea con éxito el servicio desde la interfaz web, el camino que se instala es correcto, los flujos de cada nodo del camino son correctos, y se clasifica correctamente el tráfico. Si se cumplen todos ellos, se puede concluir que la topología pasa la prueba.
+Esta prueba se separa en dos etapas. La primera se concentra en los dos primeros focos de estudio que se listaron en la descripción del escenario. Esto quiere decir que en la primera etapa se busca verificar que la arquitectura maneja sin problemas las topologias de estudio. En la tabla \ref{table:problemas_por_topologia} se detallan los comportamientos observados para algunos de los casos estudiados. En ella se indica con una X los aspectos que funcionaron correctamente para cada caso. Los aspectos que se estudian son: se crea con éxito el servicio, el camino que se calcula es correcto, los flujos de cada nodo del camino son correctos, y se clasifica correctamente el tráfico. Si se cumplen todos ellos, quiere decir que la VPN se crea correctamente y el tráfico pasa sin problemas por la misma.
 
 \begin{table}[ht]
 \caption{Resultados por topología.}
@@ -48,60 +51,85 @@ En general, se observa que la aplicación no tiene problemas para manejar grande
 % used for centering table
 \begin{tabular}{c c c c c}
 \hline\hline
-Largo del camino & Servicio & Camino & Flujos  & Clasificación de tráfico \\ [0.5ex]
+Largo del camino (topología) & Servicio & Camino & Flujos  & Clasificación de tráfico \\ [0.5ex]
 \hline
-1 & X & X & X & X \\
-7 & X & X &  &  \\
-10 &  &  &  &  \\
-X &  &  &  &  \\ [1ex]
+1 (básica) & X & X & X & X \\
+7 (chica) & X & X &  &  \\
+10 (mediana) &  &  &  &  \\
+14 (grande) &  &  &  &  \\ [1ex]
 \hline
 \end{tabular}
 \label{table:problemas_por_topologia}
 \end{table}
+Se pueden observar como mínimo dos problemas. El primero es que en el caso de la topología chica y un camino de 7 saltos, los flujos están en los nodos correctos (los del camino más corto entre las subredes cliente) ,pero los mismos no son correctos. EXPLICACIÓN.
 
-\begin{itemize}
-	\item \textbf{VPN con camino de 1 salto, en la topología básica}. La VPN se establece correctamente y el tráfico ICMP y TCP pasa sin problemas.
-	\item \textbf{VPN con camino de 7 saltos, en la topología chica}. Los servicios se crean, y se instalan flujos en los nodos correctos, osea que el camino calculado es el más corto. Sin embargo, los flujos instalados en los nodos son incorrectos.
-	\item \textbf{VPN con camino de 10 saltos, en la topología mediana}. La aplicación sufre una excepción de Python al crear los servicios.
-	\item \textbf{VPN con camino de X saltos, en la topología grande}. La aplicación sufre una excepción de Python al crear los servicios, igual que el caso anterior (???).
-\end{itemize}
-\textbf{Bug en codigo (ruta)} \\
-EXPLICAR: Error en el código que hacía que se instalaran mal los flujos en los nodos. Tenian incorrectos puertos de entrada y salida.\\
-\textbf{Bug en codigo (Dijkstra)} \\
-EXPLICAR: Error en el código del algoritmo de Dijkstra que hacia que se calcularan mal los costos, ya que se sumaba como strings (concatenación) en vez de sumar enteros. \\
-\textbf{Problema del MTU al usar iperf} \\
-EXPLICAR: Hay que reducir 5 o 10 bytes (dependiendo de si el servicio usa 1 o 2 niveles de etiquetas MPLS) al MTU para que el tráfico pase.\\
+El segundo problema detectado es que para el caso del camino de 10 saltos en la topología mediana, y el de 14 saltos en la topología grande, el servicio ni siquiera llega a crearse correctamente, es decir, la aplicación sufre una excepción de Python al intentar hacerlo. EXPLICACIÓN.
 
+***Mencionar el nuevo error que causa error 500 al crear servicios en la topología mediana con camino de largo 13.*** \\
 
-Topologia basica:
-Camino de 1 nodo: 0.033039 0.030542 0.024723 0.028429 (capa 2) ||||| 0.002574 0.002572 0.002505 0.004862 (capa 3) ||||| 886 903 889 ||||| 937 956 941
-Topologia chica:
-Camino de 1 nodo: 0.035848 0.028922 0.032488 0.032765 (capa 2) ||||| 0.002959 0.002905 0.003108 0.004570 (capa 3) ||||| X X X ||||| Y Y Y
-Camino de 2 nodo: 0.049485 0.051403 0.048168 0.052503 (capa 2) ||||| 0.003411 0.003619 0.003453 0.005191 (capa 3) ||||| X X X ||||| Y Y Y
-Camino de 4 nodo: 0.053853 0.052651 0.050458 0.053370 (capa 2) ||||| 0.003941 0.004149 0.004105 0.006505 (capa 3) ||||| X X X ||||| Y Y Y
-Camino de 6 nodo: 0.053222 0.054077 0.051948 0.056445 (capa 2) ||||| 0.005059 0.011031 0.008436 0.005675 (capa 3) ||||| X X X ||||| Y Y Y
-Camino de 8 nodo: 0.053933 0.053616 0.056469 0.055150 (capa 2) ||||| 0.004925 0.005160 0.005035 0.008904 (capa 3) ||||| 240 169 137 y despues como 900 ||||| 1001 903 917
+Con los errores de código solucionados y habiendo asegurado que las VPN se pueden crear y usar sin problemas para todas las topologias, se pasa a la segunda etapa de esta prueba, que consiste en estudiar el impacto del largo del camino y la cantidad de nodos en el tiempo de creación de una VPN. Las tablas \ref{table:tiempo_vpn_2} y \ref{table:tiempo_vpn_3} muestran para cada topología, los distintos largos de camino probados y su respectivo tiempo. La tabla \ref{table:tiempo_vpn_2} muestra los resultados cuando se trata de una VPN de capa 2, y la tabla \ref{table:tiempo_vpn_3} lo hace cuando es VPN de capa 3. Las celdas con \textit{N/C} indican que no es posible crear un camino de ese largo para esa topología.
+
+\begin{table}[ht]
+	\caption{Tiempo de demora en crear una VPN de capa 2. El tiempo se mide en m/s.}
+	\centering 
+	\begin{tabular}{c c c c c}
+		\hline\hline
+		Largo del camino & Básica & Chica & Mediana  & Grande \\ [0.5ex]
+		\hline
+		1 & 58.3 & 65.0 &  &  \\
+		2 & N/C & 100.8 &  &  \\
+		4 & N/C & 105.2 &  &  \\
+		6 & N/C & 107.8 &  &  \\
+		8 & N/C & 109.6 &  &  \\
+		10 & N/C & N/C &  &  \\
+		12 & N/C & N/C &  &  \\
+		14 & N/C & N/C &  &  \\ [1ex]
+		\hline
+	\end{tabular}
+	\label{table:tiempo_vpn_2}
+\end{table}
+
+\begin{table}[ht]
+	\caption{Tiempo de demora en crear una VPN de capa 3. El tiempo se mide en m/s.}
+	\centering 
+	\begin{tabular}{c c c c c}
+		\hline\hline
+		Largo del camino & Básica & Chica & Mediana  & Grande \\ [0.5ex]
+		\hline
+		1 & 6.3 & 6.8 &  &  \\
+		2 & N/C & 7.8 &  &  \\
+		4 & N/C & 9.4 &  &  \\
+		6 & N/C & 15.1 &  &  \\
+		8 & N/C & 12.0 &  &  \\
+		10 & N/C & N/C &  &  \\
+		12 & N/C & N/C &  &  \\
+		14 & N/C & N/C &  &  \\ [1ex]
+		\hline
+	\end{tabular}
+	\label{table:tiempo_vpn_3}
+\end{table}
+*** Algunas conclusiones de las pruebas  de tiempo
+
+*** Algunas conclusiones generales
+
+EXPLICAR PROBLEMA DEL MTU CON IPERF: Hay que reducir 5 o 10 bytes (dependiendo de si el servicio usa 1 o 2 niveles de etiquetas MPLS) al MTU para que el tráfico pase.\\
 
 \section{Escala de servicios y flujos}
-Entre los requerimientos de la RAU2 se encuentra el de la escalabilidad de usuarios. En particular, se espera alcanzar en un mediano plazo un total de 11.000 docentes, 7.000 funcionarios y 140.000 estudiantes. Esto implica que la red será sujeta a importantes cantidades de servicios y flujos distintos. He aquí la relevancia de las pruebas en la presente sección. Mediante el entorno virtual, se someterá la arquitectura a una cantidad de servicios relativamente grande y de esta forma se podrán identificar posibles puntos de falla, o umbrales bajo los cuales debe mantenerse la red para funcionar con buen rendimiento. Dado que en esta prueba también se utilizarán topologias grandes, hay que recordar la misma es posible gracias a la corrección de los errores que se explicó en la sección anterior. También es importante recordar que aunque el entorno de simulación permite hacer un valioso estudio de escalabilidad, no generará resultados en lo que refiere a la performance de la arquitectura. Recordar sección 3.3.2, donde se explica que cada instancia de Open vSwitch se ejecuta en modo user-space, y por ende procesa los paquetes de forma bastante lenta.
+Entre los requerimientos de la RAU2 se encuentra el de la escalabilidad de usuarios. En particular, se espera alcanzar en un mediano plazo un total de 11.000 docentes, 7.000 funcionarios y 140.000 estudiantes (de acuerdo a los requerimientos relevados por el proyecto RRAP). Esto implica que la red será sujeta a importantes cantidades de servicios y flujos distintos. He aquí la relevancia de las pruebas en la presente sección. Mediante el entorno virtual, se someterá la arquitectura a una cantidad de servicios relativamente grande y de esta forma se podrían identificar posibles puntos de falla, o umbrales bajo los cuales debe mantenerse la red para funcionar con buen rendimiento. Dado que en esta prueba también se utilizarán topologias grandes, hay que recordar la misma es posible gracias a la corrección de los errores que se explicó en la sección anterior. También es importante recordar que aunque el entorno de simulación permite hacer un valioso estudio de escalabilidad, no generará resultados en lo que refiere a la performance de la arquitectura. Recordar sección 3.3.2, donde se explica que cada instancia de Open vSwitch se ejecuta en modo user-space, y por ende procesa los paquetes de forma bastante lenta.
 
 \subsection{Descripción del escenario}
-Este escenario es muy similar al anterior. Se utiliza una VPN punto a punto de capa 3 para conectar dos subredes cliente, y se utiliza \textit{iperf} para generar tráfico TCP y medir el ancho de banda entre los dos RAUHost. Para cargar a la arquitectura con servicios, se crean múltiples VPN de capa 2 entre las subredes, variando los cabezales OpenFlow para que toda VPN sea distinta de las demás. De esta forma, existirán múltiples VPN pero solo una (la de capa 3) será utilizada. \\
-Dado que cargar todas las VPN a mano en la interfaz web llevaría demasiado tiempo, se creó un servicio web que recibe como parámetro la cantidad de VPN que se desean y se encarga de crearlas. \\ \\
-\begin{figure}[t]
-	\caption{Topología para prueba de escala de servicios.}
-	\includegraphics[scale=0.15]{Pruebas/stress_servicios_topologia}
-	\centering
-	\label{fig:stress_servicios_topologia}
-\end{figure}
+La idea principal del escenario es crear muchas VPN y analizar los comportamientos que esto genera. Se utiliza una VPN punto a punto de capa 3 para conectar dos subredes cliente, y se utiliza \textit{iperf} para generar tráfico TCP y medir el ancho de banda entre los dos RAUHost. Para cargar a la arquitectura con servicios, se crean múltiples VPN de capa 2 entre las subredes, variando los valores de los cabezales VLAN\_ID y VLAN\_PCP (pudiendo crear un total de 32.768 combinaciones distintas) para que toda VPN sea distinta de las demás. De esta forma, existirán múltiples VPN pero solo una (la de capa 3) será utilizada. \\
+Dado que cargar todas las VPN a mano en la interfaz web llevaría demasiado tiempo, se creó un servicio web que recibe como parámetro la cantidad de VPN que se desean. Cuando se hace un pedido GET a ese servicio web, se inicia el proceso de creación de las mismas. Este proceso puede tomar entre algunos minutos y varias horas, dependiendo de la cantidad. \\ \\
 El objetivo es verificar los siguientes dos aspectos claves: \\ \\
 \textbf{Escalabilidad interna del RAUSwitch} \\
 Se estudian posibles limitaciones internas que puedan tener los dispositivos, cuando deben manejar grandes cantidades de flujos. Es posible que a medida que crece su tabla de flujos, demoren más en encontrar el flujo que se corresponde con cada paquete que reciben. Si pasa esto, el ancho de banda debería ser afectado negativamente por la cantidad de flujos en sus tablas. El ancho de banda se medirá con la herramienta \textit{iperf}.  \\ \\
 \textbf{Escalabilidad en servicios} \\
 Se estudian posibles problemas que puedan tener la arquitectura de la red o la aplicación del controlador para manejar grandes cantidades de servicios e información. \\ \\
-Esta prueba se repite para las mismas topologias que la prueba anterior, es decir: básica (4 nodos), chica (11 nodos), mediana (45 nodos) y grande (100 nodos).
+Esta prueba se repite para las mismas topologias que la prueba anterior, es decir: básica (4 nodos), chica (11 nodos), mediana (45 nodos) y grande (105 nodos).
 
 \subsection{Resultados y observaciones}
+
+En lo que respecta a los anchos de banda medidos, los resultados de la prueba con cada topología se pueden ver en la tabla \ref{table:escala_de_servicios}. Se pueden observar dos hechos interesantes. El primer resultado que se puede estudiar, es que el ancho de banda es más bajo a medida que se incrementa la cantidad de nodos y/o el largo del camino. Esto se explica desde dos ángulos. El primero es que al tener que pasar por un camino más largo, un paquete debe ser inspeccionado y reenviado más veces. Por lo tanto, este resultado debería sería visible también en un ambiente de prueba con dispositivos físicos. El segundo ángulo que explica este resultado radica en el entorno virtual mismo. Al tener que manejar más nodos virtuales, el sistema operativo anfitrión tiene menos recursos para dedicar a cada uno. Esto quiere decir que tanto las instancias de \textit{iperf} que se encargan de recibir y enviar los paquetes, como las instancias de Open vSwitch que los procesan en cada nodo del camino, tendrán menos tiempo de CPU para realizar su tarea. \\
 
 \begin{table}[ht]
 	\caption{Anchos de banda, en Kbits/s, medidos para cada caso.}
@@ -110,25 +138,23 @@ Esta prueba se repite para las mismas topologias que la prueba anterior, es deci
 		\hline\hline
 		\# de VPN & Básica & Chica & Mediana  & Grande \\ [0.5ex]
 		\hline
-		1 & X & Y & W & Z \\
-		3000 & X & Y & W & Z  \\
-		6000 & X & Y & W & Z \\
-		9000 & X & Y & W & Z \\
-		12000 & X & Y & W & Z \\
-		15000 & X & Y & W & Z \\ [1ex]
+		1 & 893 & Y & W & Z \\
+		3000 & 887 & Y & W & Z  \\
+		6000 & 887 & Y & W & Z \\
+		9000 & 890 & Y & W & Z \\
+		12000 & 885 & Y & W & Z \\
+		15000 & 886 & Y & W & Z \\ [1ex]
 		\hline
 	\end{tabular}
 	\label{table:escala_de_servicios}
 \end{table}
 
-Los resultados de la prueba con cada topología se puede ver en la tabla \ref{table:escala_de_servicios}. Se pueden observar dos hechos interesantes. El primer resultado que se puede estudiar, es que el ancho de banda es más bajo a medida que se incrementa la cantidad de nodos y/o el largo del camino. Esto se explica desde dos ángulos. El primero es que al tener que pasar por un camino más largo, el paquete debe ser inspeccionado y reenviado más veces. Por lo tanto, este resultado debería sería visible también en un ambiente de prueba con dispositivos físicos. El segundo ángulo que explica este resultado radica en el entorno virtual mismo. Al tener que manejar más nodos virtuales, el sistema operativo anfitrión tiene menos recursos para dedicar a cada uno. Esto quiere decir que tanto las instancias de \textit{iperf} que se encargan de recibir y enviar los paquetes, como las instancias de Open vSwitch que los procesan en cada nodo del camino, tendrán menos tiempo de CPU para realizar su tarea. \\
-
-El otro resultado que se puede observar en la tabla \ref{table:escala_de_servicios}, es que el ancho de banda es constante para una topología, sin importar la cantidad de VPN existentes en el momento. Como se explica en el primer objetivo de esta prueba, se busca determinar si la existencia de muchos flujos en la tabla, implica que el switch OpenFlow demora más tiempo en encontrar el flujo que corresponde con un paquete entrante, y por lo tanto el mismo demora más en ser forwardeado. Si esto fuera así, debería haber un impacto directo en el throughput. El máximo de VPN con el que se probó fueron 15.000. Cada VPN de capa 2 está compuesta por dos servicios de capa 2, y cada uno de esos servicios introduce 42 flujos en cada nodo del camino. Esto quiere decir que cada uno contiene alrededor de 1.260.000 flujos en su tabla. \\
+El otro resultado que se puede observar en la tabla \ref{table:escala_de_servicios}, es que el ancho de banda es constante para un camino y topología, sin importar la cantidad de VPN existentes en el momento. Como se explica en el primer objetivo de esta prueba, se busca determinar si la existencia de muchos flujos en la tabla, implica que el switch OpenFlow demora más tiempo en encontrar el flujo que corresponde para un paquete entrante, y por lo tanto el mismo demora más en ser forwardeado. Si esto fuera así, debería haber un impacto directo en el throughput. El máximo de VPN con el que se probó fueron 15.000. Cada VPN de capa 2 está compuesta por dos servicios de capa 2, y cada uno de esos servicios introduce 42 flujos en cada nodo del camino. Esto quiere decir que cada uno contiene alrededor de 1.260.000 flujos en su tabla. \\
 La explicación de porqué esa cantidad de flujos no afecta el ancho de banda se encuentra en la especificación de la herramienta Open vSwitch, que utiliza la arquitectura y el entorno virtual para implementar OpenFlow. Dicha herramienta realiza cacheo de flujos. Eso quiere decir que cuando un paquete de datos de un determinado flujo llega por primera vez a un nodo, este paquete es enviado al pipeline de OpenFlow para determinar qué acción se debe tomar. Luego de realizada, esta acción es escrita en la caché, y tiene un tiempo de vida de entre 5 y 10 segundos. Si en ese período de tiempo llega otro paquete del mismo flujo, no hay necesidad de enviar el paquete al pipeline, porque ya se sabe cuales son las acciones a tomar para ese paquete. Por lo tanto, si un flujo de datos es constante y rápido, el tamaño de la tabla de OpenFlow no afectará el tiempo de decisión, ya que sólo el primer paquete de ese flujo deberá pasar por el pipeline. \\
 Mediante el comando 'ovs-appctl dpctl/show' de Open vSwitch, podemos examinar las estadísticas de la cache del datapath. Con el parámetro opcional \textit{target} se apunta el comando a cada instancia de Open vSwitch, y por ende, a cada nodo. En las figuras \ref{fig:iperf_sample} y \ref{fig:cache_sample} se observa, por un lado, la salida de 'iperf' luego de hacer tres ejecuciones, y por otro, las estadísticas del nodo 'alice' luego de dichas ejecuciones. En la sección 'lookups' se detallan cuantos 'hits' y 'miss' de caché han ocurrido hasta el momento, y 'flows' indica cuantos flujos activos hay en el momento en la caché. \\ \\
-Otro objetivo de la prueba es determinar si la arquitectura, y en particular la aplicación, tienen algún problema para manejar muchos servicios. No se detectó ninguna problema de esa índole. Sin ser una limitación, pero sí un factor importante, hay que recordar que los datos que maneja el controlador (entre ellos, los servicios) están en memoria. Por lo tanto se podrá agregar servicios mientras la computadora subyacente tenga suficiente memoria. La creación de 15.000 VPN (30.000 servicios) aumenta el consumo de memoria del controlador en 412 Mb (CONFIRMAR), por lo que un servicio ocupa alrededor de 14 Kb. A modo de ejemplo, si extrapolamos ese número a una computadora que puede dedicar 4 Gb de RAM al controlador, llegamos a que dicho controlador podrá mantener alrededor de 300.000 servicios.
+Otro objetivo de la prueba es determinar si la arquitectura, y en particular la aplicación, tienen algún problema para manejar muchos servicios. No se detectó ninguna problema de esa índole. Sin ser una limitación, pero sí un factor importante, hay que recordar que los datos que maneja el controlador (entre ellos, los servicios) están en memoria. Por lo tanto se podrá agregar servicios mientras la computadora subyacente tenga suficiente memoria. La creación de 15.000 VPN (30.000 servicios) aumenta el consumo de memoria del controlador en 412 Mb, por lo que un servicio ocupa alrededor de 14 Kb. A modo de ejemplo, si extrapolamos ese número a una computadora que puede dedicar 4 Gb de RAM al controlador, llegamos a que dicho controlador podrá mantener alrededor de 300.000 servicios. \\
 
-
+También se observó un comportamiento que no se esperaba. Se detectó que a medida que hay más VPN creadas, la red demora más tiempo en crear una nueva VPN. La siguiente gráfica ilustra este comportamiento. \\ \\
 \begin{tikzpicture}
 \begin{axis}[
 	title={Efecto de la cantidad de VPN sobre el tiempo de carga de una VPN nueva},
@@ -160,58 +186,7 @@ Otro objetivo de la prueba es determinar si la arquitectura, y en particular la 
 	\addlegendentry{VPN de capa 3}
 \end{axis}
 \end{tikzpicture}
-
-
-
-Tiempo de carga de las VPNs aumenta a medida que hay mas VPNs?
-Tiempo de carga de las VPNs aumenta a medida que hay mas nodos?
-
-NUEVOS:
-
-================================
-Topo Basica
--
-Memoria sin servicios: 0.9%
-Uso de la CPU sin VPN: 3.0%
-Ancho de banda sin VPN: 886 903 889 (receptor) 937 956 941 (emisor)
-Tiempo de carga de una VPN de capa 3, sin VPN: 0.002513 segundos (ida) 0.007488 (vuelta)
-Tiempo de carga de una VPN de capa 2, sin VPN: 0.033592 segundos (ida) 0.034675 (vuelta)
--
-Memoria con 15.000 VPN: 11.5%
-Uso de la CPU con 15.000 VPN: 67.8%
-Tiempo para crear 15.000 VPN: 8238 segundos
-Ancho de banda con 15.000 VPN: 884 886 887 (receptor) 936 939 938 (emisor)
-Tiempo de carga de una VPN de capa 3, con 15.000 VPN: 0.499023 segundos (ida) 0.490338 (vuelta)
-Tiempo de carga de una VPN de capa 2, con 15.000 VPN: 0.484804 segundos (ida) 0.505755 (vuelta)
--
-Memoria con 3.000 VPN: 3.0%
-Uso de la CPU con 3.000 VPN: 25.0%
-Tiempo para crear 0-3.000 VPN: 500 segundos
-Ancho de banda con 3.000 VPN: 899 882 880 (receptor) 900 932 931 (emisor)
-Tiempo de carga de una VPN de capa 3, con 3.000 VPN: 0.096597 segundos (ida) 0.096071 (vuelta)
-Tiempo de carga de una VPN de capa 2, con 3.000 VPN: 0.124546 segundos (ida) 0.146423 (vuelta)
--
-Memoria con 6.000 VPN: 5.2%
-Uso de la CPU con 6.000 VPN: 38.0%
-Tiempo para crear 3.000-6.000 VPN: 1086 segundos
-Ancho de banda con 6.000 VPN: 882 897 881 (receptor) 934 949 931 (emisor)
-Tiempo de carga de una VPN de capa 3, con 6.000 VPN: 0.182752 segundos (ida) 0.188211 (vuelta)
-Tiempo de carga de una VPN de capa 2, con 6.000 VPN: 0.220683 segundos (ida) 0.220042 (vuelta)
--
-Memoria con 9.000 VPN: 7.2%
-Uso de la CPU con 9.000 VPN: 47.5%
-Tiempo para crear 6.000-9.000 VPN: 1629 segundos
-Ancho de banda con 9.000 VPN: 896 882 893 (receptor) 898 934 895 (emisor)
-Tiempo de carga de una VPN de capa 3, con 9.000 VPN: 0.279042 segundos (ida) 0.290570 (vuelta)
-Tiempo de carga de una VPN de capa 2, con 9.000 VPN: 0.306835 segundos (ida) 0.315573 (vuelta)
--
-Memoria con 12.000 VPN: 9.4%
-Uso de la CPU con 12.000 VPN: 55.9%
-Tiempo para crear 9.000-12.000 VPN: 2180 segundos
-Ancho de banda con 12.000 VPN: 880 878 896 (receptor) 932 930 949 (emisor)
-Tiempo de carga de una VPN de capa 3, con 12.000 VPN: 0.362166 segundos (ida) 0.383873 (vuelta)
-Tiempo de carga de una VPN de capa 2, con 12.000 VPN: 0.412899 segundos (ida) 0.391985 (vuelta)
-
+Se puede ver que el tiempo de carga aumenta de forma lineal con la cantidad de VPN existentes. Una posible explicación para esto puede ser que al tener más flujos, cada nodo demora más en insertar los flujos nuevos en su tabla. Otra posible razón puede ser que mientras más datos en memoria, más lento se comporta la aplicación RAUFlow. \\ \\
 
 \begin{figure}[t]
 	\caption{Estadísticas de cache de flujos del nodo 'alice'.}
@@ -226,3 +201,5 @@ Tiempo de carga de una VPN de capa 2, con 12.000 VPN: 0.412899 segundos (ida) 0.
 	\centering
 	\label{fig:iperf_sample}
 \end{figure}
+
+***Algunas conclusiones de estas pruebas.
