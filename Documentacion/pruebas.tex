@@ -65,8 +65,6 @@ Se pueden observar como mínimo dos problemas. El primero es que en el caso de l
 
 El segundo problema detectado es que para el caso del camino de 10 saltos en la topología mediana, y el de 14 saltos en la topología grande, el servicio ni siquiera llega a crearse correctamente, es decir, la aplicación sufre una excepción de Python al intentar hacerlo. EXPLICACIÓN.
 
-***Mencionar el nuevo error que causa error 500 al crear servicios en la topología mediana con camino de largo 13.*** \\
-
 Con los errores de código solucionados y habiendo asegurado que las VPN se pueden crear y usar sin problemas para todas las topologias, se pasa a la segunda etapa de esta prueba, que consiste en estudiar el impacto del largo del camino y la cantidad de nodos en el tiempo de creación de una VPN. Las tablas \ref{table:tiempo_vpn_2} y \ref{table:tiempo_vpn_3} muestran para cada topología, los distintos largos de camino probados y su respectivo tiempo. La tabla \ref{table:tiempo_vpn_2} muestra los resultados cuando se trata de una VPN de capa 2, y la tabla \ref{table:tiempo_vpn_3} lo hace cuando es VPN de capa 3. Las celdas con \textit{N/C} indican que no es posible crear un camino de ese largo para esa topología.
 
 \begin{table}[ht]
@@ -83,7 +81,7 @@ Con los errores de código solucionados y habiendo asegurado que las VPN se pued
 		8 & N/C & 109.6 &  &  \\
 		10 & N/C & N/C &  &  \\
 		12 & N/C & N/C &  &  \\
-		14 & N/C & N/C &  &  \\ [1ex]
+		14 & N/C & N/C & N/C &  \\ [1ex]
 		\hline
 	\end{tabular}
 	\label{table:tiempo_vpn_2}
