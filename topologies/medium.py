@@ -28,9 +28,8 @@ class CustomTopology( Topo ):
     
 
     router1 = self.addHost('router1', loopback="127.0.0.1",
-		  ips=['192.168.1.11/24','10.10.1.1/24','10.0.0.2/24'],
+		  ips=['192.168.1.11/24','10.10.1.1/24'],
 		  controller_ip="192.168.1.10",
-          border=1, ce_ip_address='10.0.0.1', ce_mac_address='00:00:00:00:00:01',
 		  cls=RAUSwitch)
 
     router2 = self.addHost('router2', loopback="127.0.0.1",
@@ -226,13 +225,15 @@ class CustomTopology( Topo ):
     
 
     router37 = self.addHost('router37', loopback="127.0.0.1",
-              ips=['192.168.1.47/24','10.10.47.2/24','10.10.48.1/24'],
+              ips=['192.168.1.47/24','10.10.47.2/24','10.10.48.1/24','10.0.0.2/24'],
               controller_ip="192.168.1.10",
+              border=1, ce_ip_address='10.0.0.1', ce_mac_address='00:00:00:00:00:01',
               cls=RAUSwitch)
 
     router38 = self.addHost('router38', loopback="127.0.0.1",
-        ips=['192.168.1.48/24','10.10.48.2/24'],
+        ips=['192.168.1.48/24','10.10.48.2/24','10.1.0.2/24'],
         controller_ip="192.168.1.10",
+        border=1, ce_ip_address='10.1.0.1', ce_mac_address='00:00:00:00:00:02',
         cls=RAUSwitch)
 
     router39 = self.addHost('router39', loopback="127.0.0.1",
@@ -269,9 +270,8 @@ class CustomTopology( Topo ):
         cls=RAUSwitch)
 
     router45 = self.addHost('router45', loopback="127.0.0.1",
-        ips=['192.168.1.55/24','10.10.56.2/24','10.10.57.2/24','10.1.0.2/24'],
+        ips=['192.168.1.55/24','10.10.56.2/24','10.10.57.2/24'],
         controller_ip="192.168.1.10",
-        border=1, ce_ip_address='10.1.0.1', ce_mac_address='00:00:00:00:00:02',
         cls=RAUSwitch)
     
 
@@ -389,8 +389,8 @@ class CustomTopology( Topo ):
     self.addLink(router44, router45, 3, 2)
 
     ## Enlaces CE
-    self.addLink(router1, routerLan1, 2, 0)
-    self.addLink(router45, routerLan2, 3, 0)
+    self.addLink(router37, routerLan1, 3, 0)
+    self.addLink(router38, routerLan2, 2, 0)
     self.addLink(h0, routerLan1, 0, 1)
     self.addLink(h1, routerLan2, 0, 1)
 
