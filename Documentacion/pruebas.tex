@@ -128,13 +128,13 @@ El objetivo es verificar los siguientes dos aspectos claves: \\ \\
 \textbf{Escalabilidad interna del RAUSwitch} \\
 Se estudian posibles limitaciones internas que puedan tener los dispositivos, cuando deben manejar grandes cantidades de flujos. Es posible que a medida que crece su tabla de flujos, demoren más en encontrar el flujo que se corresponde con cada paquete que reciben. Si pasa esto, el ancho de banda debería ser afectado negativamente por la cantidad de flujos en sus tablas. El ancho de banda se medirá con la herramienta \textit{iperf}.  \\ \\
 \textbf{Escalabilidad en servicios} \\
-Se estudian posibles problemas que puedan tener la arquitectura de la red o la aplicación del controlador para manejar grandes cantidades de servicios e información. \\ \\
+Se estudian posibles problemas que puedan tener la arquitectura de la red o la aplicación del controlador para manejar grandes cantidades de servicios o información. Es de particular interés medir la memoria que requiere el controlador para mantener los servicios. \\ \\
 Esta prueba se repite para las mismas topologias que la prueba anterior, es decir: básica (4 nodos), chica (11 nodos) y mediana (45 nodos).
 
 \subsection{Resultados y observaciones}
 
 \begin{table}[ht]
-	\caption{Anchos de banda, en Kbits/s, medidos para cada caso.}
+	\caption{Throughput en Kbits/s para cada caso.}
 	\centering 
 	\begin{tabular}{c c c c c}
 		\hline\hline
@@ -151,27 +151,26 @@ Esta prueba se repite para las mismas topologias que la prueba anterior, es deci
 	\label{table:escala_de_servicios}
 \end{table}
 
-Los throughput medidos en la prueba se pueden observar en la tabla \ref{table:escala_de_servicios}. La principal conclusión que se puede sacar de la tabla es que el throughput es constante para un camino y topología, sin importar la cantidad de VPN existentes en el momento (se asume que las pequeñas diferencias numéricas entran en el margen de error). Como se explica en el primer objetivo de esta prueba, se busca determinar si la existencia de muchos flujos en la tabla, implica que un switch OpenFlow demora más tiempo en encontrar el flujo que corresponde para un paquete entrante, y por lo tanto el mismo demora más en ser forwardeado. Si esto fuera así, debería haber una relación inversamente proporcional entre la cantidad de flujos y el throughput. El máximo de VPN con el que se probó fueron 15.000. Cada VPN de capa 2 está compuesta por dos servicios de capa 2, y cada uno de esos servicios introduce 42 flujos en cada nodo del camino. Esto quiere decir que cada uno contiene alrededor de 1.260.000 (15.000 * 2 * 42) flujos en su tabla. \\
-Se podría argumentar que hacen falta más flujos para impactar el throughput, pero en realidad la explicación de porqué esa cantidad de flujos no afecta se encuentra en la especificación de la herramienta Open vSwitch, que utiliza la arquitectura y el entorno virtual para implementar OpenFlow. Dicha herramienta realiza cacheo de flujos. Eso quiere decir que cuando un paquete de datos de un determinado flujo llega por primera vez a un nodo, este paquete es enviado al pipeline de OpenFlow para determinar qué acción se debe tomar. Luego de realizada, esta acción es escrita en la caché, y tiene un tiempo de vida de entre 5 y 10 segundos. Si en ese período de tiempo llega otro paquete del mismo flujo, no hay necesidad de enviar el paquete al pipeline, porque ya se sabe cuales son las acciones a tomar para el mismo. Por lo tanto, si un flujo de datos es constante y rápido, el tamaño de la tabla de OpenFlow no afectará el tiempo de decisión, ya que sólo el primer paquete de ese flujo deberá pasar por el pipeline. \\
-Mediante el comando 'ovs-appctl dpctl/show' de Open vSwitch, podemos examinar las estadísticas de la cache del datapath. Con el parámetro opcional \textit{target} se apunta el comando a cada instancia de Open vSwitch, y por ende, a cada nodo. En las figuras \ref{fig:iperf_sample} y \ref{fig:cache_sample} se observa, por un lado, la salida de 'iperf' luego de hacer tres ejecuciones, y por otro, las estadísticas del nodo 'alice' luego de dichas ejecuciones. En la sección 'lookups' se detallan cuantos 'hits' y 'miss' de caché han ocurrido hasta el momento, y 'flows' indica cuantos flujos activos hay en el momento en la caché. \\ \\
-
+Como se explica en el primer objetivo de esta prueba, se busca determinar si la existencia de muchos flujos en la tabla, implica que un switch OpenFlow demora más tiempo en encontrar el flujo que corresponde para un paquete entrante, y por lo tanto demora más en determinar la acción a tomar para ese paquete. Si esto fuera así, debería existir una relación inversamente proporcional entre la cantidad de flujos en la tabla de un nodo y su velocidad para procesar paquetes. En la tabla \ref{table:escala_de_servicios} se pueden observar los throughput promedio medidos para un flujo de datos sobre la topología básica, con distintas cantidades de VPN existiendo en la red. La principal conclusión que se puede sacar de la tabla es que el throughput es constante para un camino y topología, sin importar la cantidad de VPN existentes en el momento (se asume que las pequeñas diferencias numéricas entran en el margen de error). \\
+La máxima cantidad de VPN con la que se probó fue de 15.000. Cada VPN de capa 2 está compuesta por dos servicios de capa 2, y cada uno de esos servicios introduce 42 flujos en cada nodo del camino. Esto quiere decir que cada uno contiene alrededor de 1.260.000 (15.000 * 2 * 42) flujos en su tabla. Se podría argumentar que hacen falta más flujos para impactar el throughput, pero en realidad la explicación de porqué esa cantidad de flujos no afecta se encuentra en la especificación de la herramienta Open vSwitch, que utiliza la arquitectura y el entorno virtual para implementar OpenFlow. Dicha herramienta realiza cacheo de flujos. Eso quiere decir que cuando un paquete de datos de un determinado flujo llega por primera vez a un nodo, este paquete es enviado al pipeline de OpenFlow para determinar qué acción se debe tomar. Luego de realizada, esta acción es escrita en la caché, y tiene un tiempo de vida de entre 5 y 10 segundos. Si en ese período de tiempo llega otro paquete del mismo flujo, no hay necesidad de enviar el paquete al pipeline, porque ya se sabe cuales son las acciones a tomar para el mismo. Por lo tanto, si un flujo de datos es constante y rápido, el tamaño de la tabla de OpenFlow no afectará el tiempo de decisión, ya que sólo el primer paquete de ese flujo deberá pasar por el pipeline. \\
 \begin{figure}[t]
 	\caption{Estadísticas de cache de flujos del nodo 'alice'.}
 	\includegraphics[scale=1]{Pruebas/cache_sample}
 	\centering
 	\label{fig:cache_sample}
 \end{figure}
+Mediante el comando 'ovs-appctl dpctl/show' de Open vSwitch, podemos examinar las estadísticas de la cache del datapath. Con el parámetro \textit{target} se apunta el comando a cada instancia de Open vSwitch, y por ende, a cada nodo. En la figura \ref{fig:cache_sample} se observan las estadísticas del nodo 'alice'. En la sección 'lookups' se detallan cuantos 'hits' y 'miss' de caché han ocurrido hasta el momento, y 'flows' indica cuantos flujos activos hay en el momento en la caché. \\
 
-\begin{figure}[t]
-	\caption{Resultado de la ejecución de 3 pruebas iperf en el host h1.}
-	\includegraphics[scale=1]{Pruebas/iperf_sample}
-	\centering
-	\label{fig:iperf_sample}
-\end{figure}
+%\begin{figure}[t]
+%	\caption{Resultado de la ejecución de 3 pruebas iperf en el host h1.}
+%	\includegraphics[scale=1]{Pruebas/iperf_sample}
+%	\centering
+%	\label{fig:iperf_sample}
+%\end{figure}
 
-Otro objetivo de la prueba es determinar si la arquitectura, y en particular la aplicación, tienen algún problema para manejar muchos servicios. No se detectó ninguna problema de esa índole. Sin ser una limitación, pero sí un factor importante, hay que recordar que los datos que maneja el controlador (entre ellos, los servicios) están en memoria. Por lo tanto se podrá agregar servicios mientras la computadora subyacente tenga suficiente memoria. La creación de 15.000 VPN (30.000 servicios) aumenta el consumo de memoria del controlador en 412 Mb, por lo que un servicio ocupa alrededor de 14 Kb. A modo de ejemplo, si extrapolamos ese número a una computadora que puede dedicar 4 Gb de RAM al controlador, llegamos a que dicho controlador podrá mantener alrededor de 300.000 servicios. \\
+Otro objetivo de la prueba es determinar si la arquitectura, y en particular la aplicación, tienen algún problema para manejar muchos servicios. En la prueba no se detectó ninguna problema de esa índole. Sin ser una limitación, pero sí un factor importante, hay que recordar que los datos que maneja el controlador (entre ellos, los servicios) están en memoria. Por lo tanto se podrá agregar servicios mientras la computadora subyacente tenga suficiente memoria. La creación de 15.000 VPN (30.000 servicios) aumenta el consumo de memoria del controlador en 380 Mb, por lo que un servicio ocupa casi de 13 Kb. A modo de ejemplo, si extrapolamos ese número a una computadora que puede dedicar 4 Gb de RAM para mantener los servicios, llegamos a que dicho controlador podrá mantener alrededor de 322.000 servicios. A pesar de que no es ideal mantener tantos datos en memoria, se puede concluir que es un consumo aceptable. \\
 
-También se observó un comportamiento que no se esperaba. Se detectó que a medida que hay más VPN creadas, la red demora más tiempo en crear una nueva VPN. La siguiente gráfica ilustra este comportamiento. \\ \\
+En el proceso de realizar las pruebas ya mencionadas también se observó un comportamiento que no se esperaba. Se detectó que a medida que hay más VPN creadas, la red demora más tiempo en crear una nueva VPN. Con el propósito de entender más ese comportamiento, se hizo un experimento cuyos resultados se observan en la siguiente gráfica. \\ \\
 \begin{tikzpicture}
 \begin{axis}[
 	title={Efecto de la cantidad de VPN sobre el tiempo de carga de una VPN nueva},
@@ -203,6 +202,7 @@ También se observó un comportamiento que no se esperaba. Se detectó que a med
 	\addlegendentry{VPN de capa 3}
 \end{axis}
 \end{tikzpicture}
-Se puede ver que el tiempo de carga aumenta de forma lineal con la cantidad de VPN existentes. Una posible explicación para esto puede ser que al tener más flujos, cada nodo demora más en insertar los flujos nuevos en su tabla. Otra posible razón puede ser que mientras más datos en memoria, más lento se comporta la aplicación RAUFlow. \\ \\
+Cada punto indica el tiempo que demora la red en dar de alta una nueva VPN con una determinada cantidad de VPN ya existentes. Estos tiempos se miden de la forma explicada en el capítulo anterior: se toma el tiempo que demora la aplicación en devolver la respuesta HTTP indicando que el servicio se creó con éxito (disponible en los logs). En la gráfica se puede ver que el tiempo de carga aumenta de forma lineal a medida que hay más VPN en la red, y esto se cumple para la de capa 2 como la de capa 3. Una posible explicación inicial para esto puede ser que al tener más flujos, cada nodo demora más en insertar nuevos flujos en su tabla. Esa teoría se descarta con el siguiente razonamiento. En la gráfica se observa que toma más tiempo crear una VPN de capa 2 que una de capa 3. Esto en gran medida se explica porque un servicio de capa 2 debe insertar 42 flujos en los nodos del camino, mientras que uno de capa 3 solo inserta 1. Pero también se observa que las lineas son virtualmente paralelas, es decir, esa diferencia de tiempo se mantiene constante a pesar de las VPN que existan. Si insertar un flujo nuevo cada vez tomara más tiempo, ese incremento se debería multiplicar por 42 para la VPN de capa 2, y la linea correspondiente a la VPN de capa 2 debería tener una pendiente más inclinada que la de capa 3. \\
+Otra posible explicación para este comportamiento puede ser que la aplicación se vuelve más lenta a medida que sus estructuras de datos crecen. Sin embargo, no se observó ningún patrón en el código que indique esto. \\ \\
 
 ***Algunas conclusiones de estas pruebas.
