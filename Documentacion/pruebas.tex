@@ -126,9 +126,9 @@ La idea principal del escenario es crear muchas VPN y analizar los comportamient
 Dado que cargar todas las VPN a mano en la interfaz web llevaría demasiado tiempo, se creó un servicio web que recibe como parámetro la cantidad de VPN que se desean. Cuando se hace un pedido GET a ese servicio web, se inicia el proceso de creación de las mismas. Este proceso puede tomar entre algunos minutos y varias horas, dependiendo de la cantidad. \\ \\
 El objetivo es verificar los siguientes dos aspectos claves: \\ \\
 \textbf{Escalabilidad interna del RAUSwitch} \\
-Se estudian posibles limitaciones internas que puedan tener los dispositivos, cuando deben manejar grandes cantidades de flujos. Es posible que a medida que crece su tabla de flujos, demoren más en encontrar el flujo que se corresponde con cada paquete que reciben. Si pasa esto, el ancho de banda debería ser afectado negativamente por la cantidad de flujos en sus tablas. El ancho de banda se medirá con la herramienta \textit{iperf}.  \\ \\
+Se estudian posibles limitaciones internas que puedan tener los dispositivos, cuando deben manejar grandes cantidades de flujos. Es posible que a medida que crece su tabla de flujos, demoren más en encontrar el flujo que se corresponde con cada paquete que reciben. Si pasa esto, el throughput debería ser afectado negativamente por la cantidad de flujos en sus tablas. Se utilizará \textit{iperf} para medir la velocidad de transferencia entre las subredes cliente.  \\ \\
 \textbf{Escalabilidad en servicios} \\
-Se estudian posibles problemas que puedan tener la arquitectura de la red o la aplicación del controlador para manejar grandes cantidades de servicios o información. Es de particular interés medir la memoria que requiere el controlador para mantener los servicios. \\ \\
+Se estudian posibles problemas que puedan tener la arquitectura de la red o, en particular, la aplicación RAUFlow para manejar grandes cantidades de servicios o información. Es de particular interés medir la memoria que requiere el controlador para mantener los servicios. \\ \\
 Esta prueba se repite para las mismas topologias que la prueba anterior, es decir: básica (4 nodos), chica (11 nodos) y mediana (45 nodos).
 
 \subsection{Resultados y observaciones}
@@ -168,7 +168,26 @@ Mediante el comando 'ovs-appctl dpctl/show' de Open vSwitch, podemos examinar la
 %	\label{fig:iperf_sample}
 %\end{figure}
 
-Otro objetivo de la prueba es determinar si la arquitectura, y en particular la aplicación, tienen algún problema para manejar muchos servicios. En la prueba no se detectó ninguna problema de esa índole. Sin ser una limitación, pero sí un factor importante, hay que recordar que los datos que maneja el controlador (entre ellos, los servicios) están en memoria. Por lo tanto se podrá agregar servicios mientras la computadora subyacente tenga suficiente memoria. La creación de 15.000 VPN (30.000 servicios) aumenta el consumo de memoria del controlador en 380 Mb, por lo que un servicio ocupa casi de 13 Kb. A modo de ejemplo, si extrapolamos ese número a una computadora que puede dedicar 4 Gb de RAM para mantener los servicios, llegamos a que dicho controlador podrá mantener alrededor de 322.000 servicios. A pesar de que no es ideal mantener tantos datos en memoria, se puede concluir que es un consumo aceptable. \\
+\begin{table}[ht]
+	\caption{Evolución del consumo de memoria del controlador.}
+	\centering 
+	\begin{tabular}{c c}
+		\hline\hline
+		Cantidad de VPN & Memoria (KB) \\ [0.5ex]
+		\hline
+		0 & X \\
+		3000 & X \\
+		6000 & X \\
+		9000 & X \\
+		12000 & X \\
+		15000 & X \\ [1ex]
+		\hline
+	\end{tabular}
+	\label{table:consumo_de_memoria}
+\end{table}
+
+Otro objetivo de la prueba es determinar si la arquitectura, y en particular el controlador, tienen algún problema para manejar muchos servicios. En la prueba de servicios ya mencionada no se detectó ningún problema de esa índole. Sin embargo, es importante recordar que el controlador mantiene toda su información en memoria, por lo tanto es de interés realizar un estudio del consumo de memoria del mismo a medida que crece la cantidad de servicios. El comando de Linux llamado \textit{pmap} permite estudiar el consumo de memoria del proceso que se le indique, y con el mismo podemos analizar la evolución del consumo de memoria del controlador a medida que se le agregan servicios. En la tabla \ref{table:consumo_de_memoria} se puede observar el resultado de estas mediciones. La gráfica X muestra estos resultados de una forma más intuitiva.\\
+Es fácil ver que el consumo de memoria del controlador aumenta de forma lineal con la cantidad de servicios. El mismo se incrementa en Y KB cada 3000 servicios, por lo tanto se puede calcular que cada servicio ocupa Z KB (Y/3000). A modo de ejemplo, si extrapolamos ese número a una computadora que puede dedicar 4 Gb de RAM para mantener los servicios, llegamos a que el controlador podrá mantener alrededor de P servicios. A pesar de que no es ideal mantener tantos datos en memoria, se puede concluir que es un consumo aceptable. \\
 
 En el proceso de realizar las pruebas ya mencionadas también se observó un comportamiento que no se esperaba. Se detectó que a medida que hay más VPN creadas, la red demora más tiempo en crear una nueva VPN. Con el propósito de entender más ese comportamiento, se hizo un experimento cuyos resultados se observan en la siguiente gráfica. \\ \\
 \begin{tikzpicture}

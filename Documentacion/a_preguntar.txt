@@ -1,3 +1,5 @@
+hacer capitulo de resumen del proyecto anterior
 topologia grande no carga
 muchos servicios no funciona en las grandes
 explicación para que aumente el tiempo de carga a medida que hay mas vpn
+con que detalle explicar los errores de codigo
