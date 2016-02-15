@@ -25,41 +25,41 @@ NUEVOS:
 ================================
 Topo Basica
 -
-Memoria sin servicios: 0.9%
+Memoria sin servicios: 33280
 Uso de la CPU sin VPN: 3.0%
 Ancho de banda sin VPN: 886 903 889 (receptor) 937 956 941 (emisor)
 Tiempo de carga de una VPN de capa 3, sin VPN: 0.002513 segundos (ida) 0.007488 (vuelta)
 Tiempo de carga de una VPN de capa 2, sin VPN: 0.033592 segundos (ida) 0.034675 (vuelta)
 -
-Memoria con 15.000 VPN: 11.5%
+Memoria con 15.000 VPN: 407696
 Uso de la CPU con 15.000 VPN: 67.8%
 Tiempo para crear 15.000 VPN: 8238 segundos
 Ancho de banda con 15.000 VPN: 884 886 887 (receptor) 936 939 938 (emisor)
 Tiempo de carga de una VPN de capa 3, con 15.000 VPN: 0.499023 segundos (ida) 0.490338 (vuelta)
 Tiempo de carga de una VPN de capa 2, con 15.000 VPN: 0.484804 segundos (ida) 0.505755 (vuelta)
 -
-Memoria con 3.000 VPN: 3.0%
+Memoria con 3.000 VPN: 108196
 Uso de la CPU con 3.000 VPN: 25.0%
 Tiempo para crear 0-3.000 VPN: 500 segundos
 Ancho de banda con 3.000 VPN: 899 882 880 (receptor) 900 932 931 (emisor)
 Tiempo de carga de una VPN de capa 3, con 3.000 VPN: 0.096597 segundos (ida) 0.096071 (vuelta)
 Tiempo de carga de una VPN de capa 2, con 3.000 VPN: 0.124546 segundos (ida) 0.146423 (vuelta)
 -
-Memoria con 6.000 VPN: 5.2%
+Memoria con 6.000 VPN: 182460
 Uso de la CPU con 6.000 VPN: 38.0%
 Tiempo para crear 3.000-6.000 VPN: 1086 segundos
 Ancho de banda con 6.000 VPN: 882 897 881 (receptor) 934 949 931 (emisor)
 Tiempo de carga de una VPN de capa 3, con 6.000 VPN: 0.182752 segundos (ida) 0.188211 (vuelta)
 Tiempo de carga de una VPN de capa 2, con 6.000 VPN: 0.220683 segundos (ida) 0.220042 (vuelta)
 -
-Memoria con 9.000 VPN: 7.2%
+Memoria con 9.000 VPN: 256528
 Uso de la CPU con 9.000 VPN: 47.5%
 Tiempo para crear 6.000-9.000 VPN: 1629 segundos
 Ancho de banda con 9.000 VPN: 896 882 893 (receptor) 898 934 895 (emisor)
 Tiempo de carga de una VPN de capa 3, con 9.000 VPN: 0.279042 segundos (ida) 0.290570 (vuelta)
 Tiempo de carga de una VPN de capa 2, con 9.000 VPN: 0.306835 segundos (ida) 0.315573 (vuelta)
 -
-Memoria con 12.000 VPN: 9.4%
+Memoria con 12.000 VPN: 333244
 Uso de la CPU con 12.000 VPN: 55.9%
 Tiempo para crear 9.000-12.000 VPN: 2180 segundos
 Ancho de banda con 12.000 VPN: 880 878 896 (receptor) 932 930 949 (emisor)

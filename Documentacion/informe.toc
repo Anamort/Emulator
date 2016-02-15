@@ -11,10 +11,10 @@
 \contentsline {section}{\numberline {3.4}Modo de uso del entorno}{9}
 \contentsline {chapter}{\numberline {4}Pruebas de escala}{10}
 \contentsline {section}{\numberline {4.1}Topologias de escala}{11}
-\contentsline {subsection}{\numberline {4.1.1}Descripci\IeC {\'o}n del escenario}{11}
-\contentsline {subsection}{\numberline {4.1.2}Resultados y observaciones}{12}
+\contentsline {subsection}{\numberline {4.1.1}Escenario 1}{11}
+\contentsline {subsection}{\numberline {4.1.2}Escenario 2}{13}
 \contentsline {section}{\numberline {4.2}Escala de servicios y flujos}{15}
 \contentsline {subsection}{\numberline {4.2.1}Descripci\IeC {\'o}n del escenario}{15}
 \contentsline {subsection}{\numberline {4.2.2}Resultados y observaciones}{16}
-\contentsline {chapter}{\numberline {5}Conclusiones}{20}
-\contentsline {section}{\numberline {5.1}Trabajo futuro}{20}
+\contentsline {chapter}{\numberline {5}Conclusiones}{21}
+\contentsline {section}{\numberline {5.1}Trabajo futuro}{21}

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (MiKTeX 2.9) (preloaded format=pdflatex 2015.11.16)  13 FEB 2016 16:55
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (MiKTeX 2.9) (preloaded format=pdflatex 2015.11.16)  14 FEB 2016 21:01
 entering extended mode
 **informe.tex
 (informe.tex
@@ -703,11 +703,8 @@ File: pgflibraryplotmarks.code.tex 2015/08/03 v3.0.1a (rcs-revision 1.14)
 LaTeX Warning: Unused global option(s):
     [times,numbered,print,index,custombib].
 
-(informe.aux (introduccion.aux) (estadodelarte.aux) (entorno.aux) (pruebas.aux
-
-LaTeX Warning: Label `table:tiempo_vpn_3' multiply defined.
-
-) (conclusiones.aux))
+(informe.aux (introduccion.aux) (estadodelarte.aux) (entorno.aux) (pruebas.aux)
+(conclusiones.aux))
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 9.
 LaTeX Font Info:    ... okay on input line 9.
 LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 9.
@@ -858,117 +855,112 @@ Chapter 4.
 
 
 
-]
-Underfull \hbox (badness 10000) in paragraph at lines 15--23
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 15--23
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 15--23
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 15--23
-
- []
-
-[11] <Imagenes/Pruebas/topo_chica.png, id=46, 990.70125pt x 385.44pt>
+] <Imagenes/Pruebas/topo_chica.png, id=43, 990.70125pt x 385.44pt>
 File: Imagenes/Pruebas/topo_chica.png Graphic file (type png)
 
 <use Imagenes/Pruebas/topo_chica.png>
-Package pdftex.def Info: Imagenes/Pruebas/topo_chica.png used on input line 32.
+Package pdftex.def Info: Imagenes/Pruebas/topo_chica.png used on input line 22.
 
 (pdftex.def)             Requested size: 396.27348pt x 154.17326pt.
 
-Overfull \hbox (36.27348pt too wide) in paragraph at lines 32--35
+Overfull \hbox (36.27348pt too wide) in paragraph at lines 22--25
  [][] 
  []
 
-<Imagenes/Pruebas/topo_mediana.png, id=47, 2803.47375pt x 894.34125pt>
+<Imagenes/Pruebas/topo_mediana.png, id=44, 2803.47375pt x 894.34125pt>
 File: Imagenes/Pruebas/topo_mediana.png Graphic file (type png)
 
 <use Imagenes/Pruebas/topo_mediana.png>
-Package pdftex.def Info: Imagenes/Pruebas/topo_mediana.png used on input line 3
+Package pdftex.def Info: Imagenes/Pruebas/topo_mediana.png used on input line 2
 9.
 (pdftex.def)             Requested size: 420.50293pt x 134.1454pt.
 
-Overfull \hbox (60.50293pt too wide) in paragraph at lines 39--42
+Overfull \hbox (60.50293pt too wide) in paragraph at lines 29--32
  [][] 
  []
 
-[12 <./Imagenes/Pruebas/topo_chica.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 65--66
+
+Underfull \hbox (badness 10000) in paragraph at lines 35--40
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 67--76
+Underfull \hbox (badness 10000) in paragraph at lines 35--40
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 67--76
+Underfull \hbox (badness 10000) in paragraph at lines 35--40
+
+ []
+
+[11 <./Imagenes/Pruebas/topo_chica.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 59--60
+
+ []
+
+[12 <./Imagenes/Pruebas/topo_mediana.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 61--70
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 67--76
+Underfull \hbox (badness 10000) in paragraph at lines 61--70
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 67--76
+Underfull \hbox (badness 10000) in paragraph at lines 61--70
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 67--76
+Underfull \hbox (badness 10000) in paragraph at lines 61--70
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 67--76
+Underfull \hbox (badness 10000) in paragraph at lines 61--70
 
  []
 
-[13 <./Imagenes/Pruebas/topo_mediana.png>]
+
+Underfull \hbox (badness 10000) in paragraph at lines 61--70
+
+ []
+
+[13]
+Underfull \hbox (badness 10000) in paragraph at lines 112--113
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 115--116
+
+ []
+
+
 Underfull \hbox (badness 10000) in paragraph at lines 115--116
 
  []
 
 [14]
-Underfull \hbox (badness 10000) in paragraph at lines 118--120
+Underfull \hbox (badness 10000) in paragraph at lines 121--129
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 118--120
+Underfull \hbox (badness 10000) in paragraph at lines 121--129
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 125--133
+Underfull \hbox (badness 10000) in paragraph at lines 121--129
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 125--133
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 125--133
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 125--133
+Underfull \hbox (badness 10000) in paragraph at lines 121--129
 
  []
 
@@ -977,72 +969,69 @@ File: Imagenes/Pruebas/cache_sample.png Graphic file (type png)
 
 <use Imagenes/Pruebas/cache_sample.png>
 Package pdftex.def Info: Imagenes/Pruebas/cache_sample.png used on input line 1
-58.
+54.
 (pdftex.def)             Requested size: 365.11316pt x 258.21405pt.
 
-Overfull \hbox (5.11316pt too wide) in paragraph at lines 158--161
+Overfull \hbox (5.11316pt too wide) in paragraph at lines 154--157
  [][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 154--163
+Underfull \hbox (badness 10000) in paragraph at lines 150--159
 
  []
 
-[16]
-Underfull \hbox (badness 10000) in paragraph at lines 189--191
+[16] [17 <./Imagenes/Pruebas/cache_sample.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 210--212
 
  []
 
-[17]
-Underfull \hbox (badness 10000) in paragraph at lines 192--226
+[18]
+Underfull \hbox (badness 10000) in paragraph at lines 213--247
 
  []
 
 
-Overfull \hbox (6.4899pt too wide) in paragraph at lines 192--226
+Overfull \hbox (6.4899pt too wide) in paragraph at lines 213--247
 []
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 192--226
+Underfull \hbox (badness 10000) in paragraph at lines 213--247
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 192--226
+Underfull \hbox (badness 10000) in paragraph at lines 213--247
 
  []
 
-[18 <./Imagenes/Pruebas/cache_sample.png>]) [19] (conclusiones.tex
+[19]) [20] (conclusiones.tex
 Chapter 5.
-) [20
+) [21
 
 
 
 ] (informe.aux (introduccion.aux) (estadodelarte.aux) (entorno.aux)
-(pruebas.aux) (conclusiones.aux))
-
-LaTeX Warning: There were multiply-defined labels.
-
- ) 
+(pruebas.aux) (conclusiones.aux)) ) 
 Here is how much of TeX's memory you used:
- 21355 strings out of 493673
- 560527 string characters out of 3141520
- 737686 words of memory out of 3000000
- 24332 multiletter control sequences out of 15000+200000
+ 21362 strings out of 493673
+ 560661 string characters out of 3141520
+ 736686 words of memory out of 3000000
+ 24339 multiletter control sequences out of 15000+200000
  9455 words of font info for 33 fonts, out of 3000000 for 9000
  1025 hyphenation exceptions out of 8191
- 62i,18n,83p,1383b,2095s stack positions out of 5000i,500n,10000p,200000b,50000s
-<C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx10.pfb>
-<C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C
-:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/
-Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Pro
-gram Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Progr
-am Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti10.pfb>
-Output written on informe.pdf (20 pages, 358416 bytes).
+ 62i,18n,83p,1383b,2074s stack positions out of 5000i,500n,10000p,200000b,50000s
+<C:/Program Files (x86)/MiKTeX 2.9/fonts/typ
+e1/public/amsfonts/cm/cmbx10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1
+/public/amsfonts/cm/cmbx12.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/p
+ublic/amsfonts/cm/cmmi10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/pub
+lic/amsfonts/cm/cmr10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public
+/amsfonts/cm/cmsy10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/a
+msfonts/cm/cmti10.pfb>
+Output written on informe.pdf (21 pages, 359913 bytes).
 PDF statistics:
- 101 PDF objects out of 1000 (max. 8388607)
+ 104 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  38 words of extra memory for PDF output out of 10000 (max. 10000000)
 

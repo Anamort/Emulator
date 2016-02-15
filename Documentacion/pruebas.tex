@@ -1,5 +1,5 @@
 \chapter{Pruebas de escala}
-Con el entorno de simulación construido, el siguiente objetivo es realizar pruebas de escala sobre la arquitectura. Este trabajo consiste de dos etapas. La primera sección explica la primera de ellas, que es verificar cómo funciona la arquitectura para topologias de escala. Habiendo completado esta etapa, se pasa a realizar estudios de escala sobre la cantidad de servicios. En este capítulo se explicará el propósito de cada prueba, las condiciones bajo las cuales se ejecuta cada una de ellas (topologias, tipos de tráfico, etc) y por último, los resultados que arrojan. Todas las pruebas fueron realizadas en una máquina virtual con 3590 MB de RAM, procesador Intel Core i5-5200u a 2,2 GHz y Lubuntu 14.04 como sistema operativo.
+Con el entorno de simulación construido, el siguiente objetivo es realizar pruebas de escala sobre la arquitectura. Se realizan dos tipos de pruebas de escala: (a) verificar cómo funciona la arquitectura para topologias de escala, (b) realizar estudios de escala sobre la cantidad de servicios. En este capítulo se explicará el propósito de cada prueba, las condiciones bajo las cuales se ejecuta cada una de ellas (topologias, tipos de tráfico, etc) y por último, los resultados que arrojan. Todas las pruebas fueron realizadas en una máquina virtual con 3590 MB de RAM, procesador Intel Core i5-5200u a 2,2 GHz y Lubuntu 14.04 como sistema operativo.
 
 Como se explicará mas adelante en el capítulo, en estas pruebas se utilizarán ciertas topologias creadas manualmente. Más allá de los detalles de cada topología, los siguientes puntos serán comunes a todas ellas.
 \begin{itemize}
@@ -9,17 +9,7 @@ Como se explicará mas adelante en el capítulo, en estas pruebas se utilizarán
 \end{itemize}
 
 \section{Topologias de escala}
-Es importante poder asegurar que la arquitectura puede ser fácilmente migrada a redes reales. Para poder asegurar esto, es necesario comprobar que topologias con grandes cantidades de nodos no generan problemas inesperados. También se busca determinar el impacto de topologias grandes y complejas en el tiempo de cálculo y configuración de una VPN. Dado que en el proyecto RRAP se contaba con cuatro dispositivos, este tipo de pruebas no han sido realizadas hasta el momento.
-
-\subsection{Descripción del escenario}
-La idea principal de este escenario consiste simplemente en levantar cierta topología, dar de alta una VPN entre las dos subredes cliente y analizar el comportamiento que esto genera. Los puntos específicos que se estudiarán se detallan a continuación: \\ \\
-\textbf{Algoritmo de ruteo} \\
- Se verifican dos aspectos claves: que el camino se corresponde con el camino esperado (calculado previamente de forma manual), y que el camino es correctamente instalado en forma de reglas de reenvío (en base a conmutación de etiquetas MPLS) en las respectivas tablas de flujos OpenFlow de cada nodo del camino. Todo esto se puede comprobar analizando las tablas de flujos de cada nodo, que se pueden ver utilizando el comando \textbf{dump-flows} de Open vSwitch. También se puede utilizar la interfaz gráfica de RAUFlow. Desde las tablas de flujos se puede reconstruir el camino que computó la aplicación, y también comprobar que los flujos manipulan correctamente las etiquetas MPLS. \\ \\
-\textbf{Clasificación de tráfico} \\
-La idea es verificar que realmente se están asignando las etiquetas MPLS al tráfico entrante, así como comprobar que el mismo es reenviado por los nodos correctos. Para probar esto se utilizará una VPN de capa 3, que permitirá tráfico con ethertype 0x0800, es decir, del protocolo IPv4. Se generará tráfico de este tipo utilizando el comando \textbf{ping} y la herramienta \textbf{iperf}. Con la herramienta tcpdump, se verificará que el tráfico pasa correctamente por cada nodo del camino. \\ \\
-\textbf{Tiempo de creación de una VPN} \\
-El objetivo aquí es estudiar como impacta el tamaño de la topología y el largo del camino en el tiempo que demora la arquitectura en establecer una VPN. Se espera que ese tiempo sea influenciado en gran medida por dos factores: el tiempo que demora en calcular el camino óptimo y el tiempo que demora en configurar los flujos en cada nodo. Para agilizar la ejecución de la prueba se utiliza un script en Python que manda pedidos HTTP POST al controlador para dar de alta los servicios de ida y vuelta, y se medirá el tiempo de respuesta como el tiempo que demore el controlador en devolver las respuestas HTTP indicando que los servicios fueron creados con éxito (esta información queda registrada en los logs). \\ \\
-No solo es útil estudiar el impacto de una topología grande, sino también el de caminos más largos. Por esa razón, se repetirá la prueba para distintos caminos dentro de una misma topología. Las topologias de estudio son las siguientes:
+Es importante poder asegurar que la arquitectura puede ser fácilmente migrada a redes reales. Para poder asegurar esto, se diseñan los dos siguientes escenarios de prueba. El primero consiste en verificar los aspectos críticos de la arquitectura, como el algoritmo de ruteo y la clasificación de tráfico. En el segundo escenario se intenta estudiar como impacta el largo del camino y las características de la topología sobre el tiempo que demora el controlador en dar de alta una red privada virtual. Ambos escenarios utilizan un conjunto de topologias de prueba creadas manualmente, que se listan a continuación:
 \begin{itemize}
 	\item \textbf{Básica}: 4 nodos en topología de full mesh. Es la utilizada en el prototipo físico.
 	\item \textbf{Chica}: topología arbitraria de 11 nodos (fuente: Topology Zoo). Figura \ref{fig:topo_chica}.
@@ -28,24 +18,28 @@ No solo es útil estudiar el impacto de una topología grande, sino también el 
 \end{itemize}
 
 \begin{figure}[t]
-\caption{Topología chica}
-\includegraphics[scale=0.4]{Pruebas/topo_chica}
-\centering
-\label{fig:topo_chica}
+	\caption{Topología chica}
+	\includegraphics[scale=0.4]{Pruebas/topo_chica}
+	\centering
+	\label{fig:topo_chica}
 \end{figure}
 
 \begin{figure}[t]
-\caption{Topología mediana}
-\includegraphics[scale=0.15]{Pruebas/topo_mediana}
-\centering
-\label{fig:topo_mediana}
+	\caption{Topología mediana}
+	\includegraphics[scale=0.15]{Pruebas/topo_mediana}
+	\centering
+	\label{fig:topo_mediana}
 \end{figure}
 
-\subsection{Resultados y observaciones}
-Para poder estudiar los resultados de esta prueba, es necesario considerarla como compuesta por dos etapas. La primera se concentra en los dos primeros focos de estudio que se listaron en la descripción del escenario. Esto quiere decir que en la primera etapa se busca verificar que la arquitectura maneja sin problemas las topologias de estudio. Con esa etapa terminada, luego de asegurar que no hay errores o problemas, se puede pasar a la segunda, que consiste en los estudios de tiempo descritos en el tercer foco de estudio.
+\subsection{Escenario 1}
+En este escenario se crea una VPN punto a punto de capa 3 entre las dos subredes cliente, y se controla que tanto la creación de la VPN como el uso de la misma con tráfico, funciona correctamente. Esto se repite para cada topología de prueba. Los puntos específicos que se busca verificar se detallan a continuación: \\ \\
+\textbf{Algoritmo de ruteo} \\
+ Se verifican dos aspectos claves: que el camino se corresponde con el camino esperado (calculado previamente de forma manual), y que el camino es correctamente instalado en forma de reglas de reenvío (en base a conmutación de etiquetas MPLS) en las respectivas tablas de flujos OpenFlow de cada nodo del camino. Todo esto se puede comprobar analizando las tablas de flujos de cada nodo, que se pueden ver utilizando el comando \textbf{dump-flows} de Open vSwitch. También se puede utilizar la interfaz gráfica de RAUFlow. Desde las tablas de flujos se puede reconstruir el camino que computó la aplicación, y también comprobar que los flujos manipulan correctamente las etiquetas MPLS. \\ \\
+\textbf{Clasificación de tráfico} \\
+La idea es verificar que realmente se están asignando las etiquetas MPLS al tráfico entrante, así como comprobar que el mismo es reenviado por los nodos correctos. Para probar esto se utilizará una VPN de capa 3, que permitirá tráfico con ethertype 0x0800, es decir, del protocolo IPv4. Se generará tráfico de este tipo utilizando el comando \textbf{ping} y la herramienta \textbf{iperf}. Con la herramienta tcpdump, se verificará que el tráfico pasa correctamente por cada nodo del camino. \\
 
 \begin{table}[ht]
-	\caption{Pasos que cumple cada caso en la creación exitosa de un servicio.}
+	\caption{Pasos que cumple cada caso en la creación y uso exitoso de un servicio.}
 	\centering 
 	\resizebox{\textwidth}{!}{%
 		\begin{tabular}{c c c c c}
@@ -55,14 +49,14 @@ Para poder estudiar los resultados de esta prueba, es necesario considerarla com
 			1 (básica) & X & X & X & X \\
 			7 (chica) & X & X &  &  \\
 			10 (mediana) &  &  &  &  \\
-			14 (grande) &  &  &  &  \\ [1ex]
+			12 (grande) &  &  &  &  \\ [1ex]
 			\hline
 		\end{tabular}
 	}
 	\label{table:problemas_por_topologia}
 \end{table}
 
-En la primera instancia se busca asegurar que la arquitectura puede establecer una VPN y hacerla funcionar correctamente para las topologias de prueba. Con el propósito de hacer un estudio más fino de este proceso, se lo descompone de 4 pasos conceptuales en los cuales podría haber fallas. Estos pasos son: se crea con éxito el servicio, el camino que se calcula es correcto, los flujos de cada nodo del camino son correctos, y se clasifica correctamente el tráfico. Si se cumplen estos 4 pasos quiere decir que el servicio (y por ende la VPN que lo utilice) se establece correctamente y el tráfico pasa sin problemas por el mismo. En la tabla \ref{table:problemas_por_topologia} se detallan los comportamientos observados para algunos de los casos estudiados. En ella se indica con una X los pasos que funcionaron correctamente para cada caso. Las celdas vacías indican que ese paso para ese caso falló. \\
+Con el propósito de hacer un diagnóstico más preciso sobre el proceso de creación y uso de una VPN, se lo descompone de 4 pasos conceptuales en los cuales podría haber fallas. Estos pasos son: (a) se crea con éxito el servicio, (b) el camino que se calcula es correcto, (c) los flujos de cada nodo del camino son correctos, (d) se clasifica correctamente el tráfico. Si se cumplen los 3 primeros pasos quiere decir que el servicio (y por ende la VPN que lo utilice) se establece correctamente y si se cumple el último paso entonces el tráfico pasa sin problemas por el servicio creado. En la tabla \ref{table:problemas_por_topologia} se detallan los comportamientos observados para algunos de los casos estudiados. En ella se indica con una X los pasos que funcionaron correctamente para cada caso. Las celdas vacías indican qué paso falló en cada caso. \\
 
 Analizando la tabla \ref{table:problemas_por_topologia} se pueden observar como mínimo dos problemas. El primero es que en el caso de la topología chica y un camino de 7 saltos, el servicio se crea y los flujos están en los nodos correctos (los del camino más corto entre las subredes cliente), pero los mismos no son correctos. El segundo comportamiento que se observa es que para el caso del camino de 10 saltos en la topología mediana, y el de 14 saltos en la topología grande, el servicio ni siquiera llega a crearse correctamente, es decir, la aplicación sufre una excepción de Python al intentar hacerlo. Las razones que explican esto, así como sus respectivas soluciones (si son posibles) se detallan a continuación.\\ \\
 \textbf{Error de código 1}
@@ -73,6 +67,9 @@ Explicación \\ \\
 Explicación. \\ \\
 \textbf{Observación acerca del MTU}
 Explicación. \\ \\
+
+\subsection{Escenario 2}
+El objetivo de este escenario es estudiar como impacta el tamaño de la topología y el largo del camino en el tiempo que demora la arquitectura en establecer una VPN. Se espera que ese tiempo sea influenciado en gran medida por dos factores: el tiempo que demora el controlador en calcular el camino óptimo y el tiempo que demora en configurar los flujos en cada nodo. Dado que los servicios se crean enviando pedidos HTTP POST al controlador, el tiempo de creación de los mismos se medirá como el tiempo que demore el controlador en devolver las respuestas HTTP indicando que fueron creados con éxito (esta información está disponible en los logs). Para lograr mediciones representativas y reducir el margen de error, en lugar de crear la VPN y medir su tiempo solamente, se crearán cuatro y se calculará el promedio de sus tiempos. Para agilizar la ejecución de esta prueba se utiliza un script en Python que manda los pedidos HTTP POST al controlador para crear las VPN, y de este modo no hay que hacerlo de forma manual a través de la interfaz web.
 
 \begin{table}[ht]
 	\caption{Tiempo de demora en crear una VPN de capa 2. El tiempo se mide en ms.}
@@ -112,11 +109,10 @@ Explicación. \\ \\
 	\label{table:tiempo_vpn_3}
 \end{table}
 
-Con los errores de código solucionados y habiendo asegurado que las VPN se pueden crear y usar sin problemas para todas las topologias (exceptuando la grande), se pasa a la segunda etapa de esta prueba, que consiste en estudiar el impacto del largo del camino y la cantidad de nodos en el tiempo de creación de una VPN. Las tablas \ref{table:tiempo_vpn_2} y \ref{table:tiempo_vpn_3} muestran para cada topología, los distintos largos de camino probados y su respectivo tiempo. La tabla \ref{table:tiempo_vpn_2} muestra los resultados cuando se trata de una VPN de capa 2, y la tabla \ref{table:tiempo_vpn_3} lo hace cuando es VPN de capa 3. Las celdas con \textit{N/C} indican que no es posible crear un camino de ese largo para esa topología. \\
+Las tablas \ref{table:tiempo_vpn_2} y \ref{table:tiempo_vpn_3} muestran para cada topología, los distintos largos de camino probados y su respectivo tiempo. La tabla \ref{table:tiempo_vpn_2} muestra los resultados cuando se trata de una VPN de capa 2, y la tabla \ref{table:tiempo_vpn_3} lo hace cuando es VPN de capa 3. Las celdas con \textit{N/C} indican que no es posible crear un camino de ese largo para esa topología. \\
 
 
 *** Algunas conclusiones de las pruebas  de tiempo \\ \\
-*** Algunas conclusiones generales \\ \\
 
 \section{Escala de servicios y flujos}
 Entre los requerimientos de la RAU2 se encuentra el de la escalabilidad de usuarios. En particular, se espera alcanzar en un mediano plazo un total de 11.000 docentes, 7.000 funcionarios y 140.000 estudiantes (de acuerdo a los requerimientos relevados por el proyecto RRAP). Esto implica que la red será sujeta a importantes cantidades de servicios y flujos distintos. He aquí la relevancia de las pruebas en la presente sección. Mediante el entorno virtual, se someterá la arquitectura a una cantidad de servicios relativamente grande y de esta forma se podrían identificar posibles puntos de falla, o umbrales bajo los cuales debe mantenerse la red para funcionar con buen rendimiento. Es importante recordar que aunque el entorno de simulación permite hacer un valioso estudio de escalabilidad, no generará resultados relevantes en lo que refiere al nivel de performance de la arquitectura. Recordar sección 3.3.2, donde se explica que cada instancia de Open vSwitch se ejecuta en modo user-space, y por ende procesa los paquetes de forma bastante lenta.
@@ -175,19 +171,44 @@ Mediante el comando 'ovs-appctl dpctl/show' de Open vSwitch, podemos examinar la
 		\hline\hline
 		Cantidad de VPN & Memoria (KB) \\ [0.5ex]
 		\hline
-		0 & X \\
-		3000 & X \\
-		6000 & X \\
-		9000 & X \\
-		12000 & X \\
-		15000 & X \\ [1ex]
+		0 & 33280 \\
+		3000 & 108196 \\
+		6000 & 182460 \\
+		9000 & 256528 \\
+		12000 & 333244 \\
+		15000 & 407696 \\ [1ex]
 		\hline
 	\end{tabular}
 	\label{table:consumo_de_memoria}
 \end{table}
 
-Otro objetivo de la prueba es determinar si la arquitectura, y en particular el controlador, tienen algún problema para manejar muchos servicios. En la prueba de servicios ya mencionada no se detectó ningún problema de esa índole. Sin embargo, es importante recordar que el controlador mantiene toda su información en memoria, por lo tanto es de interés realizar un estudio del consumo de memoria del mismo a medida que crece la cantidad de servicios. El comando de Linux llamado \textit{pmap} permite estudiar el consumo de memoria del proceso que se le indique, y con el mismo podemos analizar la evolución del consumo de memoria del controlador a medida que se le agregan servicios. En la tabla \ref{table:consumo_de_memoria} se puede observar el resultado de estas mediciones. La gráfica X muestra estos resultados de una forma más intuitiva.\\
-Es fácil ver que el consumo de memoria del controlador aumenta de forma lineal con la cantidad de servicios. El mismo se incrementa en Y KB cada 3000 servicios, por lo tanto se puede calcular que cada servicio ocupa Z KB (Y/3000). A modo de ejemplo, si extrapolamos ese número a una computadora que puede dedicar 4 Gb de RAM para mantener los servicios, llegamos a que el controlador podrá mantener alrededor de P servicios. A pesar de que no es ideal mantener tantos datos en memoria, se puede concluir que es un consumo aceptable. \\
+\begin{tikzpicture}
+\begin{axis}[
+title={Efecto de la cantidad de VPN sobre la memoria consumida},
+xlabel={\# de VPN},
+ylabel={Memoria (en KB)},
+xtick={0,3000,6000,9000,12000,15000},
+ytick={0,100000,200000,300000,400000,500000},
+scaled x ticks = false,
+scaled y ticks = false,
+x tick label style={/pgf/number format/fixed},
+y tick label style={/pgf/number format/fixed},
+legend pos=north west,
+ymajorgrids=true,
+grid style=dashed,
+]
+\addplot[
+color=blue,
+mark=square,
+]
+coordinates {
+	(0,33280)(3000,108196)(6000,182460)(9000,256528)(12000,333244)(15000,407696)
+};
+\end{axis}
+\end{tikzpicture}
+
+Otro objetivo de la prueba es determinar si la arquitectura, y en particular el controlador, tienen algún problema para manejar muchos servicios. En la prueba de servicios ya mencionada no se detectó ningún problema de esa índole. Sin embargo, es importante recordar que el controlador mantiene toda su información en memoria, por lo tanto es de interés realizar un estudio del consumo de memoria del mismo a medida que crece la cantidad de servicios. El comando de Linux llamado \textit{pmap} permite estudiar el consumo de memoria del proceso que se le indique, y con el mismo podemos analizar la evolución del consumo de memoria del controlador a medida que se le agregan servicios. En la tabla \ref{table:consumo_de_memoria} y la gráfica X se puede observar el resultado de estas mediciones. \\
+La principal observación que se puede hacer es que el consumo de memoria del controlador aumenta de forma lineal con la cantidad de servicios. El mismo se incrementa en Y KB cada 3000 servicios, por lo tanto se puede calcular que cada servicio ocupa Z KB (Y/3000). A modo de ejemplo, si extrapolamos ese número a una computadora que puede dedicar 4 Gb de RAM para mantener los servicios, llegamos a que el controlador podrá mantener alrededor de P servicios. A pesar de que no es ideal mantener tantos datos en memoria, se puede concluir que es un consumo aceptable. \\
 
 En el proceso de realizar las pruebas ya mencionadas también se observó un comportamiento que no se esperaba. Se detectó que a medida que hay más VPN creadas, la red demora más tiempo en crear una nueva VPN. Con el propósito de entender más ese comportamiento, se hizo un experimento cuyos resultados se observan en la siguiente gráfica. \\ \\
 \begin{tikzpicture}
