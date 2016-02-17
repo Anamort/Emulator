@@ -1,4 +1,8 @@
 \chapter{Pruebas de escala}
+
+% **************************** Define Graphics Path **************************
+\graphicspath{{Chapter4/Figs/}}
+
 Con el entorno de simulación construido, el siguiente objetivo es realizar pruebas de escala sobre la arquitectura. Se realizan dos tipos de pruebas de escala: (a) verificar cómo funciona la arquitectura para topologias de escala, (b) realizar estudios de escala sobre la cantidad de servicios. En este capítulo se explicará el propósito de cada prueba, las condiciones bajo las cuales se ejecuta cada una de ellas (topologias, tipos de tráfico, etc) y por último, los resultados que arrojan. Todas las pruebas fueron realizadas en una máquina virtual con 3590 MB de RAM, procesador Intel Core i5-5200u a 2,2 GHz y Lubuntu 14.04 como sistema operativo.
 
 Como se explicará mas adelante en el capítulo, en estas pruebas se utilizarán ciertas topologias creadas manualmente. Más allá de los detalles de cada topología, los siguientes puntos serán comunes a todas ellas.
@@ -19,14 +23,14 @@ Es importante poder asegurar que la arquitectura puede ser fácilmente migrada a
 
 \begin{figure}[t]
 	\caption{Topología chica}
-	\includegraphics[scale=0.4]{Pruebas/topo_chica}
+	\includegraphics[scale=0.4]{topo_chica}
 	\centering
 	\label{fig:topo_chica}
 \end{figure}
 
 \begin{figure}[t]
 	\caption{Topología mediana}
-	\includegraphics[scale=0.15]{Pruebas/topo_mediana}
+	\includegraphics[scale=0.15]{topo_mediana}
 	\centering
 	\label{fig:topo_mediana}
 \end{figure}
@@ -34,7 +38,7 @@ Es importante poder asegurar que la arquitectura puede ser fácilmente migrada a
 \subsection{Escenario 1}
 En este escenario se crea una VPN punto a punto de capa 3 entre las dos subredes cliente, y se controla que tanto la creación de la VPN como el uso de la misma con tráfico, funciona correctamente. Esto se repite para cada topología de prueba. Los puntos específicos que se busca verificar se detallan a continuación: \\ \\
 \textbf{Algoritmo de ruteo} \\
- Se verifican dos aspectos claves: que el camino se corresponde con el camino esperado (calculado previamente de forma manual), y que el camino es correctamente instalado en forma de reglas de reenvío (en base a conmutación de etiquetas MPLS) en las respectivas tablas de flujos OpenFlow de cada nodo del camino. Todo esto se puede comprobar analizando las tablas de flujos de cada nodo, que se pueden ver utilizando el comando \textbf{dump-flows} de Open vSwitch. También se puede utilizar la interfaz gráfica de RAUFlow. Desde las tablas de flujos se puede reconstruir el camino que computó la aplicación, y también comprobar que los flujos manipulan correctamente las etiquetas MPLS. \\ \\
+Se verifican dos aspectos claves: que el camino se corresponde con el camino esperado (calculado previamente de forma manual), y que el camino es correctamente instalado en forma de reglas de reenvío (en base a conmutación de etiquetas MPLS) en las respectivas tablas de flujos OpenFlow de cada nodo del camino. Todo esto se puede comprobar analizando las tablas de flujos de cada nodo, que se pueden ver utilizando el comando \textbf{dump-flows} de Open vSwitch. También se puede utilizar la interfaz gráfica de RAUFlow. Desde las tablas de flujos se puede reconstruir el camino que computó la aplicación, y también comprobar que los flujos manipulan correctamente las etiquetas MPLS. \\ \\
 \textbf{Clasificación de tráfico} \\
 La idea es verificar que realmente se están asignando las etiquetas MPLS al tráfico entrante, así como comprobar que el mismo es reenviado por los nodos correctos. Para probar esto se utilizará una VPN de capa 3, que permitirá tráfico con ethertype 0x0800, es decir, del protocolo IPv4. Se generará tráfico de este tipo utilizando el comando \textbf{ping} y la herramienta \textbf{iperf}. Con la herramienta tcpdump, se verificará que el tráfico pasa correctamente por cada nodo del camino. \\
 
@@ -151,7 +155,7 @@ Como se explica en el primer objetivo de esta prueba, se busca determinar si la 
 La máxima cantidad de VPN con la que se probó fue de 15.000. Cada VPN de capa 2 está compuesta por dos servicios de capa 2, y cada uno de esos servicios introduce 42 flujos en cada nodo del camino. Esto quiere decir que cada uno contiene alrededor de 1.260.000 (15.000 * 2 * 42) flujos en su tabla. Se podría argumentar que hacen falta más flujos para impactar el throughput, pero en realidad la explicación de porqué esa cantidad de flujos no afecta se encuentra en la especificación de la herramienta Open vSwitch, que utiliza la arquitectura y el entorno virtual para implementar OpenFlow. Dicha herramienta realiza cacheo de flujos. Eso quiere decir que cuando un paquete de datos de un determinado flujo llega por primera vez a un nodo, este paquete es enviado al pipeline de OpenFlow para determinar qué acción se debe tomar. Luego de realizada, esta acción es escrita en la caché, y tiene un tiempo de vida de entre 5 y 10 segundos. Si en ese período de tiempo llega otro paquete del mismo flujo, no hay necesidad de enviar el paquete al pipeline, porque ya se sabe cuales son las acciones a tomar para el mismo. Por lo tanto, si un flujo de datos es constante y rápido, el tamaño de la tabla de OpenFlow no afectará el tiempo de decisión, ya que sólo el primer paquete de ese flujo deberá pasar por el pipeline. \\
 \begin{figure}[t]
 	\caption{Estadísticas de cache de flujos del nodo 'alice'.}
-	\includegraphics[scale=1]{Pruebas/cache_sample}
+	\includegraphics[scale=1]{cache_sample}
 	\centering
 	\label{fig:cache_sample}
 \end{figure}
@@ -213,33 +217,33 @@ La principal observación que se puede hacer es que el consumo de memoria del co
 En el proceso de realizar las pruebas ya mencionadas también se observó un comportamiento que no se esperaba. Se detectó que a medida que hay más VPN creadas, la red demora más tiempo en crear una nueva VPN. Con el propósito de entender más ese comportamiento, se hizo un experimento cuyos resultados se observan en la siguiente gráfica. \\ \\
 \begin{tikzpicture}
 \begin{axis}[
-	title={Efecto de la cantidad de VPN sobre el tiempo de carga de una VPN nueva},
-	xlabel={\# de VPN},
-	ylabel={Tiempo (en ms)},
-	xtick={0,3000,6000,9000,12000,15000},
-	ytick={0,200,400,600,800,1000,1200},
-	scaled x ticks = false,
-	x tick label style={/pgf/number format/fixed},
-	legend pos=north west,
-	ymajorgrids=true,
-	grid style=dashed,
+title={Efecto de la cantidad de VPN sobre el tiempo de carga de una VPN nueva},
+xlabel={\# de VPN},
+ylabel={Tiempo (en ms)},
+xtick={0,3000,6000,9000,12000,15000},
+ytick={0,200,400,600,800,1000,1200},
+scaled x ticks = false,
+x tick label style={/pgf/number format/fixed},
+legend pos=north west,
+ymajorgrids=true,
+grid style=dashed,
 ]
 \addplot[
-	color=blue,
-	mark=square,
-	]
-	coordinates {
-		(1,68.2)(3000,270.9)(6000,440.7)(9000,622.4)(12000,804.8)(15000,990.5)
-	};
-	\addlegendentry{VPN de capa 2}
+color=blue,
+mark=square,
+]
+coordinates {
+	(1,68.2)(3000,270.9)(6000,440.7)(9000,622.4)(12000,804.8)(15000,990.5)
+};
+\addlegendentry{VPN de capa 2}
 \addplot[
-	color=red,
-	mark=square,
-	]
-	coordinates {
-		(1,10.0)(3000,192.6)(6000,370.9)(9000,569.6)(12000,746.0)(15000,989.3)
-	};
-	\addlegendentry{VPN de capa 3}
+color=red,
+mark=square,
+]
+coordinates {
+	(1,10.0)(3000,192.6)(6000,370.9)(9000,569.6)(12000,746.0)(15000,989.3)
+};
+\addlegendentry{VPN de capa 3}
 \end{axis}
 \end{tikzpicture}
 Cada punto indica el tiempo que demora la red en dar de alta una nueva VPN con una determinada cantidad de VPN ya existentes. Estos tiempos se miden de la forma explicada en el capítulo anterior: se toma el tiempo que demora la aplicación en devolver la respuesta HTTP indicando que el servicio se creó con éxito (disponible en los logs). En la gráfica se puede ver que el tiempo de carga aumenta de forma lineal a medida que hay más VPN en la red, y esto se cumple para la de capa 2 como la de capa 3. Una posible explicación inicial para esto puede ser que al tener más flujos, cada nodo demora más en insertar nuevos flujos en su tabla. Esa teoría se descarta con el siguiente razonamiento. En la gráfica se observa que toma más tiempo crear una VPN de capa 2 que una de capa 3. Esto en gran medida se explica porque un servicio de capa 2 debe insertar 42 flujos en los nodos del camino, mientras que uno de capa 3 solo inserta 1. Pero también se observa que las lineas son virtualmente paralelas, es decir, esa diferencia de tiempo se mantiene constante a pesar de las VPN que existan. Si insertar un flujo nuevo cada vez tomara más tiempo, ese incremento se debería multiplicar por 42 para la VPN de capa 2, y la linea correspondiente a la VPN de capa 2 debería tener una pendiente más inclinada que la de capa 3. \\
