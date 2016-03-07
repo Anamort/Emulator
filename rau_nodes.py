@@ -171,13 +171,19 @@ class RAUSwitch(Host):
     self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait set-manager ptcp:%s" %(self.path_ovs, self.OVS_MANAGEMENT_PORT))
     
     # Agregar puertos
+    port_number = 0
     for interfaceName in if_names[1:]:
-      self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait add-port %s %s" %(self.path_ovs, self.name, interfaceName))
+      port_number = port_number + 1
+      self.cmd("ovs-vsctl --db=unix:%s/db.sock add-port %s %s -- set Interface %s ofport_request=%s" %(self.path_ovs, self.name, interfaceName, interfaceName, str(port_number)))
       
     # Agregar puertos virtuales
     for interfaceName in vif_names:
-      self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait add-port %s %s -- set Interface %s type=internal" %(self.path_ovs, self.name, interfaceName, interfaceName))
-      
+      port_number = port_number + 1
+      self.cmd("ovs-vsctl --db=unix:%s/db.sock add-port %s %s -- set Interface %s type=internal ofport_request=%s" %(self.path_ovs, self.name, interfaceName, interfaceName, str(port_number)))
+    
+    # Prueba con 1 segundo de espera antes de agregar flujos
+    # time.sleep(5)
+
     # Instala flujos para las interfaces virtuales
     i = 1
     for interfaceName in vif_names:
