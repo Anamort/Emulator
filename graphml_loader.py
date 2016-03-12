@@ -11,8 +11,6 @@
 #   --file          [name of GraphML input file]
 #   -o              [name of GraphML output file]
 #   --output        [name of GraphML output file]
-#   -c              [controller ip as string]
-#   --controller    [controller ip as string]
 #
 # Without any input, program will terminate.
 # Without specified output, outputfile will have the same name as the input file.
@@ -107,6 +105,8 @@ node_index_value     = ''
 node_name_value      = ''
 # id:value dictionaries
 id_node_name_dict   = {}     # to hold all 'id: node_name' pairs
+# id:type dictionaries
+id_node_type_dict   = {}     # to hold all 'id: node_type' pairs
 edge_with_ip_collection = []         # to hold { node1: IP_ADDRESS1, node2: IP_ADDRESS2 } elements
 
 # FIND OUT WHAT KEY IS USED FOR THE NAME, SINCE THIS DIFFERS IN DIFFERENT GRAPHML TOPOLOGIES
@@ -136,6 +136,10 @@ for n in node_set:
 
     node_id = n.attrib['id']
 
+    # first set all nodes as rauswitch
+    # the ones that have 'type' set will overwrite it with the real type
+    id_node_type_dict[node_id] = "rauswitch"
+
     #get all data elements residing under all node elements
     data_set = n.findall(ns + 'data')
 
@@ -150,6 +154,12 @@ for n in node_set:
             #save id:data couple
             id_node_name_dict[node_id] = node_name
 
+        #node type
+        if d.attrib['key'] == "type":
+            node_type = d.text
+            # save id:type to dict
+            id_node_type_dict[node_id] = node_type
+
 # GET COLLECTION OF EDGES
 for e in edge_set:
     source_id = e.attrib['source']
@@ -160,37 +170,80 @@ for e in edge_set:
     edge[source_id] = ip_address_prefix + "1/24"
     edge[target_id] = ip_address_prefix + "2/24"
 
+    # if one of the nodes is a switch and the other is not, then we add the mac address of the customer edge node
+    # this will be used for creating the switches with the appropriate parameters when they are border switches
+    if (id_node_type_dict[source_id] != "rauswitch" and id_node_type_dict[target_id] == "rauswitch") or
+        (id_node_type_dict[target_id] != "rauswitch" and id_node_type_dict[source_id] == "rauswitch"):
+        edge["ce_mac_address"] = possible_mac_addresses.pop(0)
+
     edge_with_ip_collection.append(edge)
 
 
-# NOW THAT THE DATA IS LOADED INTO THE VARIABLES edge_with_ip_collection AND id_node_name_dict
+# NOW THAT THE DATA IS LOADED INTO THE DATA STRUCTURES
 # WE CAN CREATE ALL THE REMAINING STRINGS
+# BY THIS POINT, WE HAVE THE FOLLOWING STRUCTURES:
+#           id_node_name_dict ===> id:name dictionary to get node names using id
+#           id_node_type_dict ===> id:type dictionary to get node type (rauswitch, router, host) using id
+#           edge_with_ip_collection ===> array of dictionaries with the following structure:
+#                   edge1 = id1: ip_address1, id2: ip_address2, ["ce_mac_address": mac1]
+#                   edge2 = id3: ip_address3, id4: ip_address4, ["ce_mac_address": mac2]
+#                   ...
+#                   This is indicates for each edge, what ip address each node will have, and also
+#                   indicates what mac address the CE node will have, in case it is a border link
+#                   if it isn't a border link, that field won't exist
 
 # FIRST CREATE THE SWITCHES
 tempstring = ""
 for i in id_node_name_dict.keys():
-    # create switch
-    # we assume that the ids are integers so that the switches are named "switchX" being X an integer
-    # this is necessary because the datapath-id for the node is the integer extracted from the name
-    temp1 =  "        "
-    temp1 += id_node_name_dict[i]
-    # we add 1 to i while naming the switch because some graphs may have a node with id="0" and the datapath-id can't be 0
-    temp1 += " = self.addHost('switch" + str(int(i)+1) + "', loopback='127.0.0.1', controller_ip='" + controller_ip + "', cls=RAUSwitch, "
-    temp1 += "ips=["
+    temp1 = ""
+    if id_node_type_dict[i] == "rauswitch":
+        # create switch
+        # we assume that the ids are integers so that the switches are named "switchX" being X an integer
+        # this is necessary because the datapath-id for the node is the integer extracted from the name
+        temp1 =  "        "
+        temp1 += id_node_name_dict[i]
+        # we add 1 to i while naming the switch because some graphs may have a node with id="0" and the datapath-id can't be 0
+        temp1 += " = self.addHost('switch" + str(int(i)+1) + "', loopback='127.0.0.1', controller_ip='" + controller_ip + "', cls=RAUSwitch, "
+        temp1 += "ips=["
 
-    # Pop the first available management address and use it for this switch
-    mgmt_ip = mgmt_ip_addresses.pop(0)
-    temp1 += "'" + mgmt_ip + "'"
+        # Pop the first available management address and use it for this switch
+        mgmt_ip = mgmt_ip_addresses.pop(0)
+        temp1 += "'" + mgmt_ip + "'"
 
-    # Iterate over all the edges and get this switch's links and IP addresses
-    for edge in edge_with_ip_collection:
-        if i in edge.keys():
-            temp1 += ",'" + edge[i] + "'"
+        # Iterate over all the edges and get this switch's links and IP addresses
+        border_edge = None
+        for edge in edge_with_ip_collection:
+            if i in edge.keys():
+                if "ce_mac_address" in edge.keys():
+                    border_edge = edge
+                else:
+                    temp1 += ",'" + edge[i] + "'"
 
-    temp1 += "])"
-    temp1 += "\n"
+        # If this node has a border edge, we add the IP address for this edge last
+        if border_edge is not None:
+            temp1 += ",'" + border_edge[i] + "'"
 
-    # Add this switch to the tempstring variable, holding the switches
+        temp1 += "]"
+
+        if border_edge is not None:
+            ce_mac_address = border_edge["ce_mac_address"]
+            # Iterate through the keys in the edge hash structure
+            # When we find a key that is not the current node's id or "ce_mac_address"
+            # That means it is the node id of the linked node, in other words, the CE node
+            ce_ip_address = None
+            for key in border_edge.keys():
+                if (key != i and key != "ce_mac_address") : ce_ip_address = border_edge[key]
+            temp1 += ", border=1, ce_ip_address='" + ce_ip_address + "', ce_mac_address='" + ce_mac_address + "'"
+
+        temp1 += ")\n"
+
+    else if id_node_type_dict[i] == "router":
+        # create router
+        temp1 =  "        "
+        temp1 += id_node_name_dict[i]
+        temp1 += " = self.addHost('router" + str(i) + "', loopback='127.0.0.1', cls=QuaggaRouter, "
+
+    # Add this node to the tempstring variable
     tempstring += temp1
 
 outputstring_2b += tempstring
