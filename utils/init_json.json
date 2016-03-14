@@ -5,5 +5,7 @@
 {"router_id": "192.168.1.16", "node_top_type": 0, "node_name": "switch5"}
 {"router_id": "192.168.1.15", "node_top_type": 0, "node_name": "switch6"}
 {"router_id": "192.168.1.18", "node_top_type": 0, "node_name": "switch7"}
-{"router_id": "192.168.1.17", "node_top_type": 0, "node_name": "switch8"}
-{"router_id": "192.168.1.19", "node_top_type": 0, "node_name": "switch9"}
+{"router_id": "192.168.1.17", "node_top_type": 1, "node_name": "switch8"}
+{"router_id": "192.168.1.17", "ce_ip_address": "10.10.13.1", "ce_mac_address": "00:00:00:00:00:1", "ip_address": "10.10.13.2", "iface_top_type": 1}
+{"router_id": "192.168.1.19", "node_top_type": 1, "node_name": "switch9"}
+{"router_id": "192.168.1.19", "ce_ip_address": "10.10.14.1", "ce_mac_address": "00:00:00:00:00:2", "ip_address": "10.10.14.2", "iface_top_type": 1}

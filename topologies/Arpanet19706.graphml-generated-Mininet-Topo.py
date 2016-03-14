@@ -6,42 +6,42 @@ from mininet.topo import Topo
 from rau_nodes import RAUSwitch, QuaggaRouter, RAUController, RAUHost
 class CustomTopology( Topo ):
     "Internet Topology Zoo Specimen."
-    def __init__( self, **opts ):
+    def __init__(self):
         "Create a topology."
         # Initialize Topology
-        Topo.__init__( self, **opts )
+        Topo.__init__(self)
 
         # Add controller
-        root = self.addHost('controller', cls=RAUController, ip='192.168.1.10/24')
+        root = self.addHost('controller', cls=RAUController, ips=['192.168.1.10/24'])
         # Add management network switch
         man_switch = self.addSwitch('s1', protocols='OpenFlow13', failMode='standalone')
 
         # Add switches, hosts and routers
-        SRI = self.addHost('switch2', loopback='127.0.0.1', controller_ip='192.168.1.10', cls=RAUSwitch, ips=['192.168.1.11/24','10.10.2.1/24','10.10.3.1/24'])
-        HARVARD = self.addHost('switch1', loopback='127.0.0.1', controller_ip='192.168.1.10', cls=RAUSwitch, ips=['192.168.1.12/24','10.10.1.1/24'])
-        UCLA = self.addHost('switch4', loopback='127.0.0.1', controller_ip='192.168.1.10', cls=RAUSwitch, ips=['192.168.1.13/24','10.10.3.2/24','10.10.4.2/24','10.10.5.1/24'])
-        UCSB = self.addHost('switch3', loopback='127.0.0.1', controller_ip='192.168.1.10', cls=RAUSwitch, ips=['192.168.1.14/24','10.10.2.2/24','10.10.4.1/24'])
-        SDC = self.addHost('switch6', loopback='127.0.0.1', controller_ip='192.168.1.10', cls=RAUSwitch, ips=['192.168.1.15/24','10.10.7.2/24','10.10.8.1/24'])
-        RAND = self.addHost('switch5', loopback='127.0.0.1', controller_ip='192.168.1.10', cls=RAUSwitch, ips=['192.168.1.16/24','10.10.5.2/24','10.10.6.1/24','10.10.7.1/24'])
-        MIT = self.addHost('switch8', loopback='127.0.0.1', controller_ip='192.168.1.10', cls=RAUSwitch, ips=['192.168.1.17/24','10.10.9.2/24','10.10.10.1/24','10.10.13.2/24'])
-        UTAH = self.addHost('switch7', loopback='127.0.0.1', controller_ip='192.168.1.10', cls=RAUSwitch, ips=['192.168.1.18/24','10.10.8.2/24','10.10.9.1/24'])
-        BBN = self.addHost('switch9', loopback='127.0.0.1', controller_ip='192.168.1.10', cls=RAUSwitch, ips=['192.168.1.19/24','10.10.1.2/24','10.10.6.2/24','10.10.10.2/24','10.10.14.2/24'])
+        ROUTERUNO = self.addHost('router12', cls=QuaggaRouter, ips=['10.10.13.1/24', '10.10.11.2/24'], ce_mac_address='00:00:00:00:00:1', gw='10.10.13.2')
+        HOSTDOS = self.addHost('host11', cls=RAUHost, ips=['10.10.12.1/24'])
+        ROUTERDOS = self.addHost('router13', cls=QuaggaRouter, ips=['10.10.14.1/24', '10.10.12.2/24'], ce_mac_address='00:00:00:00:00:2', gw='10.10.14.2')
+        SRI = self.addHost('switch2', cls=RAUSwitch, controller_ip='192.168.1.10', ips=['192.168.1.11/24', '10.10.2.1/24', '10.10.3.1/24'])
+        HARVARD = self.addHost('switch1', cls=RAUSwitch, controller_ip='192.168.1.10', ips=['192.168.1.12/24', '10.10.1.1/24'])
+        UCLA = self.addHost('switch4', cls=RAUSwitch, controller_ip='192.168.1.10', ips=['192.168.1.13/24', '10.10.3.2/24', '10.10.4.2/24', '10.10.5.1/24'])
+        UCSB = self.addHost('switch3', cls=RAUSwitch, controller_ip='192.168.1.10', ips=['192.168.1.14/24', '10.10.2.2/24', '10.10.4.1/24'])
+        SDC = self.addHost('switch6', cls=RAUSwitch, controller_ip='192.168.1.10', ips=['192.168.1.15/24', '10.10.7.2/24', '10.10.8.1/24'])
+        RAND = self.addHost('switch5', cls=RAUSwitch, controller_ip='192.168.1.10', ips=['192.168.1.16/24', '10.10.5.2/24', '10.10.6.1/24', '10.10.7.1/24'])
+        MIT = self.addHost('switch8', cls=RAUSwitch, controller_ip='192.168.1.10', ips=['192.168.1.17/24', '10.10.9.2/24', '10.10.10.1/24', '10.10.13.2/24'], border=1, ce_ip_address='10.10.13.1', ce_mac_address='00:00:00:00:00:1')
+        UTAH = self.addHost('switch7', cls=RAUSwitch, controller_ip='192.168.1.10', ips=['192.168.1.18/24', '10.10.8.2/24', '10.10.9.1/24'])
+        HOSTUNO = self.addHost('host10', cls=RAUHost, ips=['10.10.11.1/24'])
+        BBN = self.addHost('switch9', cls=RAUSwitch, controller_ip='192.168.1.10', ips=['192.168.1.19/24', '10.10.1.2/24', '10.10.6.2/24', '10.10.10.2/24', '10.10.14.2/24'], border=1, ce_ip_address='10.10.14.1', ce_mac_address='00:00:00:00:00:2')
 
         # Add links between nodes
         self.addLink(man_switch, root, 1, 0)
-        self.addLink(man_switch, ROUTERUNO, 2, 0)
-        self.addLink(man_switch, HOSTDOS, 3, 0)
-        self.addLink(man_switch, ROUTERDOS, 4, 0)
-        self.addLink(man_switch, SRI, 5, 0)
-        self.addLink(man_switch, HARVARD, 6, 0)
-        self.addLink(man_switch, UCLA, 7, 0)
-        self.addLink(man_switch, UCSB, 8, 0)
-        self.addLink(man_switch, SDC, 9, 0)
-        self.addLink(man_switch, RAND, 10, 0)
-        self.addLink(man_switch, MIT, 11, 0)
-        self.addLink(man_switch, UTAH, 12, 0)
-        self.addLink(man_switch, HOSTUNO, 13, 0)
-        self.addLink(man_switch, BBN, 14, 0)
+        self.addLink(man_switch, SRI, 2, 0)
+        self.addLink(man_switch, HARVARD, 3, 0)
+        self.addLink(man_switch, UCLA, 4, 0)
+        self.addLink(man_switch, UCSB, 5, 0)
+        self.addLink(man_switch, SDC, 6, 0)
+        self.addLink(man_switch, RAND, 7, 0)
+        self.addLink(man_switch, MIT, 8, 0)
+        self.addLink(man_switch, UTAH, 9, 0)
+        self.addLink(man_switch, BBN, 10, 0)
         self.addLink(HARVARD, BBN, 1, 1)
         self.addLink(SRI, UCSB, 1, 1)
         self.addLink(SRI, UCLA, 2, 1)
@@ -52,7 +52,7 @@ class CustomTopology( Topo ):
         self.addLink(SDC, UTAH, 2, 1)
         self.addLink(MIT, UTAH, 1, 2)
         self.addLink(BBN, MIT, 3, 2)
-        self.addLink(HOSTUNO, ROUTERUNO, 1, 1)
-        self.addLink(HOSTDOS, ROUTERDOS, 1, 1)
-        self.addLink(ROUTERUNO, MIT, 2, 3)
-        self.addLink(BBN, ROUTERDOS, 4, 2)
+        self.addLink(HOSTUNO, ROUTERUNO, 0, 1)
+        self.addLink(HOSTDOS, ROUTERDOS, 0, 1)
+        self.addLink(ROUTERUNO, MIT, 0, 3)
+        self.addLink(BBN, ROUTERDOS, 4, 0)

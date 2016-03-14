@@ -40,34 +40,46 @@ def getNetmask(ip_address):
   return "255.255.255.255"  
 
 class RAUHost(Host):
-  def __init__(self, name, ip, gw, *args, **kwargs ):
+  def __init__(self, name, ips, gw=None, *args, **kwargs ):
     Host.__init__(self, name, *args, **kwargs )
-    self.ip = ip
+    self.ips = ips
     self.gw = gw
 		
   def start(self):
     info("%s " % self.name)
-    # Configuro la ip
-    ip = getIP(self.ip)
-    mask = getMaskLength(self.ip)
-    self.intfList()[0].setIP(ip,mask)
-    # Configuro el default GW
-    self.cmd("route add default gw %s %s" %(self.gw, self.intfList()[0]))
+    # Configuros la ips
+    i = 0
+    for intf in self.intfList():
+      ip = getIP(self.ips[i])
+      mask = getMaskLength(self.ips[i])
+      intf.setIP(ip,mask)
+      i += 1
+
+    if self.gw is not None:
+      # Configuro el default GW
+      self.cmd("route add default gw %s %s" %(self.gw, self.intfList()[0]))
     
   def terminate( self ):
     Host.terminate(self)
 
 class RAUController(Host):
-  def __init__(self, name, ip, *args, **kwargs ):
+  def __init__(self, name, ips, *args, **kwargs ):
     Host.__init__(self, name, *args, **kwargs )
-    self.ip = ip
+    self.ips = ips
 		
   def start(self):
     info("%s " % self.name)
-    # Configuro la ip
-    ip = getIP(self.ip)
-    mask = getMaskLength(self.ip)
-    self.intfList()[0].setIP(ip,mask)
+    # Configuro las ips
+    i = 0
+    for intf in self.intfList():
+      ip = getIP(self.ips[i])
+      mask = getMaskLength(self.ips[i])
+      intf.setIP(ip,mask)
+      i += 1
+
+    # ip = getIP(self.ip)
+    # mask = getMaskLength(self.ip)
+    # self.intfList()[0].setIP(ip,mask)
     # Se levanta el controlador
     self.cmd('sh utils/ryu_start.sh &')
     
@@ -87,10 +99,9 @@ class RAUSwitch(Host):
   OF_V = "OpenFlow13"
   OVS_MANAGEMENT_PORT = "6640"
   
-  def __init__(self, name, loopback, controller_ip, ips, dpid=None, border=0, ce_ip_address=None, ce_mac_address=None, *args, **kwargs ):
+  def __init__(self, name, controller_ip, ips, dpid=None, border=0, ce_ip_address=None, ce_mac_address=None, *args, **kwargs ):
     dirs = ['/var/log/', '/var/log/quagga', '/var/run', '/var/run/quagga', '/var/run/openvswitch', '/usr/local/var/run/openvswitch']
-    Host.__init__(self, name, privateDirs=dirs, *args, **kwargs )   
-    self.loopback = loopback
+    Host.__init__(self, name, privateDirs=dirs, *args, **kwargs )
     self.path_ovs = "%s/%s/ovs" %(self.baseDIR, self.name)
     self.ips = ips
 
@@ -314,10 +325,9 @@ class QuaggaRouter(Host):
   quaggaPath = '/usr/lib/quagga/'
   baseDIR = "/tmp"
   
-  def __init__(self, name, loopback, ips, ce_mac_address, gw, *args, **kwargs ):
+  def __init__(self, name, ips, ce_mac_address, gw=None, *args, **kwargs ):
     dirs = ['/var/log/', '/var/log/quagga', '/var/run', '/var/run/quagga']
-    Host.__init__(self, name, privateDirs=dirs, *args, **kwargs )   
-    self.loopback = loopback
+    Host.__init__(self, name, privateDirs=dirs, *args, **kwargs )
     self.ips = ips
     self.ce_mac_address = ce_mac_address
     self.gw = gw
@@ -392,8 +402,9 @@ class QuaggaRouter(Host):
     # self.cmd("%s -f %s/ospfd.conf -A 127.0.0.1 -i %s/ospfd.pid &" %(self.ospfd_exec, self.path_quagga, self.path_quagga))
     self.cmd('sysctl -w net.ipv4.ip_forward=1')
 
-    # Configuro el default GW
-    self.cmd("route add default gw %s %s" %(self.gw, self.intfList()[0]))
+    if self.gw is not None:
+      # Configuro el default GW
+      self.cmd("route add default gw %s %s" %(self.gw, self.intfList()[0]))
 
   def terminate( self ):
     # Cuidado con este comando

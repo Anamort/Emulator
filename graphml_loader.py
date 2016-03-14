@@ -56,17 +56,17 @@ from mininet.topo import Topo
 from rau_nodes import RAUSwitch, QuaggaRouter, RAUController, RAUHost
 class CustomTopology( Topo ):
     "Internet Topology Zoo Specimen."
-    def __init__( self, **opts ):
+    def __init__(self):
         "Create a topology."
         # Initialize Topology
-        Topo.__init__( self, **opts )
+        Topo.__init__(self)
 '''
 
 outputstring_2a='''
         # Add controller
 '''
 outputstring_2a += "        "
-outputstring_2a += "root = self.addHost('controller', cls=RAUController, ip='" + controller_ip + "/24')"
+outputstring_2a += "root = self.addHost('controller', cls=RAUController, ips=['" + controller_ip + "/24'])"
 outputstring_2a += '''
         # Add management network switch
         man_switch = self.addSwitch('s1', protocols='OpenFlow13', failMode='standalone')
@@ -172,7 +172,7 @@ for e in edge_set:
 
     # if one of the nodes is a switch and the other is not, then we add the mac address of the customer edge node
     # this will be used for creating the switches with the appropriate parameters when they are border switches
-    if (id_node_type_dict[source_id] != "rauswitch" and id_node_type_dict[target_id] == "rauswitch") or
+    if (id_node_type_dict[source_id] != "rauswitch" and id_node_type_dict[target_id] == "rauswitch") or \
         (id_node_type_dict[target_id] != "rauswitch" and id_node_type_dict[source_id] == "rauswitch"):
         edge["ce_mac_address"] = possible_mac_addresses.pop(0)
 
@@ -192,56 +192,81 @@ for e in edge_set:
 #                   indicates what mac address the CE node will have, in case it is a border link
 #                   if it isn't a border link, that field won't exist
 
-# FIRST CREATE THE SWITCHES
+# FIRST CREATE THE NODES
 tempstring = ""
 for i in id_node_name_dict.keys():
-    temp1 = ""
-    if id_node_type_dict[i] == "rauswitch":
-        # create switch
-        # we assume that the ids are integers so that the switches are named "switchX" being X an integer
-        # this is necessary because the datapath-id for the node is the integer extracted from the name
-        temp1 =  "        "
-        temp1 += id_node_name_dict[i]
-        # we add 1 to i while naming the switch because some graphs may have a node with id="0" and the datapath-id can't be 0
-        temp1 += " = self.addHost('switch" + str(int(i)+1) + "', loopback='127.0.0.1', controller_ip='" + controller_ip + "', cls=RAUSwitch, "
-        temp1 += "ips=["
+    node_name = id_node_name_dict[i]
+    node_type = id_node_type_dict[i]
+    temp1 =  "        "
+    temp1 += node_name
 
+    # we assume that the ids are integers so that the switches are named "switchX" being X an integer
+    # this is necessary because the datapath-id for the switch is the integer extracted from the name
+    # we add 1 to i while naming the name because some graphs may have a node with id="0" and
+    # the datapath-id can't be 0 for a switch
+    if node_type == "rauswitch":
+        console_name = "switch" + str(int(i)+1)
+    else:
+        console_name = node_type + str(int(i)+1)
+    node_class = "RAUSwitch"
+    if node_type == "router":
+        node_class = "QuaggaRouter"
+    elif node_type == "host":
+        node_class = "RAUHost"
+    
+    temp1 += " = self.addHost('" + console_name + "', cls=" + node_class + ", "
+    if node_type == "rauswitch":
+        temp1 += "controller_ip='" + controller_ip + "', "
+
+    # Now we get the list of IP addresses for this node
+    current_node_ip_addresses = []
+    if node_type == "rauswitch":
+        # The first IP address should be the management one
         # Pop the first available management address and use it for this switch
         mgmt_ip = mgmt_ip_addresses.pop(0)
-        temp1 += "'" + mgmt_ip + "'"
+        current_node_ip_addresses.append(mgmt_ip)
 
-        # Iterate over all the edges and get this switch's links and IP addresses
-        border_edge = None
-        for edge in edge_with_ip_collection:
-            if i in edge.keys():
-                if "ce_mac_address" in edge.keys():
-                    border_edge = edge
-                else:
-                    temp1 += ",'" + edge[i] + "'"
+    # Iterate over all the edges and get this node's border edge if it has one
+    # and IP addresses
+    border_edge = None
+    for edge in edge_with_ip_collection:
+        if i in edge.keys():
+            if "ce_mac_address" in edge.keys():
+                border_edge = edge
+            else:
+                current_node_ip_addresses.append(edge[i])
 
-        # If this node has a border edge, we add the IP address for this edge last
-        if border_edge is not None:
-            temp1 += ",'" + border_edge[i] + "'"
+    if border_edge is not None:
+        if node_type == "rauswitch":
+            # If it's a RAUSwitch, the border edge IP goes last in the IP list
+            current_node_ip_addresses.append(border_edge[i])
+        else:
+            # If it's not a RAUSwitch, the border edge IP goes first in the IP list
+            current_node_ip_addresses = [border_edge[i]] + current_node_ip_addresses
 
-        temp1 += "]"
+    temp1 += "ips=["
+    for ip_addr in current_node_ip_addresses:
+        temp1 += "'" + ip_addr + "'"
+        if current_node_ip_addresses.index(ip_addr) != len(current_node_ip_addresses)-1:
+            temp1 += ", "
+    temp1 += "]"
 
-        if border_edge is not None:
-            ce_mac_address = border_edge["ce_mac_address"]
-            # Iterate through the keys in the edge hash structure
-            # When we find a key that is not the current node's id or "ce_mac_address"
-            # That means it is the node id of the linked node, in other words, the CE node
-            ce_ip_address = None
-            for key in border_edge.keys():
-                if (key != i and key != "ce_mac_address") : ce_ip_address = border_edge[key]
-            temp1 += ", border=1, ce_ip_address='" + ce_ip_address + "', ce_mac_address='" + ce_mac_address + "'"
+    if border_edge is not None:
+        ce_mac_address = border_edge["ce_mac_address"]
+        # Iterate through the keys in the edge hash structure
+        # When we find a key that is not the current node's id or "ce_mac_address"
+        # That means it is the node id of the linked node
+        linked_node_ip_address = None
+        for key in border_edge.keys():
+            if (key != i and key != "ce_mac_address") : linked_node_ip_address = border_edge[key]
+        linked_node_ip_address = linked_node_ip_address.split("/")[0]
 
-        temp1 += ")\n"
+        if node_type == "rauswitch":
+            temp1 += ", border=1, ce_ip_address='" + linked_node_ip_address + "', ce_mac_address='" + ce_mac_address + "'"
+        else:
+            temp1 += ", ce_mac_address='" + ce_mac_address + "', gw='" + linked_node_ip_address + "'"
 
-    else if id_node_type_dict[i] == "router":
-        # create router
-        temp1 =  "        "
-        temp1 += id_node_name_dict[i]
-        temp1 += " = self.addHost('router" + str(i) + "', loopback='127.0.0.1', cls=QuaggaRouter, "
+    temp1 += ")\n"
 
     # Add this node to the tempstring variable
     tempstring += temp1
@@ -254,34 +279,82 @@ tempstring2 = ""
 tempstring2 += "        self.addLink(man_switch, root, 1, 0)\n"
 counter = 1
 for i in id_node_name_dict.keys():
-    temp2 = "        "
-    counter += 1
-    temp2 += "self.addLink(man_switch, " + id_node_name_dict[i] + ", " + str(counter) + ", 0)\n"
+    if id_node_type_dict[i] == "rauswitch":
+        temp2 = "        "
+        counter += 1
+        temp2 += "self.addLink(man_switch, " + id_node_name_dict[i] + ", " + str(counter) + ", 0)\n"
 
-    tempstring2 += temp2
+        tempstring2 += temp2
 
 # NEXT, CREATE THE NETWORK LINKS
 tempstring3 = ""
+
 for edge in edge_with_ip_collection:
     temp3 = "        "
 
-    source_id = edge.keys()[0]
-    target_id = edge.keys()[1]
+    keys = edge.keys()
+    is_border_edge = 0
+    if "ce_mac_address" in keys:
+        keys.remove("ce_mac_address")
+        is_border_edge = 1
+    source_id = keys[0]
+    target_id = keys[1]
 
-    # we need to iterate over all the edges before this one to know what number of link this is
-    # for each of the nodes
-    # start at 1 because they already have one link with the management switch
-    source_counter = 1
-    target_counter = 1
+    # Before we add the link, we have to know what number of interface corresponds to each node for this link
+    source_counter = 0
+    target_counter = 0
+    if is_border_edge:
+        # If it is a border edge, the interface counters should be:
+        # - 0 for the CE node (because the corresponding IP address will be the first in the "ips" parameter)
+        # - The highest number for the RAUSwitch (because the corresponding IP address will be the last in the "ips" parameter)
 
-    for e2 in edge_with_ip_collection:
-        if e2 == edge:
-            break
+        # First, we need to know which of the 2 nodes is the RAUSwitch
+        if id_node_type_dict[source_id] == "rauswitch":
+            rauswitch_id = source_id
         else:
-            if source_id in e2.keys():
-                source_counter += 1
-            if target_id in e2.keys():
-                target_counter += 1
+            rauswitch_id = target_id
+        # Iterate over all the edges to know how many links the RAUSwitch has
+        link_counter = 0
+        for e1 in edge_with_ip_collection:
+            if rauswitch_id in e1.keys():
+                link_counter += 1
+
+        if rauswitch_id == source_id:
+            source_counter = link_counter
+        else:
+            target_counter = link_counter
+    else:
+        # If it is not a border edge, we have to count the previous links
+        # to know what numbers this link will have
+        for e2 in edge_with_ip_collection:
+            if e2 == edge:
+                break
+            else:
+                if "ce_mac_address" not in e2.keys():
+                    if source_id in e2.keys():
+                        source_counter += 1
+                    if target_id in e2.keys():
+                        target_counter += 1
+
+        # We add 1 to the counter if the node is a RAUSwitch because the interface 0
+        # is reserved for the management interface
+        if id_node_type_dict[source_id] == "rauswitch":
+            source_counter += 1
+        if id_node_type_dict[target_id] == "rauswitch":
+            target_counter += 1
+
+        # If none of the nodes is a RAUSwitch, we have to iterate through the edges
+        # To know if one of them has a border edge with a RAUSwitch
+        # If it does, then the counter for that node needs to be added 1
+        # Because the interface 0 (of the CE node) is reserved for the border edge interface
+        if id_node_type_dict[source_id] != "rauswitch" and id_node_type_dict[target_id] != "rauswitch":
+            for e3 in edge_with_ip_collection:
+                if "ce_mac_address" in e3.keys():
+                    if source_id in e3.keys():
+                        source_counter += 1
+                    if target_id in e3.keys():
+                        target_counter += 1
+
 
     temp3 += "self.addLink(" + id_node_name_dict[source_id] + ", " + id_node_name_dict[target_id] + ", " + str(source_counter) + ", " + str(target_counter) + ")\n"
 
