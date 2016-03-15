@@ -40,10 +40,11 @@ def getNetmask(ip_address):
   return "255.255.255.255"  
 
 class RAUHost(Host):
-  def __init__(self, name, ips, gw=None, *args, **kwargs ):
+  def __init__(self, name, ips, gw=None, ce_mac_address=None, *args, **kwargs ):
     Host.__init__(self, name, *args, **kwargs )
     self.ips = ips
     self.gw = gw
+    self.ce_mac_address = ce_mac_address
 		
   def start(self):
     info("%s " % self.name)
@@ -54,6 +55,10 @@ class RAUHost(Host):
       mask = getMaskLength(self.ips[i])
       intf.setIP(ip,mask)
       i += 1
+
+    if self.ce_mac_address is not None:
+      # Se configura la MAC de la interfaz con la red backbone
+      self.intfList()[0].setMAC(self.ce_mac_address)
 
     if self.gw is not None:
       # Configuro el default GW

@@ -19,7 +19,7 @@ def startNetwork():
   # Se levanta la topologia
 
   info('** Creating test topology\n')
-  topology = imp.load_source('CustomTopology', 'topologies/'+sys.argv[1]+'.py')
+  topology = imp.load_source('CustomTopology', 'topologies/'+sys.argv[1])
   topo = topology.CustomTopology()
 
   info('** Starting the network\n')
