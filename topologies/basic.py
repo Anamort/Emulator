@@ -18,34 +18,30 @@ class CustomTopology( Topo ):
     h1 = self.addHost('h1', ip='10.1.1.2/24', gw='10.1.1.1', cls=RAUHost)
 
     routerLan1 = self.addHost('routerLan1', ips=['10.0.0.1/24', '10.0.1.1/24'],
-                                loopback='127.0.0.1', ce_mac_address='00:00:00:00:00:01',
+                                ce_mac_address='00:00:00:00:00:01',
                                 gw='10.0.0.2', cls=QuaggaRouter)
 
     routerLan2 = self.addHost('routerLan2', ips=['10.1.0.1/24', '10.1.1.1/24'],
-                                loopback='127.0.0.1', ce_mac_address='00:00:00:00:00:02',
+                                ce_mac_address='00:00:00:00:00:02',
                                 gw='10.1.0.2', cls=QuaggaRouter)
     
     # Galois
-    galois = self.addHost('galois', loopback="127.0.0.1",
-			  ips=['192.168.1.11/24','10.10.1.1/24','10.10.5.1/24','10.10.4.1/24'],
+    galois = self.addHost('galois', ips=['192.168.1.11/24','10.10.1.1/24','10.10.5.1/24','10.10.4.1/24'],
 			  dpid='0000000000000001', controller_ip="192.168.1.10",
 			  cls=RAUSwitch)
     # Oz
-    oz = self.addHost('oz', loopback="127.0.0.1",
-		      ips=['192.168.1.12/24','10.10.1.2/24','10.10.6.2/24','10.10.3.1/24', '10.1.0.2/24'],
+    oz = self.addHost('oz', ips=['192.168.1.12/24','10.10.1.2/24','10.10.6.2/24','10.10.3.1/24', '10.1.0.2/24'],
 		      dpid='0000000000000002', controller_ip="192.168.1.10",
               border=1, ce_ip_address='10.1.0.1', ce_mac_address='00:00:00:00:00:02',
 		      cls=RAUSwitch)
     
     # Possion
-    possion = self.addHost('possion', loopback="127.0.0.1",
-			  ips=['192.168.1.13/24','10.10.2.1/24','10.10.6.1/24','10.10.4.2/24'],
+    possion = self.addHost('possion', ips=['192.168.1.13/24','10.10.2.1/24','10.10.6.1/24','10.10.4.2/24'],
 			  dpid='0000000000000003', controller_ip="192.168.1.10",
 			  cls=RAUSwitch)
     
     # Alice
-    alice = self.addHost('alice', loopback="127.0.0.1",
-			  ips=['192.168.1.14/24','10.10.2.2/24','10.10.5.2/24','10.10.3.2/24', '10.0.0.2/24'],
+    alice = self.addHost('alice', ips=['192.168.1.14/24','10.10.2.2/24','10.10.5.2/24','10.10.3.2/24', '10.0.0.2/24'],
 			  dpid='0000000000000004', controller_ip="192.168.1.10",
               border=1, ce_ip_address='10.0.0.1', ce_mac_address='00:00:00:00:00:01',
 			  cls=RAUSwitch)

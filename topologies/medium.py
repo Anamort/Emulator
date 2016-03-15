@@ -19,258 +19,213 @@ class CustomTopology( Topo ):
     h1 = self.addHost('h1', ip='10.1.1.2/24', gw='10.1.1.1', cls=RAUHost)
 
     routerLan1 = self.addHost('routerLan1', ips=['10.0.0.1/24', '10.0.1.1/24'],
-                                loopback='127.0.0.1', ce_mac_address='00:00:00:00:00:01',
+                                ce_mac_address='00:00:00:00:00:01',
                                 gw='10.0.0.2', cls=QuaggaRouter)
 
     routerLan2 = self.addHost('routerLan2', ips=['10.1.0.1/24', '10.1.1.1/24'],
-                                loopback='127.0.0.1', ce_mac_address='00:00:00:00:00:02',
+                                ce_mac_address='00:00:00:00:00:02',
                                 gw='10.1.0.2', cls=QuaggaRouter)
     
 
-    router1 = self.addHost('router1', loopback="127.0.0.1",
-		  ips=['192.168.1.11/24','10.10.1.1/24'],
+    router1 = self.addHost('router1', ips=['192.168.1.11/24','10.10.1.1/24'],
 		  controller_ip="192.168.1.10",
 		  cls=RAUSwitch)
 
-    router2 = self.addHost('router2', loopback="127.0.0.1",
-	      ips=['192.168.1.12/24','10.10.1.2/24','10.10.2.1/24'],
+    router2 = self.addHost('router2', ips=['192.168.1.12/24','10.10.1.2/24','10.10.2.1/24'],
 	      controller_ip="192.168.1.10",
 	      cls=RAUSwitch)
     
 
-    router3 = self.addHost('router3', loopback="127.0.0.1",
-		  ips=['192.168.1.13/24','10.10.3.1/24','10.10.8.1/24','10.10.9.1/24'],
+    router3 = self.addHost('router3', ips=['192.168.1.13/24','10.10.3.1/24','10.10.8.1/24','10.10.9.1/24'],
 		  controller_ip="192.168.1.10",
 		  cls=RAUSwitch)
     
 
-    router4 = self.addHost('router4', loopback="127.0.0.1",
-		  ips=['192.168.1.14/24','10.10.2.2/24','10.10.3.2/24','10.10.4.1/24','10.10.6.1/24'],
+    router4 = self.addHost('router4', ips=['192.168.1.14/24','10.10.2.2/24','10.10.3.2/24','10.10.4.1/24','10.10.6.1/24'],
 		  controller_ip="192.168.1.10",
 		  cls=RAUSwitch)
 
-    router5 = self.addHost('router5', loopback="127.0.0.1",
-        ips=['192.168.1.15/24','10.10.4.2/24','10.10.5.1/24'],
+    router5 = self.addHost('router5', ips=['192.168.1.15/24','10.10.4.2/24','10.10.5.1/24'],
         controller_ip="192.168.1.10",
         cls=RAUSwitch)
 
-    router6 = self.addHost('router6', loopback="127.0.0.1",
-        ips=['192.168.1.16/24','10.10.5.2/24','10.10.7.1/24'],
-        controller_ip="192.168.1.10",
-        cls=RAUSwitch)
-    
-
-    router7 = self.addHost('router7', loopback="127.0.0.1",
-        ips=['192.168.1.17/24','10.10.6.2/24','10.10.7.2/24','10.10.25.1/24'],
+    router6 = self.addHost('router6', ips=['192.168.1.16/24','10.10.5.2/24','10.10.7.1/24'],
         controller_ip="192.168.1.10",
         cls=RAUSwitch)
     
 
-    router8 = self.addHost('router8', loopback="127.0.0.1",
-        ips=['192.168.1.18/24','10.10.8.2/24','10.10.10.1/24','10.10.14.1/24'],
-        controller_ip="192.168.1.10",
-        cls=RAUSwitch)
-
-    router9 = self.addHost('router9', loopback="127.0.0.1",
-        ips=['192.168.1.19/24','10.10.10.2/24','10.10.11.1/24'],
-        controller_ip="192.168.1.10",
-        cls=RAUSwitch)
-
-    router10 = self.addHost('router10', loopback="127.0.0.1",
-        ips=['192.168.1.20/24','10.10.11.2/24','10.10.12.1/24'],
+    router7 = self.addHost('router7', ips=['192.168.1.17/24','10.10.6.2/24','10.10.7.2/24','10.10.25.1/24'],
         controller_ip="192.168.1.10",
         cls=RAUSwitch)
     
 
-    router11 = self.addHost('router11', loopback="127.0.0.1",
-        ips=['192.168.1.21/24','10.10.12.2/24','10.10.13.1/24'],
+    router8 = self.addHost('router8', ips=['192.168.1.18/24','10.10.8.2/24','10.10.10.1/24','10.10.14.1/24'],
         controller_ip="192.168.1.10",
         cls=RAUSwitch)
 
-    router12 = self.addHost('router12', loopback="127.0.0.1",
-              ips=['192.168.1.22/24','10.10.14.2/24','10.10.13.2/24','10.10.19.1/24','10.10.20.1/24','10.10.18.1/24','10.10.21.1/24'],
+    router9 = self.addHost('router9', ips=['192.168.1.19/24','10.10.10.2/24','10.10.11.1/24'],
+        controller_ip="192.168.1.10",
+        cls=RAUSwitch)
+
+    router10 = self.addHost('router10', ips=['192.168.1.20/24','10.10.11.2/24','10.10.12.1/24'],
+        controller_ip="192.168.1.10",
+        cls=RAUSwitch)
+    
+
+    router11 = self.addHost('router11', ips=['192.168.1.21/24','10.10.12.2/24','10.10.13.1/24'],
+        controller_ip="192.168.1.10",
+        cls=RAUSwitch)
+
+    router12 = self.addHost('router12', ips=['192.168.1.22/24','10.10.14.2/24','10.10.13.2/24','10.10.19.1/24','10.10.20.1/24','10.10.18.1/24','10.10.21.1/24'],
               controller_ip="192.168.1.10",
               cls=RAUSwitch)
 
-    router13 = self.addHost('router13', loopback="127.0.0.1",
-          ips=['192.168.1.23/24','10.10.19.2/24'],
+    router13 = self.addHost('router13', ips=['192.168.1.23/24','10.10.19.2/24'],
           controller_ip="192.168.1.10",
           cls=RAUSwitch)
     
 
-    router14 = self.addHost('router14', loopback="127.0.0.1",
-              ips=['192.168.1.24/24','10.10.20.2/24'],
+    router14 = self.addHost('router14', ips=['192.168.1.24/24','10.10.20.2/24'],
               controller_ip="192.168.1.10",
               cls=RAUSwitch)
     
 
-    router15 = self.addHost('router15', loopback="127.0.0.1",
-              ips=['192.168.1.25/24','10.10.18.2/24','10.10.17.1/24'],
+    router15 = self.addHost('router15', ips=['192.168.1.25/24','10.10.18.2/24','10.10.17.1/24'],
               controller_ip="192.168.1.10",
               cls=RAUSwitch)
 
-    router16 = self.addHost('router16', loopback="127.0.0.1",
-        ips=['192.168.1.26/24','10.10.9.2/24','10.10.17.2/24','10.10.15.1/24','10.10.16.1/24'],
+    router16 = self.addHost('router16', ips=['192.168.1.26/24','10.10.9.2/24','10.10.17.2/24','10.10.15.1/24','10.10.16.1/24'],
         controller_ip="192.168.1.10",
         cls=RAUSwitch)
 
-    router17 = self.addHost('router17', loopback="127.0.0.1",
-        ips=['192.168.1.27/24','10.10.15.2/24'],
-        controller_ip="192.168.1.10",
-        cls=RAUSwitch)
-    
-
-    router18 = self.addHost('router18', loopback="127.0.0.1",
-        ips=['192.168.1.28/24','10.10.16.2/24','10.10.22.1/24'],
+    router17 = self.addHost('router17', ips=['192.168.1.27/24','10.10.15.2/24'],
         controller_ip="192.168.1.10",
         cls=RAUSwitch)
     
 
-    router19 = self.addHost('router19', loopback="127.0.0.1",
-        ips=['192.168.1.29/24','10.10.21.2/24','10.10.23.1/24'],
-        controller_ip="192.168.1.10",
-        cls=RAUSwitch)
-
-    router20 = self.addHost('router20', loopback="127.0.0.1",
-        ips=['192.168.1.30/24','10.10.22.2/24','10.10.24.1/24'],
-        controller_ip="192.168.1.10",
-        cls=RAUSwitch)
-
-    router21 = self.addHost('router21', loopback="127.0.0.1",
-        ips=['192.168.1.31/24','10.10.23.2/24','10.10.24.2/24','10.10.29.1/24','10.10.31.1/24'],
+    router18 = self.addHost('router18', ips=['192.168.1.28/24','10.10.16.2/24','10.10.22.1/24'],
         controller_ip="192.168.1.10",
         cls=RAUSwitch)
     
 
-    router22 = self.addHost('router22', loopback="127.0.0.1",
-        ips=['192.168.1.32/24','10.10.29.2/24','10.10.26.1/24','10.10.30.1/24'],
+    router19 = self.addHost('router19', ips=['192.168.1.29/24','10.10.21.2/24','10.10.23.1/24'],
         controller_ip="192.168.1.10",
         cls=RAUSwitch)
 
-    router23 = self.addHost('router23', loopback="127.0.0.1",
-              ips=['192.168.1.33/24','10.10.26.2/24','10.10.27.1/24'],
+    router20 = self.addHost('router20', ips=['192.168.1.30/24','10.10.22.2/24','10.10.24.1/24'],
+        controller_ip="192.168.1.10",
+        cls=RAUSwitch)
+
+    router21 = self.addHost('router21', ips=['192.168.1.31/24','10.10.23.2/24','10.10.24.2/24','10.10.29.1/24','10.10.31.1/24'],
+        controller_ip="192.168.1.10",
+        cls=RAUSwitch)
+    
+
+    router22 = self.addHost('router22', ips=['192.168.1.32/24','10.10.29.2/24','10.10.26.1/24','10.10.30.1/24'],
+        controller_ip="192.168.1.10",
+        cls=RAUSwitch)
+
+    router23 = self.addHost('router23', ips=['192.168.1.33/24','10.10.26.2/24','10.10.27.1/24'],
               controller_ip="192.168.1.10",
               cls=RAUSwitch)
 
-    router24 = self.addHost('router24', loopback="127.0.0.1",
-          ips=['192.168.1.34/24','10.10.27.2/24','10.10.28.1/24'],
+    router24 = self.addHost('router24', ips=['192.168.1.34/24','10.10.27.2/24','10.10.28.1/24'],
           controller_ip="192.168.1.10",
           cls=RAUSwitch)
     
 
-    router25 = self.addHost('router25', loopback="127.0.0.1",
-              ips=['192.168.1.35/24','10.10.31.2/24','10.10.32.1/24'],
+    router25 = self.addHost('router25', ips=['192.168.1.35/24','10.10.31.2/24','10.10.32.1/24'],
               controller_ip="192.168.1.10",
               cls=RAUSwitch)
     
 
-    router26 = self.addHost('router26', loopback="127.0.0.1",
-              ips=['192.168.1.36/24','10.10.32.2/24','10.10.33.1/24'],
+    router26 = self.addHost('router26', ips=['192.168.1.36/24','10.10.32.2/24','10.10.33.1/24'],
               controller_ip="192.168.1.10",
               cls=RAUSwitch)
 
-    router27 = self.addHost('router27', loopback="127.0.0.1",
-        ips=['192.168.1.37/24','10.10.30.2/24','10.10.33.2/24','10.10.34.1/24','10.10.35.1/24'],
+    router27 = self.addHost('router27', ips=['192.168.1.37/24','10.10.30.2/24','10.10.33.2/24','10.10.34.1/24','10.10.35.1/24'],
         controller_ip="192.168.1.10",
         cls=RAUSwitch)
 
-    router28 = self.addHost('router28', loopback="127.0.0.1",
-        ips=['192.168.1.38/24','10.10.34.2/24','10.10.36.1/24'],
-        controller_ip="192.168.1.10",
-        cls=RAUSwitch)
-    
-
-    router29 = self.addHost('router29', loopback="127.0.0.1",
-        ips=['192.168.1.39/24','10.10.25.2/24','10.10.28.2/24','10.10.37.1/24'],
+    router28 = self.addHost('router28', ips=['192.168.1.38/24','10.10.34.2/24','10.10.36.1/24'],
         controller_ip="192.168.1.10",
         cls=RAUSwitch)
     
 
-    router30 = self.addHost('router30', loopback="127.0.0.1",
-        ips=['192.168.1.40/24','10.10.35.2/24','10.10.39.1/24'],
-        controller_ip="192.168.1.10",
-        cls=RAUSwitch)
-
-    router31 = self.addHost('router31', loopback="127.0.0.1",
-        ips=['192.168.1.41/24','10.10.36.2/24','10.10.37.2/24','10.10.38.1/24'],
-        controller_ip="192.168.1.10",
-        cls=RAUSwitch)
-
-    router32 = self.addHost('router32', loopback="127.0.0.1",
-        ips=['192.168.1.42/24','10.10.39.2/24','10.10.38.2/24','10.10.41.1/24','10.10.40.1/24'],
+    router29 = self.addHost('router29', ips=['192.168.1.39/24','10.10.25.2/24','10.10.28.2/24','10.10.37.1/24'],
         controller_ip="192.168.1.10",
         cls=RAUSwitch)
     
 
-    router33 = self.addHost('router33', loopback="127.0.0.1",
-        ips=['192.168.1.43/24','10.10.41.2/24','10.10.42.1/24'],
+    router30 = self.addHost('router30', ips=['192.168.1.40/24','10.10.35.2/24','10.10.39.1/24'],
         controller_ip="192.168.1.10",
         cls=RAUSwitch)
 
-    router34 = self.addHost('router34', loopback="127.0.0.1",
-              ips=['192.168.1.44/24','10.10.40.2/24','10.10.42.2/24','10.10.43.1/24','10.10.45.1/24','10.10.44.1/24'],
+    router31 = self.addHost('router31', ips=['192.168.1.41/24','10.10.36.2/24','10.10.37.2/24','10.10.38.1/24'],
+        controller_ip="192.168.1.10",
+        cls=RAUSwitch)
+
+    router32 = self.addHost('router32', ips=['192.168.1.42/24','10.10.39.2/24','10.10.38.2/24','10.10.41.1/24','10.10.40.1/24'],
+        controller_ip="192.168.1.10",
+        cls=RAUSwitch)
+    
+
+    router33 = self.addHost('router33', ips=['192.168.1.43/24','10.10.41.2/24','10.10.42.1/24'],
+        controller_ip="192.168.1.10",
+        cls=RAUSwitch)
+
+    router34 = self.addHost('router34', ips=['192.168.1.44/24','10.10.40.2/24','10.10.42.2/24','10.10.43.1/24','10.10.45.1/24','10.10.44.1/24'],
               controller_ip="192.168.1.10",
               cls=RAUSwitch)
 
-    router35 = self.addHost('router35', loopback="127.0.0.1",
-          ips=['192.168.1.45/24','10.10.43.2/24','10.10.46.1/24'],
+    router35 = self.addHost('router35', ips=['192.168.1.45/24','10.10.43.2/24','10.10.46.1/24'],
           controller_ip="192.168.1.10",
           cls=RAUSwitch)
     
 
-    router36 = self.addHost('router36', loopback="127.0.0.1",
-              ips=['192.168.1.46/24','10.10.46.2/24','10.10.47.1/24'],
+    router36 = self.addHost('router36', ips=['192.168.1.46/24','10.10.46.2/24','10.10.47.1/24'],
               controller_ip="192.168.1.10",
               cls=RAUSwitch)
     
 
-    router37 = self.addHost('router37', loopback="127.0.0.1",
-              ips=['192.168.1.47/24','10.10.47.2/24','10.10.48.1/24','10.0.0.2/24'],
+    router37 = self.addHost('router37', ips=['192.168.1.47/24','10.10.47.2/24','10.10.48.1/24','10.0.0.2/24'],
               controller_ip="192.168.1.10",
               border=1, ce_ip_address='10.0.0.1', ce_mac_address='00:00:00:00:00:01',
               cls=RAUSwitch)
 
-    router38 = self.addHost('router38', loopback="127.0.0.1",
-        ips=['192.168.1.48/24','10.10.48.2/24','10.1.0.2/24'],
+    router38 = self.addHost('router38', ips=['192.168.1.48/24','10.10.48.2/24','10.1.0.2/24'],
         controller_ip="192.168.1.10",
         border=1, ce_ip_address='10.1.0.1', ce_mac_address='00:00:00:00:00:02',
         cls=RAUSwitch)
 
-    router39 = self.addHost('router39', loopback="127.0.0.1",
-        ips=['192.168.1.49/24','10.10.45.2/24','10.10.49.1/24'],
+    router39 = self.addHost('router39', ips=['192.168.1.49/24','10.10.45.2/24','10.10.49.1/24'],
         controller_ip="192.168.1.10",
         cls=RAUSwitch)
     
 
-    router40 = self.addHost('router40', loopback="127.0.0.1",
-        ips=['192.168.1.50/24','10.10.49.2/24','10.10.50.1/24','10.10.51.1/24'],
+    router40 = self.addHost('router40', ips=['192.168.1.50/24','10.10.49.2/24','10.10.50.1/24','10.10.51.1/24'],
         controller_ip="192.168.1.10",
         cls=RAUSwitch)
     
 
-    router41 = self.addHost('router41', loopback="127.0.0.1",
-        ips=['192.168.1.51/24','10.10.44.2/24','10.10.50.2/24','10.10.53.1/24','10.10.52.1/24'],
+    router41 = self.addHost('router41', ips=['192.168.1.51/24','10.10.44.2/24','10.10.50.2/24','10.10.53.1/24','10.10.52.1/24'],
         controller_ip="192.168.1.10",
         cls=RAUSwitch)
 
-    router42 = self.addHost('router42', loopback="127.0.0.1",
-        ips=['192.168.1.52/24','10.10.53.2/24','10.10.54.1/24'],
+    router42 = self.addHost('router42', ips=['192.168.1.52/24','10.10.53.2/24','10.10.54.1/24'],
         controller_ip="192.168.1.10",
         cls=RAUSwitch)
 
-    router43 = self.addHost('router43', loopback="127.0.0.1",
-        ips=['192.168.1.53/24','10.10.52.2/24','10.10.54.2/24','10.10.55.1/24','10.10.56.1/24'],
+    router43 = self.addHost('router43', ips=['192.168.1.53/24','10.10.52.2/24','10.10.54.2/24','10.10.55.1/24','10.10.56.1/24'],
         controller_ip="192.168.1.10",
         cls=RAUSwitch)
     
 
-    router44 = self.addHost('router44', loopback="127.0.0.1",
-        ips=['192.168.1.54/24','10.10.51.2/24','10.10.55.2/24','10.10.57.1/24'],
+    router44 = self.addHost('router44', ips=['192.168.1.54/24','10.10.51.2/24','10.10.55.2/24','10.10.57.1/24'],
         controller_ip="192.168.1.10",
         cls=RAUSwitch)
 
-    router45 = self.addHost('router45', loopback="127.0.0.1",
-        ips=['192.168.1.55/24','10.10.56.2/24','10.10.57.2/24'],
+    router45 = self.addHost('router45', ips=['192.168.1.55/24','10.10.56.2/24','10.10.57.2/24'],
         controller_ip="192.168.1.10",
         cls=RAUSwitch)
     
