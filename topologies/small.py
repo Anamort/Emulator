@@ -15,8 +15,8 @@ class CustomTopology( Topo ):
     Topo.__init__( self )
 
     # Hosts
-    h0 = self.addHost('h0', ip='10.0.1.2/24', gw='10.0.1.1', cls=RAUHost)
-    h1 = self.addHost('h1', ip='10.1.1.2/24', gw='10.1.1.1', cls=RAUHost)
+    h0 = self.addHost('h0', ips=['10.0.1.2/24'], gw='10.0.1.1', cls=RAUHost)
+    h1 = self.addHost('h1', ips=['10.1.1.2/24'], gw='10.1.1.1', cls=RAUHost)
 
     routerLan1 = self.addHost('routerLan1', ips=['10.0.0.1/24', '10.0.1.1/24'],
                                 ce_mac_address='00:00:00:00:00:01',
@@ -80,8 +80,7 @@ class CustomTopology( Topo ):
     
 
     # Controlador
-    root = self.addHost('controller', cls=RAUController,
-      ip='192.168.1.10/24')
+    root = self.addHost('controller', cls=RAUController, ips=['192.168.1.10/24'])
     
     # Switch de la red de gestion
     man_switch = self.addSwitch('s1', protocols='OpenFlow13', failMode='standalone')

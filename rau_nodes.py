@@ -14,6 +14,10 @@ from subprocess import Popen,PIPE
 from mininet.node import Host
 from mininet.log import info, error
 
+#########################################################################
+########################### AUXILIARY METHODS ###########################
+#########################################################################
+
 # Los siguientes metodos son metodos auxiliares para obtener
 # direcciones IP y mascaras de red a partir del formato X.X.X.X/X
 # ya que con ese formato se pasan las direcciones a los constructores
@@ -37,7 +41,27 @@ def getNetmask(ip_address):
     return "255.255.0.0"
   if (mask_length == 24):
     return "255.255.255.0"
-  return "255.255.255.255"  
+  return "255.255.255.255"
+
+def checkIPAddressesAndInterfaces(node_name, intfList, ips):
+  if len(intfList) > len(ips):
+    raise Exception(node_name + " wasn't created with enough IP addresses")
+  elif len(intfList) < len(ips):
+    raise Exception(node_name + " was created with too many IP addresses")
+
+def setIPAddressesToInterfaces(node_name, intfList, ips):
+  checkIPAddressesAndInterfaces(node_name, intfList, ips)
+  # Iterate over the interfaces and assign each IP address
+  i = 0
+  for intf in intfList:
+    ip = getIP(ips[i])
+    mask = getMaskLength(ips[i])
+    intf.setIP(ip,mask)
+    i += 1
+
+#########################################################################
+######################### RAUHost Class Definition ######################
+#########################################################################
 
 class RAUHost(Host):
   def __init__(self, name, ips, gw=None, ce_mac_address=None, *args, **kwargs ):
@@ -48,13 +72,9 @@ class RAUHost(Host):
 		
   def start(self):
     info("%s " % self.name)
+
     # Configuros la ips
-    i = 0
-    for intf in self.intfList():
-      ip = getIP(self.ips[i])
-      mask = getMaskLength(self.ips[i])
-      intf.setIP(ip,mask)
-      i += 1
+    setIPAddressesToInterfaces(self.name, self.intfList(), self.ips)
 
     if self.ce_mac_address is not None:
       # Se configura la MAC de la interfaz con la red backbone
@@ -67,6 +87,10 @@ class RAUHost(Host):
   def terminate( self ):
     Host.terminate(self)
 
+#########################################################################
+###################### RAUController Class Definition ###################
+#########################################################################
+
 class RAUController(Host):
   def __init__(self, name, ips, *args, **kwargs ):
     Host.__init__(self, name, *args, **kwargs )
@@ -74,13 +98,9 @@ class RAUController(Host):
 		
   def start(self):
     info("%s " % self.name)
+
     # Configuro las ips
-    i = 0
-    for intf in self.intfList():
-      ip = getIP(self.ips[i])
-      mask = getMaskLength(self.ips[i])
-      intf.setIP(ip,mask)
-      i += 1
+    setIPAddressesToInterfaces(self.name, self.intfList(), self.ips)
 
     # ip = getIP(self.ip)
     # mask = getMaskLength(self.ip)
@@ -94,6 +114,10 @@ class RAUController(Host):
     self.cmd("pkill -f ryu_start.sh")
     self.cmd("pkill -f gui_topology.py")
     Host.terminate(self)
+
+#########################################################################
+##################### RAUSwitch Class Definition ########################
+#########################################################################
 
 class RAUSwitch(Host):
   zebra_exec = '/usr/lib/quagga/zebra'
@@ -122,6 +146,17 @@ class RAUSwitch(Host):
 		
   def start(self):
     info("%s " % self.name)
+
+    ### Some sanity checks ###
+
+    # Sanity check for interfaces and ip addresses
+    checkIPAddressesAndInterfaces(self.name, self.intfList(), self.ips)
+    # Sanity check for border, ce_ip_address and ce_mac_address parameters
+    if self.border == 1 and (self.ce_mac_address is None or self.ce_ip_address is None):
+      raise Exception(self.name + " is set as a border switch but doesn't have ce_ip_address and ce_mac_address")
+
+    ########################
+
     # if_names: lista que contiene los nombres de las interfaces del router
     if_names = []
     for intf in self.intfList():
@@ -323,6 +358,10 @@ class RAUSwitch(Host):
     self.cmd("pkill -f wsOVS.py")
     Host.terminate(self)
     shutil.rmtree("%s/%s" %(self.baseDIR, self.name), ignore_errors=True)
+
+#########################################################################
+###################### QuaggaRouter Class Definition ####################
+#########################################################################
     
 class QuaggaRouter(Host):
   zebra_exec = '/usr/lib/quagga/zebra'
@@ -345,12 +384,7 @@ class QuaggaRouter(Host):
     self.intfList()[0].setMAC(self.ce_mac_address)
     
     # Se asignan las direcciones IP a las interfaces
-    i = 0
-    for intf in self.intfList():
-      ip = getIP(self.ips[i])
-      mask = getMaskLength(self.ips[i])
-      intf.setIP(ip,mask)
-      i = i + 1      
+    setIPAddressesToInterfaces(self.name, self.intfList(), self.ips)     
     
     # Configuracion de Quagga
     shutil.rmtree("%s/%s" %(self.baseDIR, self.name), ignore_errors=True)
