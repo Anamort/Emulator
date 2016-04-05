@@ -2,3 +2,7 @@ explicación para que aumente el tiempo de carga a medida que hay mas vpn
 con que detalle explicar los errores de codigo
 
 idioma de los comentarios y codigo
+
+
+PARA ESTUDIAR:
+escalabilidad de la red de gestion y tiempo de ejecucion del script de topo
