@@ -27,7 +27,8 @@ if password:
 
 tn.write("show ip ospf database router\n")
 tn.write("exit\n")
-salida = tn.read_all()
+# salida = tn.read_all()
+salida = tn.read_very_eager()
 
 arregloNodos = salida.split("LS age")
 

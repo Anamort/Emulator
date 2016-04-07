@@ -94,7 +94,7 @@ class CustomTopology( Topo ):
               controller_ip="192.168.1.10",
               cls=RAUSwitch)
 
-    router16 = self.addHost('router16', ips=['192.168.1.26/24','10.10.15.2/24','10.10.31.1/24','10.10.32.1/24'],
+    router16 = self.addHost('router16', ips=['192.168.1.26/24','10.10.15.2/24','10.10.31.1/24'],
         controller_ip="192.168.1.10",
         cls=RAUSwitch)
 
@@ -103,16 +103,16 @@ class CustomTopology( Topo ):
         cls=RAUSwitch)
     
 
-    router18 = self.addHost('router18', ips=['192.168.1.28/24','10.10.17.2/24','10.10.35.1/24','10.10.36.1/24'],
+    router18 = self.addHost('router18', ips=['192.168.1.28/24','10.10.17.2/24','10.10.35.1/24'],
         controller_ip="192.168.1.10",
         cls=RAUSwitch)
     
 
-    router19 = self.addHost('router19', ips=['192.168.1.29/24','10.10.18.2/24','10.10.37.1/24','10.10.38.1/24'],
+    router19 = self.addHost('router19', ips=['192.168.1.29/24','10.10.18.2/24','10.10.37.1/24'],
         controller_ip="192.168.1.10",
         cls=RAUSwitch)
 
-    router20 = self.addHost('router20', ips=['192.168.1.30/24','10.10.19.2/24','10.10.39.1/24','10.10.40.1/24'],
+    router20 = self.addHost('router20', ips=['192.168.1.30/24','10.10.19.2/24','10.10.39.1/24'],
         controller_ip="192.168.1.10",
         cls=RAUSwitch)
 
@@ -170,9 +170,9 @@ class CustomTopology( Topo ):
         cls=RAUSwitch)
     
 
-    router33 = self.addHost('router33', ips=['192.168.1.43/24','10.10.32.2/24','10.10.65.1/24'],
-        controller_ip="192.168.1.10",
-        cls=RAUSwitch)
+    # router33 = self.addHost('router33', ips=['192.168.1.43/24','10.10.32.2/24','10.10.65.1/24'],
+    #     controller_ip="192.168.1.10",
+    #     cls=RAUSwitch)
 
     router34 = self.addHost('router34', ips=['192.168.1.44/24','10.10.33.2/24','10.10.66.1/24'],
               controller_ip="192.168.1.10",
@@ -188,17 +188,17 @@ class CustomTopology( Topo ):
               cls=RAUSwitch)
     
 
-    router37 = self.addHost('router37', ips=['192.168.1.47/24','10.10.36.2/24','10.10.71.1/24'],
-              controller_ip="192.168.1.10",
-              cls=RAUSwitch)
+    # router37 = self.addHost('router37', ips=['192.168.1.47/24','10.10.36.2/24','10.10.71.1/24'],
+    #           controller_ip="192.168.1.10",
+    #           cls=RAUSwitch)
 
     router38 = self.addHost('router38', ips=['192.168.1.48/24','10.10.37.2/24','10.10.72.1/24'],
         controller_ip="192.168.1.10",
         cls=RAUSwitch)
 
-    router39 = self.addHost('router39', ips=['192.168.1.49/24','10.10.38.2/24','10.10.73.1/24'],
-        controller_ip="192.168.1.10",
-        cls=RAUSwitch)
+    # router39 = self.addHost('router39', ips=['192.168.1.49/24','10.10.38.2/24','10.10.73.1/24'],
+    #     controller_ip="192.168.1.10",
+    #     cls=RAUSwitch)
     
 
     router40 = self.addHost('router40', ips=['192.168.1.50/24','10.10.39.2/24','10.10.74.1/24'],
@@ -206,9 +206,9 @@ class CustomTopology( Topo ):
         cls=RAUSwitch)
     
 
-    router41 = self.addHost('router41', ips=['192.168.1.51/24','10.10.40.2/24','10.10.75.1/24'],
-        controller_ip="192.168.1.10",
-        cls=RAUSwitch)
+    # router41 = self.addHost('router41', ips=['192.168.1.51/24','10.10.40.2/24','10.10.75.1/24'],
+    #     controller_ip="192.168.1.10",
+    #     cls=RAUSwitch)
 
     router42 = self.addHost('router42', ips=['192.168.1.52/24','10.10.41.2/24','10.10.76.1/24'],
         controller_ip="192.168.1.10",
@@ -316,9 +316,9 @@ class CustomTopology( Topo ):
         controller_ip="192.168.1.10",
         cls=RAUSwitch)
 
-    router66 = self.addHost('router66', ips=['192.168.1.76/24','10.10.65.2/24'],
-        controller_ip="192.168.1.10",
-        cls=RAUSwitch)
+    # router66 = self.addHost('router66', ips=['192.168.1.76/24','10.10.65.2/24'],
+    #     controller_ip="192.168.1.10",
+    #     cls=RAUSwitch)
     
 
     router67 = self.addHost('router67', ips=['192.168.1.77/24','10.10.66.2/24'],
@@ -343,27 +343,27 @@ class CustomTopology( Topo ):
               controller_ip="192.168.1.10",
               cls=RAUSwitch)
 
-    router72 = self.addHost('router72', ips=['192.168.1.82/24','10.10.71.2/24'],
-        controller_ip="192.168.1.10",
-        cls=RAUSwitch)
+    # router72 = self.addHost('router72', ips=['192.168.1.82/24','10.10.71.2/24'],
+    #     controller_ip="192.168.1.10",
+    #     cls=RAUSwitch)
 
     router73 = self.addHost('router73', ips=['192.168.1.83/24','10.10.72.2/24'],
         controller_ip="192.168.1.10",
         cls=RAUSwitch)
     
 
-    router74 = self.addHost('router74', ips=['192.168.1.84/24','10.10.73.2/24'],
-        controller_ip="192.168.1.10",
-        cls=RAUSwitch)
+    # router74 = self.addHost('router74', ips=['192.168.1.84/24','10.10.73.2/24'],
+    #     controller_ip="192.168.1.10",
+    #     cls=RAUSwitch)
     
 
     router75 = self.addHost('router75', ips=['192.168.1.85/24','10.10.74.2/24'],
         controller_ip="192.168.1.10",
         cls=RAUSwitch)
 
-    router76 = self.addHost('router76', ips=['192.168.1.86/24','10.10.75.2/24'],
-        controller_ip="192.168.1.10",
-        cls=RAUSwitch)
+    # router76 = self.addHost('router76', ips=['192.168.1.86/24','10.10.75.2/24'],
+    #     controller_ip="192.168.1.10",
+    #     cls=RAUSwitch)
 
     router77 = self.addHost('router77', ips=['192.168.1.87/24','10.10.76.2/24','10.0.0.2/24'],
         controller_ip="192.168.1.10",
@@ -529,15 +529,15 @@ class CustomTopology( Topo ):
     self.addLink(man_switch, router30, 31, 0)
     self.addLink(man_switch, router31, 32, 0)
     self.addLink(man_switch, router32, 33, 0)
-    self.addLink(man_switch, router33, 34, 0)
+    # self.addLink(man_switch, router33, 34, 0)
     self.addLink(man_switch, router34, 35, 0)
     self.addLink(man_switch, router35, 36, 0)
     self.addLink(man_switch, router36, 37, 0)
-    self.addLink(man_switch, router37, 38, 0)
+    # self.addLink(man_switch, router37, 38, 0)
     self.addLink(man_switch, router38, 39, 0)
-    self.addLink(man_switch, router39, 40, 0)
+    # self.addLink(man_switch, router39, 40, 0)
     self.addLink(man_switch, router40, 41, 0)
-    self.addLink(man_switch, router41, 42, 0)
+    # self.addLink(man_switch, router41, 42, 0)
     self.addLink(man_switch, router42, 43, 0)
     self.addLink(man_switch, router43, 44, 0)
     self.addLink(man_switch, router44, 45, 0)
@@ -562,17 +562,17 @@ class CustomTopology( Topo ):
     self.addLink(man_switch, router63, 64, 0)
     # self.addLink(man_switch, router64, 65, 0)
     self.addLink(man_switch, router65, 66, 0)
-    self.addLink(man_switch, router66, 67, 0)
+    # self.addLink(man_switch, router66, 67, 0)
     self.addLink(man_switch, router67, 68, 0)
     # self.addLink(man_switch, router68, 69, 0)
     self.addLink(man_switch, router69, 70, 0)
     # self.addLink(man_switch, router70, 71, 0)
     self.addLink(man_switch, router71, 72, 0)
-    self.addLink(man_switch, router72, 73, 0)
+    # self.addLink(man_switch, router72, 73, 0)
     self.addLink(man_switch, router73, 74, 0)
-    self.addLink(man_switch, router74, 75, 0)
+    # self.addLink(man_switch, router74, 75, 0)
     self.addLink(man_switch, router75, 76, 0)
-    self.addLink(man_switch, router76, 77, 0)
+    # self.addLink(man_switch, router76, 77, 0)
     self.addLink(man_switch, router77, 78, 0)
     # self.addLink(man_switch, router78, 79, 0)
     self.addLink(man_switch, router79, 80, 0)
@@ -635,15 +635,15 @@ class CustomTopology( Topo ):
     self.addLink(router15, router30, 2, 1)
     self.addLink(router15, router31, 3, 1)
     self.addLink(router16, router32, 2, 1)
-    self.addLink(router16, router33, 3, 1)
+    # self.addLink(router16, router33, 3, 1)
     self.addLink(router17, router34, 2, 1)
     self.addLink(router17, router35, 3, 1)
     self.addLink(router18, router36, 2, 1)
-    self.addLink(router18, router37, 3, 1)
+    # self.addLink(router18, router37, 3, 1)
     self.addLink(router19, router38, 2, 1)
-    self.addLink(router19, router39, 3, 1)
+    # self.addLink(router19, router39, 3, 1)
     self.addLink(router20, router40, 2, 1)
-    self.addLink(router20, router41, 3, 1)
+    # self.addLink(router20, router41, 3, 1)
     self.addLink(router21, router42, 2, 1)
     self.addLink(router21, router43, 3, 1)
     self.addLink(router22, router44, 2, 1)
@@ -668,17 +668,17 @@ class CustomTopology( Topo ):
     self.addLink(router31, router63, 3, 1)
     # self.addLink(router32, router64, 2, 1)
     self.addLink(router32, router65, 2, 1)
-    self.addLink(router33, router66, 2, 1)
+    # self.addLink(router33, router66, 2, 1)
     self.addLink(router34, router67, 2, 1)
     # self.addLink(router35, router68, 2, 1)
     self.addLink(router35, router69, 2, 1)
     # self.addLink(router36, router70, 2, 1)
     self.addLink(router36, router71, 2, 1)
-    self.addLink(router37, router72, 2, 1)
+    # self.addLink(router37, router72, 2, 1)
     self.addLink(router38, router73, 2, 1)
-    self.addLink(router39, router74, 2, 1)
+    # self.addLink(router39, router74, 2, 1)
     self.addLink(router40, router75, 2, 1)
-    self.addLink(router41, router76, 2, 1)
+    # self.addLink(router41, router76, 2, 1)
     self.addLink(router42, router77, 2, 1)
     # self.addLink(router43, router78, 2, 1)
     self.addLink(router43, router79, 2, 1)

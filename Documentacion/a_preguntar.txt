@@ -6,3 +6,6 @@ idioma de los comentarios y codigo
 
 PARA ESTUDIAR:
 escalabilidad de la red de gestion y tiempo de ejecucion del script de topo
+
+91 nodos: no anda.
+Con 82 nodos no hay problema de broken pipe, pero script de topo no termina. Problema con python/telnet buffers? read_very_eager lo soluciona.
