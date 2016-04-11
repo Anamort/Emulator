@@ -102,11 +102,9 @@ class RAUController(Host):
     # Configuro las ips
     setIPAddressesToInterfaces(self.name, self.intfList(), self.ips)
 
-    # ip = getIP(self.ip)
-    # mask = getMaskLength(self.ip)
-    # self.intfList()[0].setIP(ip,mask)
     # Se levanta el controlador
     self.cmd('sh utils/ryu_start.sh &')
+    # self.cmd('tcpdump -i controller-eth0 -w contr2.cap &')
     
   def terminate( self ):
     # Usar con cuidado
@@ -183,19 +181,13 @@ class RAUSwitch(Host):
     self.name, self.OF_V))
     self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait set-fail-mode %s secure" %(self.path_ovs, self.name))
     self.cmd('ovs-vsctl --db=unix:%s/db.sock --no-wait set bridge %s datapath_type=netdev' %(self.path_ovs, self.name))
-    # self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait set controller %s connection-mode=out-of-band" %(self.path_ovs, self.name))
     
     # Configuracion de sFlow
     # self.cmd("sudo ovs-vsctl --db=unix:%s/db.sock --no-wait -- --id=@sflow create sflow agent=%s  target=\"%s\" sampling=10 polling=10 -- -- set bridge %s sflow=@sflow" %(self.path_ovs, if_names[0], self.controller_ip, self.name))
     
     # Se asignan las direcciones IP a las interfaces fisicas
     # Esto es provisorio solo para facilitar la implementacion de "ports_info"
-    i = 0
-    for intf in self.intfList():
-      ip = getIP(self.ips[i])
-      mask = getMaskLength(self.ips[i])
-      intf.setIP(ip,mask)
-      i = i + 1
+    setIPAddressesToInterfaces(self.name, self.intfList(), self.ips)
    
     # Configurar other_config, que va a incluir datos de los puertos
     ip_addr_config_field = "other_config:ports_info="
@@ -217,6 +209,8 @@ class RAUSwitch(Host):
     
     # Agregar controlador
     self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait set-controller %s tcp:%s:6633" %(self.path_ovs, self.name, self.controller_ip))
+    # self.cmd("ovs-vsctl --db=unix:%s/db.sock set controller %s connection-mode=out-of-band" %(self.path_ovs, self.name))
+    self.cmd("ovs-vsctl --db=unix:%s/db.sock set controller %s inactivity_probe=45000" %(self.path_ovs, self.name))
     
     # Gestion remota
     self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait set-manager ptcp:%s" %(self.path_ovs, self.OVS_MANAGEMENT_PORT))
@@ -231,9 +225,6 @@ class RAUSwitch(Host):
     for interfaceName in vif_names:
       port_number = port_number + 1
       self.cmd("ovs-vsctl --db=unix:%s/db.sock add-port %s %s -- set Interface %s type=internal ofport_request=%s" %(self.path_ovs, self.name, interfaceName, interfaceName, str(port_number)))
-    
-    # Prueba con 1 segundo de espera antes de agregar flujos
-    # time.sleep(5)
 
     # Instala flujos para las interfaces virtuales
     i = 1
