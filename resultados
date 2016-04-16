@@ -1,106 +1,31 @@
 Topologia basica:
-	Camino de 1 nodo: 0.033039 0.030542 0.024723 0.028429 (capa 2) ||||| 0.002574 0.002572 0.002505 0.004862 (capa 3) ||||| 886 903 889 ||||| 937 956 941
+Camino 1, Corrida 1, Capa 2 ===> 0.093309 + 0.095303
+Camino 1, Corrida 2, Capa 2 ===> 0.094577 + 0.093533
+Camino 1, Corrida 3, Capa 2 ===> 0.095365 + 0.103895
+Camino 1, Corrida 4, Capa 2 ===> 0.093469 + 0.095472
+Camino 1, Corrida 1, Capa 3 ===> 0.007251 + 0.007564
+Camino 1, Corrida 2, Capa 3 ===> 0.015591 + 0.007515
+Camino 1, Corrida 3, Capa 3 ===> 0.007754 + 0.007898
+Camino 1, Corrida 4, Capa 3 ===> 0.007674 + 0.007860
+
 Topologia chica:
-	Camino de 1 nodo: 0.035848 0.028922 0.032488 0.032765 (capa 2) ||||| 0.002959 0.002905 0.003108 0.004570 (capa 3) ||||| X X X ||||| Y Y Y
-	Camino de 2 nodo: 0.049485 0.051403 0.048168 0.052503 (capa 2) ||||| 0.003411 0.003619 0.003453 0.005191 (capa 3) ||||| X X X ||||| Y Y Y
-	Camino de 4 nodo: 0.053853 0.052651 0.050458 0.053370 (capa 2) ||||| 0.003941 0.004149 0.004105 0.006505 (capa 3) ||||| X X X ||||| Y Y Y
-	Camino de 6 nodo: 0.053222 0.054077 0.051948 0.056445 (capa 2) ||||| 0.005059 0.011031 0.008436 0.005675 (capa 3) ||||| X X X ||||| Y Y Y
-	Camino de 8 nodo: 0.053933 0.053616 0.056469 0.055150 (capa 2) ||||| 0.004925 0.005160 0.005035 0.008904 (capa 3) ||||| 240 169 137 y despues como 900 ||||| 1001 903 917
-Topologia mediana:
-	Camino de 1 nodo: 0.041120 0.038490 0.043019 0.043475 (capa 2) ||||| 0.008767 0.009400 0.008424 0.011982 (capa 3) ||||| X X X ||||| Y Y Y
-	Camino de 2 nodo: 0.061994 0.057779 0.061300 0.066937 (capa 2) ||||| 0.011729 0.009167 0.008624 0.013391 (capa 3) ||||| X X X ||||| Y Y Y
-	Camino de 4 nodo: 0.058580 0.064428 0.068568 0.056623 (capa 2) ||||| 0.009834 0.014069 0.012081 0.009736 (capa 3) ||||| X X X ||||| Y Y Y
-	Camino de 6 nodo: 0.061753 0.063936 0.065798 0.071371 (capa 2) ||||| 0.015611 0.010638 0.010570 0.010770 (capa 3) ||||| X X X ||||| Y Y Y
-	Camino de 8 nodo: 0.072767 0.063147 0.058724 0.062552 (capa 2) ||||| 0.009986 0.010322 0.011607 0.015536 (capa 3) ||||| X X X ||||| Y Y Y
-	Camino de 10 nodo: 0.066617 0.073766 0.064166 0.075089 (capa 2) ||||| 0.011190 0.011341 0.016157 0.014030 (capa 3) ||||| X X X ||||| Y Y Y
-	Camino de 12 nodo: 0.073136 0.072035 0.072301 0.072118 (capa 2) ||||| 0.012001 0.012489 0.012071 0.018497 (capa 3) ||||| X X X ||||| Y Y Y
-	Camino de 13 nodo: 0.072579 0.063308 0.064778 0.066157 (capa 2) ||||| 0.012125 0.012440 0.012961 0.018089 (capa 3) ||||| X X X ||||| Y Y Y
-Topologia grande:
-	Camino de 1 nodo:  (capa 2) |||||  (capa 3) ||||| X X X ||||| Y Y Y
-	Camino de 2 nodo:  (capa 2) |||||  (capa 3) ||||| X X X ||||| Y Y Y
-	Camino de 4 nodo:  (capa 2) |||||  (capa 3) ||||| X X X ||||| Y Y Y
-	Camino de 6 nodo:  (capa 2) |||||  (capa 3) ||||| X X X ||||| Y Y Y
-	Camino de 8 nodo:  (capa 2) |||||  (capa 3) ||||| X X X ||||| Y Y Y
-	Camino de 10 nodo:  (capa 2) |||||  (capa 3) ||||| X X X ||||| Y Y Y
-	Camino de 12 nodo: 0.434917 0.333972 0.369097 0.286729 (capa 2) ||||| 0.091589 0.106026 0.177940 0.110529 (capa 3) ||||| X X X ||||| Y Y Y
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-NUEVOS:
-================================
-Topo Basica
--
-Memoria sin servicios: 33280
-Uso de la CPU sin VPN: 3.0%
-Ancho de banda sin VPN: 886 903 889 (receptor) 937 956 941 (emisor)
-Tiempo de carga de una VPN de capa 3, sin VPN: 0.002513 segundos (ida) 0.007488 (vuelta)
-Tiempo de carga de una VPN de capa 2, sin VPN: 0.033592 segundos (ida) 0.034675 (vuelta)
--
-Memoria con 15.000 VPN: 407696
-Uso de la CPU con 15.000 VPN: 67.8%
-Tiempo para crear 15.000 VPN: 8238 segundos
-Ancho de banda con 15.000 VPN: 884 886 887 (receptor) 936 939 938 (emisor)
-Tiempo de carga de una VPN de capa 3, con 15.000 VPN: 0.499023 segundos (ida) 0.490338 (vuelta)
-Tiempo de carga de una VPN de capa 2, con 15.000 VPN: 0.484804 segundos (ida) 0.505755 (vuelta)
--
-Memoria con 3.000 VPN: 108196
-Uso de la CPU con 3.000 VPN: 25.0%
-Tiempo para crear 0-3.000 VPN: 500 segundos
-Ancho de banda con 3.000 VPN: 899 882 880 (receptor) 900 932 931 (emisor)
-Tiempo de carga de una VPN de capa 3, con 3.000 VPN: 0.096597 segundos (ida) 0.096071 (vuelta)
-Tiempo de carga de una VPN de capa 2, con 3.000 VPN: 0.124546 segundos (ida) 0.146423 (vuelta)
--
-Memoria con 6.000 VPN: 182460
-Uso de la CPU con 6.000 VPN: 38.0%
-Tiempo para crear 3.000-6.000 VPN: 1086 segundos
-Ancho de banda con 6.000 VPN: 882 897 881 (receptor) 934 949 931 (emisor)
-Tiempo de carga de una VPN de capa 3, con 6.000 VPN: 0.182752 segundos (ida) 0.188211 (vuelta)
-Tiempo de carga de una VPN de capa 2, con 6.000 VPN: 0.220683 segundos (ida) 0.220042 (vuelta)
--
-Memoria con 9.000 VPN: 256528
-Uso de la CPU con 9.000 VPN: 47.5%
-Tiempo para crear 6.000-9.000 VPN: 1629 segundos
-Ancho de banda con 9.000 VPN: 896 882 893 (receptor) 898 934 895 (emisor)
-Tiempo de carga de una VPN de capa 3, con 9.000 VPN: 0.279042 segundos (ida) 0.290570 (vuelta)
-Tiempo de carga de una VPN de capa 2, con 9.000 VPN: 0.306835 segundos (ida) 0.315573 (vuelta)
--
-Memoria con 12.000 VPN: 333244
-Uso de la CPU con 12.000 VPN: 55.9%
-Tiempo para crear 9.000-12.000 VPN: 2180 segundos
-Ancho de banda con 12.000 VPN: 880 878 896 (receptor) 932 930 949 (emisor)
-Tiempo de carga de una VPN de capa 3, con 12.000 VPN: 0.362166 segundos (ida) 0.383873 (vuelta)
-Tiempo de carga de una VPN de capa 2, con 12.000 VPN: 0.412899 segundos (ida) 0.391985 (vuelta)
-==================================
-Topo Chica
--
-Ancho de banda sin VPN: 856 897 879 (receptor) 896 920 920 (emisor)
--
-Tiempo para crear 12.000-15.000 VPN:  segundos
-Ancho de banda con 15.000 VPN:  (receptor)  (emisor)
--
-Tiempo para crear 0-3.000 VPN:  segundos
-Ancho de banda con 3.000 VPN:  (receptor)  (emisor)
--
-Tiempo para crear 3.000-6.000 VPN:  segundos
-Ancho de banda con 6.000 VPN:  (receptor)  (emisor)
--
-Tiempo para crear 6.000-9.000 VPN:  segundos
-Ancho de banda con 9.000 VPN:  (receptor)  (emisor)
--
-Tiempo para crear 9.000-12.000 VPN:  segundos
-Ancho de banda con 12.000 VPN:  (receptor)  (emisor)
-
+Camino 1, Corrida 1, Capa 2 ===> 
+Camino 1, Corrida 2, Capa 2 ===> 
+Camino 1, Corrida 3, Capa 2 ===> 
+Camino 1, Corrida 4, Capa 2 ===> 
+Camino 1, Corrida 1, Capa 3 ===> 
+Camino 1, Corrida 2, Capa 3 ===> 
+Camino 1, Corrida 3, Capa 3 ===> 
+Camino 1, Corrida 4, Capa 3 ===> 
+****
+Camino 2, Corrida 1, Capa 2 ===> 
+Camino 2, Corrida 2, Capa 2 ===> 
+Camino 2, Corrida 3, Capa 2 ===> 
+Camino 2, Corrida 4, Capa 2 ===> 
+Camino 2, Corrida 1, Capa 3 ===> 
+Camino 2, Corrida 2, Capa 3 ===> 
+Camino 2, Corrida 3, Capa 3 ===> 
+Camino 2, Corrida 4, Capa 3 ===> 
 
 
 ovs-dpctl se conecta con el kernel datapath que esta afuera de ovs-vswitchd. Para conectarme con el userspace (netdev) datapath tengo que usar ovs-appctl --target={ArchivoCTL} dpctl/*
@@ -115,13 +40,11 @@ ovs-vsctl -f table -- --columns=name,ofport,external-ids list interface
 Para ver mapeos ovsPort-portNumber
 http://openvswitch.org/ovs-vswitchd.conf.db.5.pdf
 
-PROBAR SACANDO EL SWITCH DE GESTION
-
-semi-large.py 22995pa 76seg 300pps
-muchas: 0x0a
-		0x0d
-pocas: 0x00
-	   0x05
-	   0x06
-	   0x09
-	   0x0e
+******
+Para conectarse al servidor:
+ssh -X santiago.vidal@lulu.fing.edu.uy
+ssh -X santiago@192.168.60.232
+Proxy: ssh -R 3129:proxy.fing.edu.uy:3128 lar@192.168.60.230
+	   export http_proxy='http://localhost:3129'
+	   export https_proxy='http://localhost:3129'
+******
