@@ -26,6 +26,15 @@ Camino 2, Corrida 1, Capa 3 ===>
 Camino 2, Corrida 2, Capa 3 ===> 
 Camino 2, Corrida 3, Capa 3 ===> 
 Camino 2, Corrida 4, Capa 3 ===> 
+****
+Camino 8, Corrida 1, Capa 2 ===> 
+Camino 8, Corrida 2, Capa 2 ===> 
+Camino 8, Corrida 3, Capa 2 ===> 
+Camino 8, Corrida 4, Capa 2 ===> 
+Camino 8, Corrida 1, Capa 3 ===> 
+Camino 8, Corrida 2, Capa 3 ===> 
+Camino 8, Corrida 3, Capa 3 ===> 
+Camino 8, Corrida 4, Capa 3 ===> 
 
 
 ovs-dpctl se conecta con el kernel datapath que esta afuera de ovs-vswitchd. Para conectarme con el userspace (netdev) datapath tengo que usar ovs-appctl --target={ArchivoCTL} dpctl/*
