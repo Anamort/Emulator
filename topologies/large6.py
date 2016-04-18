@@ -27,8 +27,9 @@ class CustomTopology( Topo ):
                                 gw='10.1.0.2', cls=QuaggaRouter)
     
 
-    router1 = self.addHost('router1', ips=['192.168.1.11/24','10.10.1.1/24','10.10.2.1/24'],
+    router1 = self.addHost('router1', ips=['192.168.1.11/24','10.10.1.1/24','10.10.2.1/24','10.1.0.2/24'],
           controller_ip="192.168.1.10",
+          border=1, ce_ip_address='10.1.0.1', ce_mac_address='00:00:00:00:00:02',
           cls=RAUSwitch)
 
     router2 = self.addHost('router2', ips=['192.168.1.12/24','10.10.1.2/24','10.10.3.1/24','10.10.4.1/24'],
@@ -464,9 +465,8 @@ class CustomTopology( Topo ):
         controller_ip="192.168.1.10",
         cls=RAUSwitch)
 
-    router100 = self.addHost('router100', ips=['192.168.1.110/24','10.10.99.2/24','10.1.0.2/24'],
+    router100 = self.addHost('router100', ips=['192.168.1.110/24','10.10.99.2/24'],
         controller_ip="192.168.1.10",
-        border=1, ce_ip_address='10.1.0.1', ce_mac_address='00:00:00:00:00:02',
         cls=RAUSwitch)
 
     router101 = self.addHost('router101', ips=['192.168.1.111/24','10.10.100.2/24'],
@@ -711,7 +711,7 @@ class CustomTopology( Topo ):
 
     ## Enlaces CE
     self.addLink(router77, routerLan1, 2, 0)
-    self.addLink(router100, routerLan2, 2, 0)
+    self.addLink(router1, routerLan2, 3, 0)
     self.addLink(h0, routerLan1, 0, 1)
     self.addLink(h1, routerLan2, 0, 1)
 
