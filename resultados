@@ -9,14 +9,60 @@ Camino 1, Corrida 3, Capa 3 ===> 0.007754 + 0.007898
 Camino 1, Corrida 4, Capa 3 ===> 0.007674 + 0.007860
 
 Topologia chica:
-Camino 1, Corrida 1, Capa 2 ===> 
-Camino 1, Corrida 2, Capa 2 ===> 
-Camino 1, Corrida 3, Capa 2 ===> 
-Camino 1, Corrida 4, Capa 2 ===> 
-Camino 1, Corrida 1, Capa 3 ===> 
-Camino 1, Corrida 2, Capa 3 ===> 
-Camino 1, Corrida 3, Capa 3 ===> 
-Camino 1, Corrida 4, Capa 3 ===> 
+Camino 1, Corrida 1, Capa 2 ===> 0.051528 + 0.104245
+Camino 1, Corrida 2, Capa 2 ===> 0.104255 + 0.104413
+Camino 1, Corrida 3, Capa 2 ===> 0.111192 + 0.240472
+Camino 1, Corrida 4, Capa 2 ===> 0.106900 + 0.113997
+Camino 1, Corrida 1, Capa 3 ===> 0.018391 + 0.011101
+Camino 1, Corrida 2, Capa 3 ===> 0.009171 + 0.012958
+Camino 1, Corrida 3, Capa 3 ===> 0.009569 + 0.009624
+Camino 1, Corrida 4, Capa 3 ===> 0.009393 + 0.009575
+****
+Camino 2, Corrida 1, Capa 2 ===> 0.074426 + 0.167322
+Camino 2, Corrida 2, Capa 2 ===> 0.158224 + 0.151004
+Camino 2, Corrida 3, Capa 2 ===> 0.160356 + 0.157186
+Camino 2, Corrida 4, Capa 2 ===> 0.152163 + 0.165461
+Camino 2, Corrida 1, Capa 3 ===> 0.012951 + 0.012633
+Camino 2, Corrida 2, Capa 3 ===> 0.014131 + 0.013290
+Camino 2, Corrida 3, Capa 3 ===> 0.013814 + 0.017526
+Camino 2, Corrida 4, Capa 3 ===> 0.013018 + 0.016522
+****
+Camino 4, Corrida 1, Capa 2 ===> 0.120160 + 0.149083
+Camino 4, Corrida 2, Capa 2 ===> 0.149250 + 0.149224
+Camino 4, Corrida 3, Capa 2 ===> 0.162154 + 0.165347
+Camino 4, Corrida 4, Capa 2 ===> 0.149969 + 0.151119
+Camino 4, Corrida 1, Capa 3 ===> 0.025134 + 0.027402
+Camino 4, Corrida 2, Capa 3 ===> 0.024219 + 0.018488
+Camino 4, Corrida 3, Capa 3 ===> 0.021744 + 0.022110
+Camino 4, Corrida 4, Capa 3 ===> 0.017419 + 0.022396
+****
+Camino 6, Corrida 1, Capa 2 ===> 0.077848 + 0.180032
+Camino 6, Corrida 2, Capa 2 ===> 0.163658 + 0.157209
+Camino 6, Corrida 3, Capa 2 ===> 0.175280 + 0.173484
+Camino 6, Corrida 4, Capa 2 ===> 0.159769 + 0.166587
+Camino 6, Corrida 1, Capa 3 ===> 0.019812 + 0.023005
+Camino 6, Corrida 2, Capa 3 ===> 0.030312 + 0.025580
+Camino 6, Corrida 3, Capa 3 ===> 0.030692 + 0.026256
+Camino 6, Corrida 4, Capa 3 ===> 0.031336 + 0.025837
+****
+Camino 8, Corrida 1, Capa 2 ===> 0.123097 + 0.162814
+Camino 8, Corrida 2, Capa 2 ===> 0.172049 + 0.161306
+Camino 8, Corrida 3, Capa 2 ===> 0.169903 + 0.167993
+Camino 8, Corrida 4, Capa 2 ===> 0.157421 + 0.185558
+Camino 8, Corrida 1, Capa 3 ===> 0.022561 + 0.028756
+Camino 8, Corrida 2, Capa 3 ===> 0.034999 + 0.029510
+Camino 8, Corrida 3, Capa 3 ===> 0.029399 + 0.035526
+Camino 8, Corrida 4, Capa 3 ===> 0.029330 + 0.030762
+
+Topologia grande:
+Camino 1, Corrida 1, Capa 2 ===> 0.144948 + 0.280369
+Camino 1, Corrida 2, Capa 2 ===> 0.452936 + 0.487721
+Camino 1, Corrida 3, Capa 2 ===> 0.390200 + 0.183328
+Camino 1, Corrida 4, Capa 2 ===> 0.256869 + 0.171360
+Camino 1, Corrida 1, Capa 3 ===> 0.219299 + 0.264103
+Camino 1, Corrida 2, Capa 3 ===> 0.212751 + 0.112894
+Camino 1, Corrida 3, Capa 3 ===> 0.345433 + 0.236060
+Camino 1, Corrida 4, Capa 3 ===> 0.202829 + 0.079239
 ****
 Camino 2, Corrida 1, Capa 2 ===> 
 Camino 2, Corrida 2, Capa 2 ===> 
@@ -27,6 +73,24 @@ Camino 2, Corrida 2, Capa 3 ===>
 Camino 2, Corrida 3, Capa 3 ===> 
 Camino 2, Corrida 4, Capa 3 ===> 
 ****
+Camino 4, Corrida 1, Capa 2 ===> 
+Camino 4, Corrida 2, Capa 2 ===> 
+Camino 4, Corrida 3, Capa 2 ===> 
+Camino 4, Corrida 4, Capa 2 ===> 
+Camino 4, Corrida 1, Capa 3 ===> 
+Camino 4, Corrida 2, Capa 3 ===> 
+Camino 4, Corrida 3, Capa 3 ===> 
+Camino 4, Corrida 4, Capa 3 ===> 
+****
+Camino 6, Corrida 1, Capa 2 ===> 
+Camino 6, Corrida 2, Capa 2 ===> 
+Camino 6, Corrida 3, Capa 2 ===> 
+Camino 6, Corrida 4, Capa 2 ===> 
+Camino 6, Corrida 1, Capa 3 ===> 
+Camino 6, Corrida 2, Capa 3 ===> 
+Camino 6, Corrida 3, Capa 3 ===> 
+Camino 6, Corrida 4, Capa 3 ===> 
+****
 Camino 8, Corrida 1, Capa 2 ===> 
 Camino 8, Corrida 2, Capa 2 ===> 
 Camino 8, Corrida 3, Capa 2 ===> 
@@ -35,6 +99,24 @@ Camino 8, Corrida 1, Capa 3 ===>
 Camino 8, Corrida 2, Capa 3 ===> 
 Camino 8, Corrida 3, Capa 3 ===> 
 Camino 8, Corrida 4, Capa 3 ===> 
+****
+Camino 10, Corrida 1, Capa 2 ===> 
+Camino 10, Corrida 2, Capa 2 ===> 
+Camino 10, Corrida 3, Capa 2 ===> 
+Camino 10, Corrida 4, Capa 2 ===> 
+Camino 10, Corrida 1, Capa 3 ===> 
+Camino 10, Corrida 2, Capa 3 ===> 
+Camino 10, Corrida 3, Capa 3 ===> 
+Camino 10, Corrida 4, Capa 3 ===> 
+****
+Camino 12, Corrida 1, Capa 2 ===> 
+Camino 12, Corrida 2, Capa 2 ===> 
+Camino 12, Corrida 3, Capa 2 ===> 
+Camino 12, Corrida 4, Capa 2 ===> 
+Camino 12, Corrida 1, Capa 3 ===> 
+Camino 12, Corrida 2, Capa 3 ===> 
+Camino 12, Corrida 3, Capa 3 ===> 
+Camino 12, Corrida 4, Capa 3 ===> 
 
 
 ovs-dpctl se conecta con el kernel datapath que esta afuera de ovs-vswitchd. Para conectarme con el userspace (netdev) datapath tengo que usar ovs-appctl --target={ArchivoCTL} dpctl/*
