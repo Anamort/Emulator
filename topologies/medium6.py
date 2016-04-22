@@ -80,9 +80,8 @@ class CustomTopology( Topo ):
               controller_ip="192.168.1.10",
               cls=RAUSwitch)
 
-    router13 = self.addHost('router13', ips=['192.168.1.23/24','10.10.19.2/24','10.1.0.2/24'],
+    router13 = self.addHost('router13', ips=['192.168.1.23/24','10.10.19.2/24'],
           controller_ip="192.168.1.10",
-          border=1, ce_ip_address='10.1.0.1', ce_mac_address='00:00:00:00:00:02',
           cls=RAUSwitch)
     
 
@@ -158,8 +157,9 @@ class CustomTopology( Topo ):
         cls=RAUSwitch)
     
 
-    router30 = self.addHost('router30', ips=['192.168.1.40/24','10.10.35.2/24','10.10.39.1/24'],
+    router30 = self.addHost('router30', ips=['192.168.1.40/24','10.10.35.2/24','10.10.39.1/24','10.1.0.2/24'],
         controller_ip="192.168.1.10",
+        border=1, ce_ip_address='10.1.0.1', ce_mac_address='00:00:00:00:00:02',
         cls=RAUSwitch)
 
     router31 = self.addHost('router31', ips=['192.168.1.41/24','10.10.36.2/24','10.10.37.2/24','10.10.38.1/24'],
@@ -344,7 +344,7 @@ class CustomTopology( Topo ):
 
     ## Enlaces CE
     self.addLink(router38, routerLan1, 2, 0)
-    self.addLink(router13, routerLan2, 2, 0)
+    self.addLink(router30, routerLan2, 3, 0)
     self.addLink(h0, routerLan1, 0, 1)
     self.addLink(h1, routerLan2, 0, 1)
 
