@@ -75,6 +75,32 @@ Explicación. \\ \\
 \subsection{Escenario 2}
 El objetivo de este escenario es estudiar como impacta el tamaño de la topología y el largo del camino en el tiempo que demora la arquitectura en establecer una VPN. Se espera que ese tiempo sea influenciado en gran medida por dos factores: el tiempo que demora el controlador en calcular el camino óptimo y el tiempo que demora en configurar los flujos en cada nodo. Dado que los servicios se crean enviando pedidos HTTP POST al controlador, el tiempo de creación de los mismos se medirá como el tiempo que demore el controlador en devolver las respuestas HTTP indicando que fueron creados con éxito (esta información está disponible en los logs). Para lograr mediciones representativas y reducir el margen de error, en lugar de crear la VPN y medir su tiempo solamente, se crearán cuatro y se calculará el promedio de sus tiempos. Para agilizar la ejecución de esta prueba se utiliza un script en Python que manda los pedidos HTTP POST al controlador para crear las VPN, y de este modo no hay que hacerlo de forma manual a través de la interfaz web.
 
+\newcommand{\vpncd}{\textcolor{blue}[1]}
+
+\newcommand{\vpnct}{\textcolor{green}[1]}
+
+\begin{table}[ht]
+	\caption{Tiempo de demora en crear VPN en la topología chica. El tiempo se mide en ms.}
+	\centering 
+	\begin{tabular}{p{3.4cm} p{1.7cm} p{1.7cm} p{1.7cm} p{1.7cm} p{1.7cm}}
+		\hline
+		Largo del camino & 1 & 2 & 4 & 6 & 8 \\ [0.5ex]
+		\hline
+		Ejecución & & & & & \\
+		1 & \textcolor{brown}{155} / \textcolor{blue}{29} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} \\
+		2 & \textcolor{brown}{208} / \textcolor{blue}{22} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{}  \\
+		3 & \textcolor{brown}{351} / \textcolor{blue}{19} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{}  \\
+		4 & \textcolor{brown}{220} / \textcolor{blue}{18} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{}  \\
+		& & & & & \\
+		Media & \textcolor{brown}{234} / \textcolor{blue}{22} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} \\
+		Mediana & \textcolor{brown}{214} / \textcolor{blue}{21} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} \\
+		Desv. Estandar & \textcolor{brown}{83} / \textcolor{blue}{5} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} \\
+		CV & & & & & \\ [1ex]
+		\hline
+	\end{tabular}
+	\label{table:tiempo_vpn_2}
+\end{table}
+
 \begin{table}[ht]
 	\caption{Tiempo de demora en crear una VPN de capa 2. El tiempo se mide en ms.}
 	\centering 
