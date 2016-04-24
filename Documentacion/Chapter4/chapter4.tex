@@ -80,22 +80,22 @@ El objetivo de este escenario es estudiar como impacta el tamaño de la topolog�
 \newcommand{\vpnct}{\textcolor{green}[1]}
 
 \begin{table}[ht]
-	\caption{Tiempo de demora en crear VPN en la topología chica. El tiempo se mide en ms.}
+	\caption{Tiempo de demora en crear VPN en la topología chica. El tiempo se mide en ms. Los valores de color marrón se corresponden con la VPN de capa 2, y los azules con la de capa 3.}
 	\centering 
-	\begin{tabular}{p{3.4cm} p{1.7cm} p{1.7cm} p{1.7cm} p{1.7cm} p{1.7cm}}
+	\begin{tabular}{p{3.2cm} p{1.8cm} p{1.8cm} p{1.8cm} p{1.8cm} p{1.8cm}}
 		\hline
 		Largo del camino & 1 & 2 & 4 & 6 & 8 \\ [0.5ex]
 		\hline
 		Ejecución & & & & & \\
-		1 & \textcolor{brown}{155} / \textcolor{blue}{29} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} \\
-		2 & \textcolor{brown}{208} / \textcolor{blue}{22} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{}  \\
-		3 & \textcolor{brown}{351} / \textcolor{blue}{19} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{}  \\
-		4 & \textcolor{brown}{220} / \textcolor{blue}{18} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{}  \\
+		1 & \textcolor{brown}{155} / \textcolor{blue}{29} & \textcolor{brown}{241} / \textcolor{blue}{25} & \textcolor{brown}{269} / \textcolor{blue}{52} & \textcolor{brown}{257} / \textcolor{blue}{42} & \textcolor{brown}{285} / \textcolor{blue}{51} \\
+		2 & \textcolor{brown}{208} / \textcolor{blue}{22} & \textcolor{brown}{309} / \textcolor{blue}{27} & \textcolor{brown}{298} / \textcolor{blue}{42} & \textcolor{brown}{320} / \textcolor{blue}{55} & \textcolor{brown}{333} / \textcolor{blue}{64}  \\
+		3 & \textcolor{brown}{351} / \textcolor{blue}{19} & \textcolor{brown}{317} / \textcolor{blue}{31} & \textcolor{brown}{327} / \textcolor{blue}{43} & \textcolor{brown}{348} / \textcolor{blue}{56} & \textcolor{brown}{337} / \textcolor{blue}{64}  \\
+		4 & \textcolor{brown}{220} / \textcolor{blue}{18} & \textcolor{brown}{317} / \textcolor{blue}{29} & \textcolor{brown}{301} / \textcolor{blue}{39} & \textcolor{brown}{326} / \textcolor{blue}{57} & \textcolor{brown}{342} / \textcolor{blue}{60}  \\
 		& & & & & \\
-		Media & \textcolor{brown}{234} / \textcolor{blue}{22} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} \\
-		Mediana & \textcolor{brown}{214} / \textcolor{blue}{21} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} \\
-		Desv. Estandar & \textcolor{brown}{83} / \textcolor{blue}{5} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} \\
-		CV & & & & & \\ [1ex]
+		Media & \textcolor{brown}{234} / \textcolor{blue}{22} & \textcolor{brown}{296} / \textcolor{blue}{28} & \textcolor{brown}{299} / \textcolor{blue}{44} & \textcolor{brown}{313} / \textcolor{blue}{53} & \textcolor{brown}{324} / \textcolor{blue}{60} \\
+		Mediana & \textcolor{brown}{214} / \textcolor{blue}{21} & \textcolor{brown}{313} / \textcolor{blue}{28} & \textcolor{brown}{300} / \textcolor{blue}{43} & \textcolor{brown}{323} / \textcolor{blue}{56} & \textcolor{brown}{335} / \textcolor{blue}{62} \\
+		Desv. Estandar & \textcolor{brown}{83} / \textcolor{blue}{5} & \textcolor{brown}{37} / \textcolor{blue}{3} & \textcolor{brown}{24} / \textcolor{blue}{6} & \textcolor{brown}{39} / \textcolor{blue}{7} & \textcolor{brown}{26} / \textcolor{blue}{6} \\
+		CV & \textcolor{brown}{0.35} / \textcolor{blue}{0.23} & \textcolor{brown}{0.13} / \textcolor{blue}{0.11} & \textcolor{brown}{0.08} / \textcolor{blue}{0.14} & \textcolor{brown}{0.12} / \textcolor{blue}{0.13} & \textcolor{brown}{0.08} / \textcolor{blue}{0.10} \\ [1ex]
 		\hline
 	\end{tabular}
 	\label{table:tiempo_vpn_2}
