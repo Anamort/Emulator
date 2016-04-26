@@ -80,6 +80,28 @@ El objetivo de este escenario es estudiar como impacta el tamaño de la topolog�
 \newcommand{\vpnct}{\textcolor{green}[1]}
 
 \begin{table}[ht]
+	\caption{Tiempo de demora en crear VPN en la topología básica. El tiempo se mide en ms. Los valores de color marrón se corresponden con la VPN de capa 2, y los azules con la de capa 3.}
+	\centering 
+	\begin{tabular}{p{3.2cm} p{1.8cm}}
+		\hline
+		Largo del camino & 1 \\ [0.5ex]
+		\hline
+		Ejecución & \\
+		1 & \textcolor{brown}{188} / \textcolor{blue}{14} \\
+		2 & \textcolor{brown}{188} / \textcolor{blue}{23} \\
+		3 & \textcolor{brown}{199} / \textcolor{blue}{15} \\
+		4 & \textcolor{brown}{188} / \textcolor{blue}{15} \\
+		& \\
+		Media & \textcolor{brown}{191} / \textcolor{blue}{17} \\
+		Mediana & \textcolor{brown}{188} / \textcolor{blue}{15} \\
+		Desv. Estandar & \textcolor{brown}{6} / \textcolor{blue}{4} \\
+		CV & \textcolor{brown}{0.03} / \textcolor{blue}{0.24} \\ [1ex]
+		\hline
+	\end{tabular}
+	\label{table:tiempo_topo_basica}
+\end{table}
+
+\begin{table}[ht]
 	\caption{Tiempo de demora en crear VPN en la topología chica. El tiempo se mide en ms. Los valores de color marrón se corresponden con la VPN de capa 2, y los azules con la de capa 3.}
 	\centering 
 	\begin{tabular}{p{3.2cm} p{1.8cm} p{1.8cm} p{1.8cm} p{1.8cm} p{1.8cm}}
@@ -98,45 +120,53 @@ El objetivo de este escenario es estudiar como impacta el tamaño de la topolog�
 		CV & \textcolor{brown}{0.35} / \textcolor{blue}{0.23} & \textcolor{brown}{0.13} / \textcolor{blue}{0.11} & \textcolor{brown}{0.08} / \textcolor{blue}{0.14} & \textcolor{brown}{0.12} / \textcolor{blue}{0.13} & \textcolor{brown}{0.08} / \textcolor{blue}{0.10} \\ [1ex]
 		\hline
 	\end{tabular}
-	\label{table:tiempo_vpn_2}
+	\label{table:tiempo_topo_chica}
 \end{table}
 
 \begin{table}[ht]
-	\caption{Tiempo de demora en crear una VPN de capa 2. El tiempo se mide en ms.}
+	\scriptsize
+	\caption{Tiempo de demora en crear VPN en la topología mediana. El tiempo se mide en ms. Los valores de color marrón se corresponden con la VPN de capa 2, y los azules con la de capa 3.}
 	\centering 
-	\begin{tabular}{c c c c c}
-		\hline\hline
-		Largo del camino & Básica & Chica & Mediana  & Grande \\ [0.5ex]
+	\begin{tabular}{p{2.4cm} p{1.3cm} p{1.3cm} p{1.3cm} p{1.3cm} p{1.3cm} p{1.3cm} p{1.3cm}}
 		\hline
-		1 & 58.3 & 65.0 & 83.1 &  \\
-		2 & N/C & 100.8 & 124.0 &  \\
-		4 & N/C & 105.2 & 124.1 &  \\
-		6 & N/C & 107.8 & 131.4 &  \\
-		8 & N/C & 109.6 & 128.6 &  \\
-		10 & N/C & N/C & 139.8 &  \\
-		12 & N/C & N/C & 133.4 &  \\ [1ex]
+		Largo del camino & 1 & 2 & 4 & 6 & 8 & 10 & 12 \\ [0.5ex]
+		\hline
+		Ejecución & & & & & & & \\
+		1 & \textcolor{brown}{254} / \textcolor{blue}{101} & \textcolor{brown}{567} / \textcolor{blue}{104} & \textcolor{brown}{372} / \textcolor{blue}{129} & \textcolor{brown}{364} / \textcolor{blue}{126} & \textcolor{brown}{436} / \textcolor{blue}{130} & \textcolor{brown}{414} / \textcolor{blue}{181} & \textcolor{brown}{441} / \textcolor{blue}{289} \\
+		2 & \textcolor{brown}{318} / \textcolor{blue}{92} & \textcolor{brown}{746} / \textcolor{blue}{134} & \textcolor{brown}{504} / \textcolor{blue}{105} & \textcolor{brown}{397} / \textcolor{blue}{187}  & \textcolor{brown}{515} / \textcolor{blue}{271} & \textcolor{brown}{548} / \textcolor{blue}{197} & \textcolor{brown}{519} / \textcolor{blue}{152} \\
+		3 & \textcolor{brown}{355} / \textcolor{blue}{110} & \textcolor{brown}{520} / \textcolor{blue}{112} & \textcolor{brown}{498} / \textcolor{blue}{135} & \textcolor{brown}{675} / \textcolor{blue}{164} & \textcolor{brown}{529} / \textcolor{blue}{202} & \textcolor{brown}{485} / \textcolor{blue}{214} & \textcolor{brown}{613} / \textcolor{blue}{154} \\
+		4 & \textcolor{brown}{318} / \textcolor{blue}{110} & \textcolor{brown}{611} / \textcolor{blue}{127} & \textcolor{brown}{438} / \textcolor{blue}{145} & \textcolor{brown}{529} / \textcolor{blue}{153} & \textcolor{brown}{787} / \textcolor{blue}{179} & \textcolor{brown}{477} / \textcolor{blue}{191} & \textcolor{brown}{571} / \textcolor{blue}{178} \\
+		& & & & & & & \\
+		Media & \textcolor{brown}{311} / \textcolor{blue}{103} & \textcolor{brown}{611} / \textcolor{blue}{119} & \textcolor{brown}{453} / \textcolor{blue}{129} & \textcolor{brown}{491} / \textcolor{blue}{158} & \textcolor{brown}{567} / \textcolor{blue}{196} & \textcolor{brown}{481} / \textcolor{blue}{196} & \textcolor{brown}{536} / \textcolor{blue}{193} \\
+		Mediana & \textcolor{brown}{318} / \textcolor{blue}{106} & \textcolor{brown}{589} / \textcolor{blue}{120} & \textcolor{brown}{468} / \textcolor{blue}{132} & \textcolor{brown}{463} / \textcolor{blue}{159} & \textcolor{brown}{522} / \textcolor{blue}{191} & \textcolor{brown}{481} / \textcolor{blue}{194} & \textcolor{brown}{545} / \textcolor{blue}{166} \\
+		Desv. Estandar & \textcolor{brown}{42} / \textcolor{blue}{9} & \textcolor{brown}{97} / \textcolor{blue}{14} & \textcolor{brown}{62} / \textcolor{blue}{17} & \textcolor{brown}{142} / \textcolor{blue}{25} & \textcolor{brown}{152} / \textcolor{blue}{59} & \textcolor{brown}{55} / \textcolor{blue}{14} & \textcolor{brown}{74} / \textcolor{blue}{65} \\
+		CV & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} \\ [1ex]
 		\hline
 	\end{tabular}
-	\label{table:tiempo_vpn_2}
+	\label{table:tiempo_topo_mediana}
 \end{table}
 
 \begin{table}[ht]
-	\caption{Tiempo de demora en crear una VPN de capa 3. El tiempo se mide en ms.}
+	\scriptsize
+	\caption{Tiempo de demora en crear VPN en la topología grande. El tiempo se mide en ms. Los valores de color marrón se corresponden con la VPN de capa 2, y los azules con la de capa 3.}
 	\centering 
-	\begin{tabular}{c c c c c}
-		\hline\hline
-		Largo del camino & Básica & Chica & Mediana  & Grande \\ [0.5ex]
+	\begin{tabular}{p{2.2cm} p{1.4cm} p{1.4cm} p{1.4cm} p{1.4cm} p{1.4cm} p{1.4cm} p{1.4cm}}
 		\hline
-		1 & 6.3 & 6.8 & 19.3 &  \\
-		2 & N/C & 7.8 & 21.5 &  \\
-		4 & N/C & 9.4 & 22.3 &  \\
-		6 & N/C & 15.1 & 23.8 &  \\
-		8 & N/C & 12.0 & 23.7 &  \\
-		10 & N/C & N/C & 26.4 &  \\
-		12 & N/C & N/C & 27.5 &  \\ [1ex]
+		Largo del camino & 1 & 2 & 4 & 6 & 8 & 10 & 12 \\ [0.5ex]
+		\hline
+		Ejecución & & & & & & & \\
+		1 & \textcolor{brown}{425} / \textcolor{blue}{483} & \textcolor{brown}{642} / \textcolor{blue}{810} & \textcolor{brown}{1692} / \textcolor{blue}{1000} & \textcolor{brown}{1669} / \textcolor{blue}{722} & \textcolor{brown}{1516} / \textcolor{blue}{2182} & \textcolor{brown}{493} / \textcolor{blue}{449} & \textcolor{brown}{1843} / \textcolor{blue}{594} \\
+		2 & \textcolor{brown}{940} / \textcolor{blue}{325} & \textcolor{brown}{457} / \textcolor{blue}{223} & \textcolor{brown}{2457} / \textcolor{blue}{2209} & \textcolor{brown}{1254} / \textcolor{blue}{1016}  & \textcolor{brown}{2273} / \textcolor{blue}{608} & \textcolor{brown}{775} / \textcolor{blue}{638} & \textcolor{brown}{3438} / \textcolor{blue}{1422} \\
+		3 & \textcolor{brown}{573} / \textcolor{blue}{581} & \textcolor{brown}{1044} / \textcolor{blue}{319} & \textcolor{brown}{1543} / \textcolor{blue}{1070} & \textcolor{brown}{1048} / \textcolor{blue}{476} & \textcolor{brown}{3482} / \textcolor{blue}{856} & \textcolor{brown}{784} / \textcolor{blue}{563} & \textcolor{brown}{1791} / \textcolor{blue}{1018} \\
+		4 & \textcolor{brown}{428} / \textcolor{blue}{282} & \textcolor{brown}{2671} / \textcolor{blue}{1346} & \textcolor{brown}{1613} / \textcolor{blue}{668} & \textcolor{brown}{2678} / \textcolor{blue}{569} & \textcolor{brown}{3496} / \textcolor{blue}{748} & \textcolor{brown}{966} / \textcolor{blue}{570} & \textcolor{brown}{2848} / \textcolor{blue}{849} \\
+		& & & & & & & \\
+		Media & \textcolor{brown}{592} / \textcolor{blue}{418} & \textcolor{brown}{1204} / \textcolor{blue}{675} & \textcolor{brown}{1826} / \textcolor{blue}{1237} & \textcolor{brown}{1662} / \textcolor{blue}{696} & \textcolor{brown}{2692} / \textcolor{blue}{1099} & \textcolor{brown}{755} / \textcolor{blue}{555} & \textcolor{brown}{2480} / \textcolor{blue}{971} \\
+		Mediana & \textcolor{brown}{501} / \textcolor{blue}{404} & \textcolor{brown}{843} / \textcolor{blue}{565} & \textcolor{brown}{1653} / \textcolor{blue}{1035} & \textcolor{brown}{1462} / \textcolor{blue}{646} & \textcolor{brown}{2878} / \textcolor{blue}{802} & \textcolor{brown}{780} / \textcolor{blue}{567} & \textcolor{brown}{2346} / \textcolor{blue}{934} \\
+		Desv. Estandar & \textcolor{brown}{242} / \textcolor{blue}{139} & \textcolor{brown}{1009} / \textcolor{blue}{516} & \textcolor{brown}{425} / \textcolor{blue}{672} & \textcolor{brown}{725} / \textcolor{blue}{236} & \textcolor{brown}{972} / \textcolor{blue}{729} & \textcolor{brown}{195} / \textcolor{blue}{78} & \textcolor{brown}{803} / \textcolor{blue}{348} \\
+		CV & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} & \textcolor{brown}{} / \textcolor{blue}{} \\ [1ex]
 		\hline
 	\end{tabular}
-	\label{table:tiempo_vpn_3}
+	\label{table:tiempo_topo_grande}
 \end{table}
 
 Las tablas \ref{table:tiempo_vpn_2} y \ref{table:tiempo_vpn_3} muestran para cada topología, los distintos largos de camino probados y su respectivo tiempo. La tabla \ref{table:tiempo_vpn_2} muestra los resultados cuando se trata de una VPN de capa 2, y la tabla \ref{table:tiempo_vpn_3} lo hace cuando es VPN de capa 3. Las celdas con \textit{N/C} indican que no es posible crear un camino de ese largo para esa topología. \\
