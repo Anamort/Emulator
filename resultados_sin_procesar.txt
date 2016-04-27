@@ -1,0 +1,183 @@
+Topologia basica:
+Camino 1, Corrida 1, Capa 2 ===> 0.093309 + 0.095303 = 188
+Camino 1, Corrida 2, Capa 2 ===> 0.094577 + 0.093533 = 188
+Camino 1, Corrida 3, Capa 2 ===> 0.095365 + 0.103895 = 199
+Camino 1, Corrida 4, Capa 2 ===> 0.093469 + 0.095472 = 188
+Camino 1, Corrida 1, Capa 3 ===> 0.007251 + 0.007564 = 14
+Camino 1, Corrida 2, Capa 3 ===> 0.015591 + 0.007515 = 23
+Camino 1, Corrida 3, Capa 3 ===> 0.007754 + 0.007898 = 15
+Camino 1, Corrida 4, Capa 3 ===> 0.007674 + 0.007860 = 15
+
+Topologia chica:
+Camino 1, Corrida 1, Capa 2 ===> 0.051528 + 0.104245
+Camino 1, Corrida 2, Capa 2 ===> 0.104255 + 0.104413
+Camino 1, Corrida 3, Capa 2 ===> 0.111192 + 0.240472
+Camino 1, Corrida 4, Capa 2 ===> 0.106900 + 0.113997
+Camino 1, Corrida 1, Capa 3 ===> 0.018391 + 0.011101
+Camino 1, Corrida 2, Capa 3 ===> 0.009171 + 0.012958
+Camino 1, Corrida 3, Capa 3 ===> 0.009569 + 0.009624
+Camino 1, Corrida 4, Capa 3 ===> 0.009393 + 0.009575
+****
+Camino 2, Corrida 1, Capa 2 ===> 0.074426 + 0.167322
+Camino 2, Corrida 2, Capa 2 ===> 0.158224 + 0.151004
+Camino 2, Corrida 3, Capa 2 ===> 0.160356 + 0.157186
+Camino 2, Corrida 4, Capa 2 ===> 0.152163 + 0.165461
+Camino 2, Corrida 1, Capa 3 ===> 0.012951 + 0.012633
+Camino 2, Corrida 2, Capa 3 ===> 0.014131 + 0.013290
+Camino 2, Corrida 3, Capa 3 ===> 0.013814 + 0.017526
+Camino 2, Corrida 4, Capa 3 ===> 0.013018 + 0.016522
+****
+Camino 4, Corrida 1, Capa 2 ===> 0.120160 + 0.149083
+Camino 4, Corrida 2, Capa 2 ===> 0.149250 + 0.149224
+Camino 4, Corrida 3, Capa 2 ===> 0.162154 + 0.165347
+Camino 4, Corrida 4, Capa 2 ===> 0.149969 + 0.151119
+Camino 4, Corrida 1, Capa 3 ===> 0.025134 + 0.027402
+Camino 4, Corrida 2, Capa 3 ===> 0.024219 + 0.018488
+Camino 4, Corrida 3, Capa 3 ===> 0.021744 + 0.022110
+Camino 4, Corrida 4, Capa 3 ===> 0.017419 + 0.022396
+****
+Camino 6, Corrida 1, Capa 2 ===> 0.077848 + 0.180032
+Camino 6, Corrida 2, Capa 2 ===> 0.163658 + 0.157209
+Camino 6, Corrida 3, Capa 2 ===> 0.175280 + 0.173484
+Camino 6, Corrida 4, Capa 2 ===> 0.159769 + 0.166587
+Camino 6, Corrida 1, Capa 3 ===> 0.019812 + 0.023005
+Camino 6, Corrida 2, Capa 3 ===> 0.030312 + 0.025580
+Camino 6, Corrida 3, Capa 3 ===> 0.030692 + 0.026256
+Camino 6, Corrida 4, Capa 3 ===> 0.031336 + 0.025837
+****
+Camino 8, Corrida 1, Capa 2 ===> 0.123097 + 0.162814
+Camino 8, Corrida 2, Capa 2 ===> 0.172049 + 0.161306
+Camino 8, Corrida 3, Capa 2 ===> 0.169903 + 0.167993
+Camino 8, Corrida 4, Capa 2 ===> 0.157421 + 0.185558
+Camino 8, Corrida 1, Capa 3 ===> 0.022561 + 0.028756
+Camino 8, Corrida 2, Capa 3 ===> 0.034999 + 0.029510
+Camino 8, Corrida 3, Capa 3 ===> 0.029399 + 0.035526
+Camino 8, Corrida 4, Capa 3 ===> 0.029330 + 0.030762
+
+Topologia mediana:
+Camino 1, Corrida 1, Capa 2 ===> 0.069026 + 0.185965
+Camino 1, Corrida 2, Capa 2 ===> 0.139901 + 0.178790
+Camino 1, Corrida 3, Capa 2 ===> 0.199285 + 0.156436
+Camino 1, Corrida 4, Capa 2 ===> 0.156239 + 0.162336
+Camino 1, Corrida 1, Capa 3 ===> 0.051190 + 0.050396
+Camino 1, Corrida 2, Capa 3 ===> 0.041709 + 0.050799
+Camino 1, Corrida 3, Capa 3 ===> 0.048733 + 0.061676
+Camino 1, Corrida 4, Capa 3 ===> 0.058029 + 0.052447
+****
+Camino 2, Corrida 1, Capa 2 ===> 0.183435 + 0.384517
+Camino 2, Corrida 2, Capa 2 ===> 0.312528 + 0.434325
+Camino 2, Corrida 3, Capa 2 ===> 0.236980 + 0.283523
+Camino 2, Corrida 4, Capa 2 ===> 0.341767 + 0.270131
+Camino 2, Corrida 1, Capa 3 ===> 0.045581 + 0.059191
+Camino 2, Corrida 2, Capa 3 ===> 0.065978 + 0.068546
+Camino 2, Corrida 3, Capa 3 ===> 0.052819 + 0.059676
+Camino 2, Corrida 4, Capa 3 ===> 0.049090 + 0.077929
+****
+Camino 4, Corrida 1, Capa 2 ===> 0.101514 + 0.271239
+Camino 4, Corrida 2, Capa 2 ===> 0.250580 + 0.253650
+Camino 4, Corrida 3, Capa 2 ===> 0.230524 + 0.267695
+Camino 4, Corrida 4, Capa 2 ===> 0.232959 + 0.205704
+Camino 4, Corrida 1, Capa 3 ===> 0.059168 + 0.070483
+Camino 4, Corrida 2, Capa 3 ===> 0.050587 + 0.055386
+Camino 4, Corrida 3, Capa 3 ===> 0.053524 + 0.082108
+Camino 4, Corrida 4, Capa 3 ===> 0.078819 + 0.066298
+****
+Camino 6, Corrida 1, Capa 2 ===> 0.108997 + 0.255691
+Camino 6, Corrida 2, Capa 2 ===> 0.111484 + 0.286256
+Camino 6, Corrida 3, Capa 2 ===> 0.325474 + 0.350498
+Camino 6, Corrida 4, Capa 2 ===> 0.288955 + 0.240415
+Camino 6, Corrida 1, Capa 3 ===> 0.068708 + 0.058151
+Camino 6, Corrida 2, Capa 3 ===> 0.093814 + 0.093381
+Camino 6, Corrida 3, Capa 3 ===> 0.078485 + 0.085960
+Camino 6, Corrida 4, Capa 3 ===> 0.063187 + 0.090529
+****
+Camino 8, Corrida 1, Capa 2 ===> 0.120983 + 0.315740
+Camino 8, Corrida 2, Capa 2 ===> 0.276896 + 0.238316
+Camino 8, Corrida 3, Capa 2 ===> 0.277164 + 0.252142
+Camino 8, Corrida 4, Capa 2 ===> 0.336598 + 0.450764
+Camino 8, Corrida 1, Capa 3 ===> 0.059909 + 0.071038
+Camino 8, Corrida 2, Capa 3 ===> 0.195205 + 0.076021
+Camino 8, Corrida 3, Capa 3 ===> 0.109082 + 0.092961
+Camino 8, Corrida 4, Capa 3 ===> 0.106111 + 0.073693
+****
+Camino 10, Corrida 1, Capa 2 ===> 0.101397 + 0.312848
+Camino 10, Corrida 2, Capa 2 ===> 0.305880 + 0.242898
+Camino 10, Corrida 3, Capa 2 ===> 0.235262 + 0.249763
+Camino 10, Corrida 4, Capa 2 ===> 0.232370 + 0.245610
+Camino 10, Corrida 1, Capa 3 ===> 0.082851 + 0.098153
+Camino 10, Corrida 2, Capa 3 ===> 0.097549 + 0.100016
+Camino 10, Corrida 3, Capa 3 ===> 0.097661 + 0.116579
+Camino 10, Corrida 4, Capa 3 ===> 0.088024 + 0.103246
+****
+Camino 12, Corrida 1, Capa 2 ===> 0.136538 + 0.304888
+Camino 12, Corrida 2, Capa 2 ===> 0.267467 + 0.251800
+Camino 12, Corrida 3, Capa 2 ===> 0.308881 + 0.304881
+Camino 12, Corrida 4, Capa 2 ===> 0.292200 + 0.279271
+Camino 12, Corrida 1, Capa 3 ===> 0.200872 + 0.088525
+Camino 12, Corrida 2, Capa 3 ===> 0.065094 + 0.087121
+Camino 12, Corrida 3, Capa 3 ===> 0.081501 + 0.072715
+Camino 12, Corrida 4, Capa 3 ===> 0.077424 + 0.101529
+
+Topologia grande:
+Camino 1, Corrida 1, Capa 2 ===> 0.144948 + 0.280369
+Camino 1, Corrida 2, Capa 2 ===> 0.452936 + 0.487721
+Camino 1, Corrida 3, Capa 2 ===> 0.390200 + 0.183328
+Camino 1, Corrida 4, Capa 2 ===> 0.256869 + 0.171360
+Camino 1, Corrida 1, Capa 3 ===> 0.219299 + 0.264103
+Camino 1, Corrida 2, Capa 3 ===> 0.212751 + 0.112894
+Camino 1, Corrida 3, Capa 3 ===> 0.345433 + 0.236060
+Camino 1, Corrida 4, Capa 3 ===> 0.202829 + 0.079239
+****
+Camino 2, Corrida 1, Capa 2 ===> 0.158042 + 0.484519
+Camino 2, Corrida 2, Capa 2 ===> 0.287507 + 0.170262
+Camino 2, Corrida 3, Capa 2 ===> 0.564114 + 0.480466
+Camino 2, Corrida 4, Capa 2 ===> 0.165348 + 2.505957
+Camino 2, Corrida 1, Capa 3 ===> 0.509217 + 0.301200
+Camino 2, Corrida 2, Capa 3 ===> 0.124612 + 0.098523
+Camino 2, Corrida 3, Capa 3 ===> 0.200887 + 0.118435
+Camino 2, Corrida 4, Capa 3 ===> 0.813164 + 0.533497
+****
+Camino 4, Corrida 1, Capa 2 ===> 1.050559 + 0.641541
+Camino 4, Corrida 2, Capa 2 ===> 1.914679 + 0.543051
+Camino 4, Corrida 3, Capa 2 ===> 0.777032 + 0.766587
+Camino 4, Corrida 4, Capa 2 ===> 0.823716 + 0.790040
+Camino 4, Corrida 1, Capa 3 ===> 0.174475 + 0.825669
+Camino 4, Corrida 2, Capa 3 ===> 1.197179 + 1.012106
+Camino 4, Corrida 3, Capa 3 ===> 0.551859 + 0.519106
+Camino 4, Corrida 4, Capa 3 ===> 0.273456 + 0.395178
+****
+Camino 6, Corrida 1, Capa 2 ===> 0.931738 + 0.737544
+Camino 6, Corrida 2, Capa 2 ===> 0.689798 + 0.564758
+Camino 6, Corrida 3, Capa 2 ===> 0.338319 + 0.710349
+Camino 6, Corrida 4, Capa 2 ===> 1.515856 + 1.163115
+Camino 6, Corrida 1, Capa 3 ===> 0.254206 + 0.468604
+Camino 6, Corrida 2, Capa 3 ===> 0.751899 + 0.264638
+Camino 6, Corrida 3, Capa 3 ===> 0.214076 + 0.262357
+Camino 6, Corrida 4, Capa 3 ===> 0.235179 + 0.334314
+****
+Camino 8, Corrida 1, Capa 2 ===> 0.660130 + 0.856432
+Camino 8, Corrida 2, Capa 2 ===> 1.246480 + 1.026991
+Camino 8, Corrida 3, Capa 2 ===> 2.054557 + 1.428314
+Camino 8, Corrida 4, Capa 2 ===> 1.630952 + 1.865648
+Camino 8, Corrida 1, Capa 3 ===> 0.961355 + 1.221478
+Camino 8, Corrida 2, Capa 3 ===> 0.300519 + 0.307887
+Camino 8, Corrida 3, Capa 3 ===> 0.469092 + 0.386924
+Camino 8, Corrida 4, Capa 3 ===> 0.321861 + 0.426478
+****
+Camino 10, Corrida 1, Capa 2 ===> 0.245109 + 0.248605
+Camino 10, Corrida 2, Capa 2 ===> 0.509774 + 0.265427
+Camino 10, Corrida 3, Capa 2 ===> 0.435563 + 0.348911
+Camino 10, Corrida 4, Capa 2 ===> 0.504078 + 0.462040
+Camino 10, Corrida 1, Capa 3 ===> 0.369982 + 0.079694
+Camino 10, Corrida 2, Capa 3 ===> 0.267215 + 0.371308
+Camino 10, Corrida 3, Capa 3 ===> 0.286348 + 0.276674
+Camino 10, Corrida 4, Capa 3 ===> 0.269761 + 0.300644
+****
+Camino 12, Corrida 1, Capa 2 ===> 0.677733 + 1.165759
+Camino 12, Corrida 2, Capa 2 ===> 2.009580 + 1.428788
+Camino 12, Corrida 3, Capa 2 ===> 0.980906 + 0.810529
+Camino 12, Corrida 4, Capa 2 ===> 1.042868 + 1.805888
+Camino 12, Corrida 1, Capa 3 ===> 0.210555 + 0.383759
+Camino 12, Corrida 2, Capa 3 ===> 0.506152 + 0.915870
+Camino 12, Corrida 3, Capa 3 ===> 0.712786 + 0.306115
+Camino 12, Corrida 4, Capa 3 ===> 0.345657 + 0.503596

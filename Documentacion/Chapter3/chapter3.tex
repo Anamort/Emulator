@@ -64,11 +64,32 @@ Es una clase similar al RAUSwitch pero sin OpenVSwitch, es decir, sólo usa Quag
 \subsection{RAUHost}
 Representa a los hosts que serán clientes de la red. Con este propósito, se podría utilizar directamente la clase Host de Mininet, pero se construye esta clase auxiliar para evitar determinadas configuraciones manuales, como por ejemplo, el \textit{default gateway}.
 
+\subsection{LSDB Sync}
+Explicar que se cambió SNMP por OVS
 
 \section{Modo de uso del entorno}
 En Mininet estándar, las topologias se crean mediante la API en Python. Se crea un objeto de tipo Topology, se le agregan los nodos que se desee, y se establecen los enlaces virtuales entre esos nodos. Como el entorno es en esencia una extensión de Mininet, hereda su facilidad de uso. La única diferencia radica en que las entidades de este entorno requieren parámetros adicionales para su creación, que serán detallados en el Anexo.
 
 \subsection{GraphML Loader}
 
-Mencionar:
-Cambiar SNMP por OVS
+\section{Problemas detectados y/o resueltos}
+
+\subsection{Errores en el código de RAUFlow}
+\textbf{Error de código 1}
+Explicación. \\ \\
+\textbf{Error de código 2}
+Explicación \\ \\
+
+\subsection{Problemas de comunicación con grandes cantidades de nodos}
+\textbf{Problema del entorno virtual para levantar la topología grande}
+Explicación. \\ \\
+
+\subsection{Problema de concurrencia por muchas instancias de OpenVSwitch}
+Explicación de problema entre n° de puerto openflow con n° de puerto openvswitch, que pasa con todas menos la topología básica.
+
+\subsection{Problema de LSDB Sync con muchos nodos}
+Explicar problema de read\_all\(\) de python/telnetlib cuando la base es muy grande, y el cambio a read\_very\_eager\(\)
+
+\subsection{Reducción del MTU}
+Explicar que hay que reducir el MTU por 5/10 bytes para iperf
+
