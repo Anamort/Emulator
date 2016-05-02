@@ -72,20 +72,42 @@ En Mininet estándar, las topologias se crean mediante la API en Python. Se crea
 
 \subsection{GraphML Loader}
 
-\section{Problemas detectados y/o resueltos}
+\section{Problemas y errores encontrados}
+Como resultado de las pruebas funcionales básicas que se efectuaron sobre el entorno (que son detalladas en la sección 4.1.1) se detectaron determinados problemas que fueron necesarios estudiar. Esta sección explicará en que consiste cada problema, estudiando sus síntomas, su explicación, y en caso de que exista una, su solución. Como se verá, algunos de ellos se manifestarían en un despliegue real de la arquitectura, y otros son a causa del uso de un entorno virtual, y por lo tanto no se deberían tener en cuenta en un despliegue real.
 
 \subsection{Errores en el código de RAUFlow}
-\textbf{Error de código 1}
-Explicación. \\ \\
-\textbf{Error de código 2}
-Explicación \\ \\
+Se descubrió que existían determinados errores (o "bugs") en el código de RAUFlow. Como son errores en el código del controlador, es importante remarcar que estos errores sin lugar a dudas se manifestarían en una red real. \\ \\
+\textbf{Error en flujos de servicio con más de un salto} \\
+\begin{figure}[t]
+	\caption{Arquitectura de OpenVSwitch.}
+	\includegraphics[scale=0.5]{flujos_incorrectos}
+	\centering
+	\label{fig:flujos_incorrectos}
+\end{figure}
+Se observó que cuando se trataba de crear un servicio que pasara por más de 2 nodos (es decir, con más de un salto), el controlador instalaba flujos en los nodos correctos, pero los flujos mismos no eran correctos. Esto indicó que el problema no se encontraba en el algoritmo de ruteo, sino que en el algoritmo encargado de configurar los flujos en cada nodo del camino computado. Específicamente, el problema es que los flujos en los nodos intermedios (es decir, los nodos donde no empieza ni termina el servicio) tenían un incorrecto puerto de entrada. En la figura \ref{fig:flujos_incorrectos} se examina este comportamiento. Los enlaces verdes muestran el camino del servicio que se intentó crear, y cada flecha indica la tabla de flujos (reducida) de cada nodo relevante. Si se presta atención a los flujos en los nodos intermedios, se puede ver que los puertos de entrada de cada flujo coinciden con el puerto de salida del flujo en el nodo anterior. Los recuadros rojos muestran los puertos incorrectos y los amarillos indican los que podrían haber sido incorrectos pero no lo son por coincidencia.
+Para solucionar esto se creó un "fork" del repositorio de RAUFlow para poder hacer las correcciones que correspondan. El arreglo de código de este error se puede ver en el siguiente commit: https://github.com/santiagovidal/LiveCode/commit/aeb575a10eb241dc3980a4c37846af7551bb7060. \\ \\
+\textbf{Error de tipos en el algoritmo de ruteo} \\
+Se detectó que al intentar crear servicios en algunas topologias, se producía un error 500 de Python en RAUFlow. Luego de inspeccionar el código se concluyó que el problema radicaba en la implementación del algoritmo de ruteo, que está basado en Dijkstra. En el proceso de calcular el camino óptimo, el algoritmo de Dijkstra acumula iterativamente los costos desde el origen hasta los nodos intermedios. Dado que los costos de cada enlace son números enteros, la acumulación de costos debería implementarse simplemente aplicando suma entera a dichos costos. Sin embargo, la estructura interna usada para representar el grafo, almacena los costos de cada enlace con tipo "String". Al hacer la suma para acumular los costos, en vez de aplicar suma entera, el código hacía concatenación de strings. Dada la estructura interna del código, que no se mencionará para simplificar, esto generaba un error 500 sólo en algunas topologias. Para solucionar esto se realizó un casteo de String a Int en el código del algoritmo. Dicho arreglo se puede ver en el siguiente commit: https://github.com/santiagovidal/LiveCode/commit/4128923efcff38768aefd2864e10bd1adb63df52 \\ \\
 
 \subsection{Problemas de comunicación con grandes cantidades de nodos}
-\textbf{Problema del entorno virtual para levantar la topología grande}
-Explicación. \\ \\
+
 
 \subsection{Problema de concurrencia por muchas instancias de OpenVSwitch}
-Explicación de problema entre n° de puerto openflow con n° de puerto openvswitch, que pasa con todas menos la topología básica.
+Como se explica en (referencia a informe RRAP), para que las interfaces de red de los nodos funcionen como puertos OpenFlow con dirección IP, no solo se debe crear un puerto para cada una, sino que también se debe crear una interfaz virtual con su respectivo puerto OpenFlow. Además, deben crearse flujos para que los paquetes que entran por la interfaz física salgan por su respectiva interfaz virtual, y viceversa.
+El siguiente pseudocódigo muestra como es este proceso:
+	add_port eth0     (asigna número de puerto 1)
+	add_port eth1	  (asigna número de puerto 2)
+	add_port eth2	  (asigna número de puerto 3)
+	add_port veth0	  (asigna número de puerto 4)
+	add_port veth1	  (asigna número de puerto 5)
+	add_port veth2	  (asigna número de puerto 6)
+	
+	add_flow in_port=1,output:4
+	add_flow in_port=2,output:5
+	add_flow in_port=3,output:6
+Cuando se agrega un puerto, OpenVSwitch le asigna automáticamente un número de puerto OpenFlow. La manera en que OpenVSwitch hace esa numeración es secuencial, empezando desde 1. Eso quiere decir que, en teoría, si se agregan 3 puertos a OpenVSwitch, sus puertos OpenFlow tendrán los números 1, 2 y 3, de acuerdo al orden en que fueron creados. Como se ve en el pseudocódigo, el código que agrega los flujos que "conectan" las interfaces virtuales y físicas asumen que esto es así.
+
+ Si bien este era el caso para topologias con pocos nodos, si se usaban más nodos (desde los 11 nodos esto ya se hacía aparente), eso ya no se cumplía. Eso quiere decir que si se levantaba una topología grande
 
 \subsection{Problema de LSDB Sync con muchos nodos}
 Explicar problema de read\_all\(\) de python/telnetlib cuando la base es muy grande, y el cambio a read\_very\_eager\(\)
