@@ -5,6 +5,13 @@
 \usepackage{graphicx}
 \usepackage[spanish]{babel}
 \usepackage{xcolor}
+\usepackage{listings}
+\usepackage{csquotes}
+
+\lstset{
+	basicstyle={\small\ttfamily},
+	tabsize=2
+}
 
 % ******************************************************************************
 % ****************************** Custom Margin *********************************
@@ -126,7 +133,7 @@
 % If you would like to use biblatex for your reference management, as opposed to the default `natbibpackage` pass the option `custombib` in the document class. Comment out the previous line to make sure you don't load the natbib package. Uncomment the following lines and specify the location of references.bib file
 
 %\RequirePackage[backend=biber, style=numeric-comp, citestyle=numeric, sorting=nty, natbib=true]{biblatex}
-%\bibliography{References/references} %Location of references.bib only for biblatex
+\bibliography{References/references} %Location of references.bib only for biblatex
 
 \fi
 
