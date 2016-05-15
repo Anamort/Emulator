@@ -1,7 +1,5 @@
-{"router_id": "192.168.1.11", "node_top_type": 1, "node_name": "router1"}
-{"router_id": "192.168.1.11", "ce_ip_address": "10.0.0.1", "ce_mac_address": "00:00:00:00:00:01", "ip_address": "10.0.0.2", "iface_top_type": 1}
-{"router_id": "192.168.1.12", "node_top_type": 1, "node_name": "router2"}
-{"router_id": "192.168.1.12", "ce_ip_address": "10.1.0.1", "ce_mac_address": "00:00:00:00:00:02", "ip_address": "10.1.0.2", "iface_top_type": 1}
+{"router_id": "192.168.1.11", "node_top_type": 0, "node_name": "router1"}
+{"router_id": "192.168.1.12", "node_top_type": 0, "node_name": "router2"}
 {"router_id": "192.168.1.13", "node_top_type": 0, "node_name": "router3"}
 {"router_id": "192.168.1.14", "node_top_type": 0, "node_name": "router4"}
 {"router_id": "192.168.1.15", "node_top_type": 0, "node_name": "router5"}
@@ -76,7 +74,8 @@
 {"router_id": "192.168.1.84", "node_top_type": 0, "node_name": "router74"}
 {"router_id": "192.168.1.85", "node_top_type": 0, "node_name": "router75"}
 {"router_id": "192.168.1.86", "node_top_type": 0, "node_name": "router76"}
-{"router_id": "192.168.1.87", "node_top_type": 0, "node_name": "router77"}
+{"router_id": "192.168.1.87", "node_top_type": 1, "node_name": "router77"}
+{"router_id": "192.168.1.87", "ce_ip_address": "10.0.0.1", "ce_mac_address": "00:00:00:00:00:01", "ip_address": "10.0.0.2", "iface_top_type": 1}
 {"router_id": "192.168.1.88", "node_top_type": 0, "node_name": "router78"}
 {"router_id": "192.168.1.89", "node_top_type": 0, "node_name": "router79"}
 {"router_id": "192.168.1.90", "node_top_type": 0, "node_name": "router80"}
@@ -99,7 +98,8 @@
 {"router_id": "192.168.1.107", "node_top_type": 0, "node_name": "router97"}
 {"router_id": "192.168.1.108", "node_top_type": 0, "node_name": "router98"}
 {"router_id": "192.168.1.109", "node_top_type": 0, "node_name": "router99"}
-{"router_id": "192.168.1.110", "node_top_type": 0, "node_name": "router100"}
+{"router_id": "192.168.1.110", "node_top_type": 1, "node_name": "router100"}
+{"router_id": "192.168.1.110", "ce_ip_address": "10.1.0.1", "ce_mac_address": "00:00:00:00:00:02", "ip_address": "10.1.0.2", "iface_top_type": 1}
 {"router_id": "192.168.1.111", "node_top_type": 0, "node_name": "router101"}
 {"router_id": "192.168.1.112", "node_top_type": 0, "node_name": "router102"}
 {"router_id": "192.168.1.113", "node_top_type": 0, "node_name": "router103"}
