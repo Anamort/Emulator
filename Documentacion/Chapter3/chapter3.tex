@@ -34,6 +34,8 @@ El segundo grupo de requerimientos es más genérico, ya que son los que surgen 
 %Provee ejemplos sobre como usar Quagga
 %Escalable
 %Api Python para fácil configuración de topologias
+%active community, flexibility, usability, easy use, support, license free, and bunch of available protocols,
+%ver pagina de "why is mininet cool"
 
 
 \section{Diseño e implementación del entorno}
@@ -141,7 +143,7 @@ Lo interesante de esta situación es estudiar por qué el controlador no logra r
 \begin{itemize}
 	\item Congestión en la red de gestión. Es posible que el exceso de nodos genere demasiado tráfico de control, y por ende haya retrasos y/o pérdidas en la red de gestión. Este problema posiblemente estaría presente en un despliegue real de la arquitectura.
 	\item Falta de capacidad de cómputo. Dado que este comportamiento se detectó en el entorno virtual y con un número importante de nodos, es posible que el controlador no tenga acceso al poder de cómputo suficiente como para responder a tiempo a todas las sondas. Este sería un problema del entorno virtual, y no sería relevante en una red real.
-	\item Incapacidad de Ryu para manejar muchos nodos. En \cite{proyecto-rrap} se menciona que Ryu es un controlador minimalista y académico. Por lo tanto, es posible que no esté diseñado para controlar tantos switches. Si ese fuera el caso, esto sería un obstáculo al desplegar la arquitectura en una red real. 
+	\item Incapacidad de Ryu para manejar muchos nodos. En \cite{proyecto-rrap} se menciona que Ryu es un controlador minimalista y académico. Por lo tanto, es posible que no esté diseñado para controlar tantos switches. Si ese fuera el caso, esto sería un obstáculo al desplegar la arquitectura en una red real. TODO!: Mencionar CBench o otro benchmark para controllers como posible manera de analizar.
 \end{itemize}
 Como solución provisoria, con el propósito de realizar pruebas con las topologias que presentan este problema, se configuró el valor de inactivity\_probe como un número muy alto (45 segundos) de modo de darle al controlador más que suficiente tiempo para responder a las sondas. Sin embargo, esta no es una buena solución ya que en una red real, cuanto más alto esté ese número, más demoraría el controlador en darse cuenta que un switch se desconectó. Se deja para trabajos futuros investigar si esto podría afectar una despliegue real, ya que si lo hace, tendrían que hacerse cambios radicales a la arquitectura.
 

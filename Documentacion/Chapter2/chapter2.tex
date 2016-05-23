@@ -18,7 +18,7 @@ Modelo reactivo vs proactivo \\
 
 %http://www.spirent.com/~/media/White%20Papers/Broadband/PAB/OpenFlow_Performance_Testing_WhitePaper.pdf
 
-\section{OpenVSwitch}
+\section{Open vSwitch}
 %http://openvswitch.org/pipermail/discuss/2012-February/006447.html
 
 %http://openvswitch.org/support/dist-docs/ovs-vswitchd.8.txt
@@ -43,24 +43,42 @@ Modelo reactivo vs proactivo \\
 
 %https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&cad=rja&uact=8&ved=0ahUKEwjZvdvaiuLLAhWF1h4KHfYrCKoQFggiMAA&url=http%3A%2F%2Fopenvswitch.org%2Fsupport%2Fovscon2014%2F18%2F1600-ovs_perf.pptx&usg=AFQjCNGGTT0rHmENeZ2ZcoRfWNFJ__hBLw
 
+\section{Red Privada Virtual (VPN)}
 
+\section{Multiprotocol Label Switching (MPLS)}
 
-\section{Virtualización de SDN}
+\section{Simuladores de redes}
 %https://hal-univ-tlse3.archives-ouvertes.fr/hal-00605383/document
-\subsection{NS-3}
-\subsection{LXC}
-\subsection{Estinet}
-\subsection{Mininet}
+\subsection{Cloonix}
+\subsection{CORE}
+\subsection{DOT} %si
+\subsection{Estinet} %si
+\subsection{fs-sdn} %si
+\subsection{GNS3}
+\subsection{IMUNES}
+\subsection{LINE}
+\subsection{Marionnet}
+\subsection{Mininet} %si
+\subsection{MLN}
+\subsection{Netkit}
+\subsection{NetSim}
+\subsection{NS-3} %si
+\subsection{OFNet} %si
+\subsection{Omnet++}
+\subsection{Opencontrail} %si
+\subsection{OpenStack}
+\subsection{OPNET}
+\subsection{Psimulator2}
+\subsection{Shadow}
+\subsection{STS} %si
+\subsection{Unified Networking Lab}
+\subsection{VNX y VNUML}
 
 %http://netgroup.uniroma2.it/twiki/pub/Oshi/WebHome/OSHI_tech_report.pdf
 
 %http://tiny-tera.stanford.edu/~nickm/papers/p253.pdf
 
-\section{Aplicaciones de SDN}
-
-\section{Red Privada Virtual (VPN)}
-
-\section{Multiprotocol Label Switching (MPLS)}
+%\section{Aplicaciones de SDN}
 
 Se estudió el estado del arte en lo que respecta a opciones de emulación o simulación para SDN. A continuación se detallan las principales herramientas analizadas al momento de hacer esta investigación.\\
 
@@ -72,6 +90,12 @@ Estinet requiere licencias pagas, y se opto por elegir herramientas open source.
 
 \textbf{Mininet}\\
 Mininet es un emulador de redes SDN que permite emular hosts, switches, controladores y enlaces. Utiliza virtualización basada en procesos para ejecutar múltiples instancias (hasta 4096) de hosts y switches en un unico kernel de sistema operativo. También utiliza una capacidad de Linux denominada \textit{network namespace} que permite crear "interfaces de red virtuales", y de esta manera dotar a los nodos con sus propias interfaces, tablas de ruteo y tablas ARP. Lo que en realidad hace Mininet es utilizar la arquitectura \textit{Linux container}, que tiene la capacidad de proveer virtualización completa, pero de un modo reducido ya que no requiere de todas sus capacidades. Mininet también utiliza \textit{virtual ethernet (veth)} para crear los enlaces virtuales entre los nodos.
+
+Mencionar MaxiNet (está en las referencias)
+Capaz mencionar Mininet-HiFi (buscar en el survey)
+Capaz mencionar Mininet CE (buscar en el survey)
+Capaz mencionar SDN Cloud DC (buscar en el survey)
+
 
 
 \textbf{LXC}\\
