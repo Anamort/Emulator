@@ -1,4 +1,65 @@
 % ******************************* Thesis Appendix A ****************************
 
-\chapter{Detalles de la API del entorno virtual}
+\chapter{Manual de usuario del emulador}
+
+\section{Modo de uso}
+El emulador se inicia con el siguiente comando:
+\begin{lstlisting}
+sudo python start.py {RUTA_TOPOLOGIA}
+\end{lstlisting}
+
+El valor de \{RUTA\_TOPOLOGIA\} debe ser el path hacia el script Python que configura la topología. Para conocer los detalles de lo que debe hacer ese script, leer la sección A.2.
+
+El script \textbf{start.py} realiza las siguientes funciones:
+\begin{itemize}
+	\item Carga la topología recibida por parámetro y la inicia.
+	\item Borra el archivo utils/init\_json.json, en caso de que una ejecución previa lo haya creado. El propósito de este archivo se verá mas adelante.
+	\item Llama al método \textbf{start} de cada nodo virtual. Cada una de las cuatro clases de nodos (RAUSwitch, RAUHost, RAUController y QuaggaRouter) tiene este método, que se encarga de inicializar y configurar el nodo.
+\end{itemize}
+
+Luego de iniciar, Mininet ofrece una línea de comandos para que el usuario interactúe. Ejecutando el siguiente comando se puede obtener una terminal Linux en cualquiera de los nodos.
+\begin{lstlisting}
+xterm {NOMBRE_NODO}
+\end{lstlisting}
+
+De aquí en adelante en este manual de usuario, cuando se diga que hay que ejecutar un determinado comando en un nodo, se lo debe ejecutar en una consola xterm en dicho nodo.
+
+Habiendo iniciado el entorno virtual, hay que llevar a cabo algunos pasos más para que sea totalmente funcional:
+%%ATENCION!!
+%https://github.com/santiagovidal/LiveCode/blob/master/ryu-master/ryu/app/proyecto/businessLogic/external_interfaces.py
+\begin{enumerate}
+	\item Esperar a que OSPF termine de distribuir las rutas y actualizar las bases de datos topológicas. Este proceso en general toma menos de un minuto, y varía de acuerdo al tamaño de la topología. Una manera de verificar esto es con el comando \textbf{route} y analizando la tabla de ruteo de los nodos.
+	\item Ejecutar el comando \textbf{python telnetRouters.py} en cualquiera de los RAUSwitch. Este script escrito en Python se encarga de consultar la base de datos topológica de OSPF mediante Telnet, parsear la información y enviarla al controlador. Luego de recibir la topología, el controlador todavía necesita la siguiente información de cada RAUSwitch: nombres de interfaces, direcciones IP y direcciones MAC. Para obtener esta información, se conecta automáticamente con el nodo que tiene levantado el Web Service que hace disponible la información de cada nodo. El nodo que levanta el Web Service es el controlador mismo (o sea que se conecta consigo mismo mediante localhost) pero puede ser cualquiera, siempre y cuando esté ejecutando el script \textbf{utils/wsOVS.py}. Este script es el sustituto que se creó para suplantar a \textbf{wsSNMP.py} (recordar sección 3.3.5).
+\end{enumerate}
+
+\section{API para configurar las topologias}
 %En Mininet estándar, las topologias se crean mediante la API en Python. Se crea un objeto de tipo Topology, se le agregan los nodos que se desee, y se establecen los enlaces virtuales entre esos nodos. Como el entorno es en esencia una extensión de Mininet, hereda su facilidad de uso. La única diferencia radica en que las entidades de este entorno requieren parámetros adicionales para su creación, que serán detallados en el Anexo.
+%Parámetros necesarios para instanciar los objetos:
+
+%%RAUHost
+%ip: Dirección IP
+%gw: Default gateway
+
+%%RAUSwitch
+%loopback: Dirección de loopback
+%ips: Direcciones IP de todas las interfaces (formato A.B.C.D/E)
+%La primera direccion IP debe ser la de la red de gestion
+%La ultima direccion IP debe ser la de la interfaz que lo conecta con el router CE (en caso que sea borde)
+%El orden debe ser coherente con la numeración de las interfaces al agregar los links (ver en topo.py como se agregan los links)
+%dpid: Datapath ID
+%controller_ip: Dirección IP del controlador
+%border: 0 o 1 dependiendo de si es router de borde o no
+%ce_ip_addresss: Direccion IP del router CE (aplica solo si es de borde)
+%ce_mac_address: Direccion MAC del router CE (aplica solo si es de borde)
+
+%%RAUController
+%ip: Dirección IP
+
+%QuaggaRouter
+%loopback: Dirección de loopback
+%ips: Direcciones IP de todas las interfaces (formato A.B.C.D/E)
+%La primera direccion IP debe ser la de la interfaz que lo conecta con el backbone
+%ce_mac_address: Direccion MAC de la interfaz que lo conecta con el backbone
+
+\section{GraphML Loader}
+

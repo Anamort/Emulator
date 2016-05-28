@@ -19,7 +19,7 @@ def startNetwork():
   # Se levanta la topologia
 
   info('** Creating test topology\n')
-  topology = imp.load_source('CustomTopology', 'topologies/'+sys.argv[1])
+  topology = imp.load_source('CustomTopology', sys.argv[1])
   topo = topology.CustomTopology()
 
   info('** Starting the network\n')
@@ -32,7 +32,7 @@ def startNetwork():
   if os.path.exists('utils/init_json.json'):
     os.remove('utils/init_json.json')
   
-  # Invocar el metodo start en cada nodo en 'startList'
+  # Invocar el metodo start en cada nodo
   info('** Starting RAU nodes\n')
   for node in topo.hosts():
     n = net.get(node)

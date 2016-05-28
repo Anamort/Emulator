@@ -99,12 +99,15 @@ class RAUController(Host):
   def start(self):
     info("%s " % self.name)
 
-    # Configuro las ips
+    # Configura las ips
     setIPAddressesToInterfaces(self.name, self.intfList(), self.ips)
 
     # Se levanta el controlador
     self.cmd('sh utils/ryu_start.sh &')
-    # self.cmd('tcpdump -i controller-eth0 -w contr2.cap &')
+
+    # Se inicia el WebService que recibe los pedidos de informacion de un nodo
+    # y usa 'ovs-vsctl list bridge' para obtener dicha informacion
+    self.cmd('python utils/wsOVS.py &')
     
   def terminate( self ):
     # Usar con cuidado
@@ -338,10 +341,6 @@ class RAUSwitch(Host):
       datos['ce_ip_address'] = self.ce_ip_address
       json_data = json.dumps(datos)
       init_json.write(json_data + '\n')
-
-    # El router con la ip 192.168.1.12 levanta el WS con la informacion de los routers
-    if (self.ips[0] == '192.168.1.12/24'):
-      self.cmd('python utils/wsOVS.py &')
 
   def terminate( self ):
     # Cuidado con este comando
