@@ -3,7 +3,7 @@
 \chapter{Manual de usuario del emulador}
 
 \section{Modo de uso}
-El emulador se inicia con el siguiente comando:
+Posicionándose en el directorio raíz, el emulador se inicia con el siguiente comando:
 \begin{lstlisting}
 sudo python start.py {RUTA_TOPOLOGIA}
 \end{lstlisting}
@@ -30,7 +30,32 @@ Habiendo iniciado el entorno virtual, hay que llevar a cabo algunos pasos más p
 \begin{enumerate}
 	\item Esperar a que OSPF termine de distribuir las rutas y actualizar las bases de datos topológicas. Este proceso en general toma menos de un minuto, y varía de acuerdo al tamaño de la topología. Una manera de verificar esto es con el comando \textbf{route} y analizando la tabla de ruteo de los nodos.
 	\item Ejecutar el comando \textbf{python telnetRouters.py} en cualquiera de los RAUSwitch. Este script escrito en Python se encarga de consultar la base de datos topológica de OSPF mediante Telnet, parsear la información y enviarla al controlador. Luego de recibir la topología, el controlador todavía necesita la siguiente información de cada RAUSwitch: nombres de interfaces, direcciones IP y direcciones MAC. Para obtener esta información, se conecta automáticamente con el nodo que tiene levantado el Web Service que hace disponible la información de cada nodo. El nodo que levanta el Web Service es el controlador mismo (o sea que se conecta consigo mismo mediante localhost) pero puede ser cualquiera, siempre y cuando esté ejecutando el script \textbf{utils/wsOVS.py}. Este script es el sustituto que se creó para suplantar a \textbf{wsSNMP.py} (recordar sección 3.3.5).
+	\item Para poder crear servicios en RAUFlow, se debe indicar cuales RAUSwitch son de borde y cuales no. En el caso de los que sean de borde, también se debe especificar la dirección IP y MAC de el nodo CE con el que el RAUSwitch está conectado. Tradicionalmente esto se hace en la interfaz web de RAUFlow, pero esto resulta tedioso y lento si se tienen muchos nodos. Para acelerar este proceso existe un script llamado \textbf{nodeInits.py} que se puede ejecutar desde cualquier nodo, y se encarga de enviar toda esa información al controlador mediante pedidos HTTP. La ejecución de este script es opcional, si el usuario desea puede ingresar los datos mediante la interfaz web. El script envía los datos que se encuentren en el archivo \textbf{init\_json.json}, y dicho archivo es creado automáticamente cuando se levanta el emulador. En la sección A.2 se explicará como indicarle al emulador que nodos son de borde, así como las direcciones de los nodos CE.
 \end{enumerate}
+
+Luego de que el entorno está levantado y listo para usarse, se puede empezar a crear servicios. Para usar la interfaz web de RAUFlow se debe levantar un explorador desde el nodo controlador. Esto se puede lograr primero iniciando una consola xterm en dicho nodo, y luego ejecutando el comando que inicie el explorador. Una vez en la interfaz web de RAUFlow, se puede interactuar con ella de forma normal.
+
+\section{Cómo interactuar con cada instancia de Open vSwitch}
+Como se explica en el capítulo 3, cada RAUSwitch tiene su propia instancia de Open vSwitch ejecutándose en modo userspace. Esto modifica un poco la manera de usar sus comandos, ya que cada comando se debe 'apuntar' a la instancia con la que se desea interactuar.
+
+Cada RAUSwitch tiene un directorio bajo /tmp donde se almacenan los archivos relacionados con su instancia de Open vSwitch y Quagga. Por ejemplo, si un nodo se llama 'switch1', tendrá lo siguiente:
+\dirtree{%
+	.1 /.
+	.2 tmp.
+	.3 switch1.
+	.4 ovs.
+	.4 quagga.
+}
+
+
+Open vSwitch tiene varias herramientas para consultar datos y realizar configuraciones. Las de interés en este contexto son: ovs-appctl, ovs-vsctl, ovs-ofctl y ovs-dpctl. A continuación se explicará en que consiste cada una y como usarla en una instancia en particular.
+
+\begin{itemize}
+	\item \textbf{ovs-appctl} \cite{ovs-appctl}
+	\item \textbf{ovs-vsctl} \cite{ovs-vsctl}
+	\item \textbf{ovs-ofctl} \cite{ovs-ofctl}
+	\item \textbf{ovs-dpctl} \cite{ovs-dpctl}
+\end{itemize}
 
 \section{API para configurar las topologias}
 %En Mininet estándar, las topologias se crean mediante la API en Python. Se crea un objeto de tipo Topology, se le agregan los nodos que se desee, y se establecen los enlaces virtuales entre esos nodos. Como el entorno es en esencia una extensión de Mininet, hereda su facilidad de uso. La única diferencia radica en que las entidades de este entorno requieren parámetros adicionales para su creación, que serán detallados en el Anexo.
