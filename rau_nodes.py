@@ -176,7 +176,7 @@ class RAUSwitch(Host):
     self.cmd("ovsdb-tool create %s/conf.db" % self.path_ovs)
     self.cmd("ovsdb-server %s/conf.db --remote=punix:%s/db.sock --remote=db:Open_vSwitch,Open_vSwitch,manager_options --no-chdir --unixctl=%s/ovsdb-server.sock --detach" %(self.path_ovs, self.path_ovs, self.path_ovs))
     self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait init" % self.path_ovs)
-    self.cmd("ovs-vswitchd unix:%s/db.sock --unixctl=%s/ovs-vswitchd.9999.ctl -vinfo --log-file=%s/ovs-vswitchd.log --pidfile=%s/ovs-vswitchd.pid --no-chdir --detach" %(self.path_ovs, self.path_ovs, self.path_ovs, self.path_ovs))
+    self.cmd("ovs-vswitchd unix:%s/db.sock --unixctl=%s/ovs-vswitchd.ctl -vinfo --log-file=%s/ovs-vswitchd.log --pidfile=%s/ovs-vswitchd.pid --no-chdir --detach" %(self.path_ovs, self.path_ovs, self.path_ovs, self.path_ovs))
 
     # Creacion y configuracion del bridge
     self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait add-br %s" %(self.path_ovs, self.name))

@@ -3,11 +3,12 @@
 \pgfplotsset{width=9cm,compat=1.9}
 \usepackage[utf8]{inputenc} 
 \usepackage{graphicx}
-\usepackage[spanish]{babel}
+%\usepackage[spanish]{babel}
 \usepackage{xcolor}
 \usepackage{listings}
 \usepackage{csquotes}
 \usepackage{dirtree}
+\DeclareUnicodeCharacter{00A0}{ }
 
 \lstset{
 	basicstyle={\small\ttfamily},
@@ -73,6 +74,23 @@
 \RequirePackage[labelsep=space,tableposition=top]{caption}
 \renewcommand{\figurename}{Fig.} %to support older versions of captions.sty
 
+% ########################## Renombrado ##########################
+\renewcommand{\appendixpagename}{Apendice}
+
+% changes the default name `Bibliography` -> `References'
+\renewcommand{\bibname}{Bibliografía}
+
+\def\acknowledgementsname{acknowledgements}
+\renewcommand{\acknowledgementsname}{Agradecimientos}
+
+\renewcommand{\chaptername}{Capítulo}
+
+\renewcommand{\contentsname}{Tabla de Contenidos}
+\renewcommand{\listfigurename}{Tabla de Figuras}
+\renewcommand{\listtablename}{Tabla de Cuadros}
+
+\renewcommand{\appendixtocname}{Lista de apendices}
+\renewcommand{\appendixname}{Apendice}
 
 % *************************** Graphics and figures *****************************
 

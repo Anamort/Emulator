@@ -214,3 +214,10 @@ Script para calcular tiempos
 ...                     first_num = float(first_num)
 ...                     second_num = float(second_num)
 ...                     print str(first_num + second_num)
+
+
+CAMBIOS AL CODIGO:
+wsOVS lo levanta el controlador
+archivo .ctl no es mas 9999.ctl
+ruta de inicio ahora debe ser completa
+investigar si se puede levantar varios datapaths en el kernel datapath

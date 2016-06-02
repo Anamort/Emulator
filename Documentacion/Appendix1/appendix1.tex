@@ -17,20 +17,20 @@ El script \textbf{start.py} realiza las siguientes funciones:
 	\item Llama al método \textbf{start} de cada nodo virtual. Cada una de las cuatro clases de nodos (RAUSwitch, RAUHost, RAUController y QuaggaRouter) tiene este método, que se encarga de inicializar y configurar el nodo.
 \end{itemize}
 
-Luego de iniciar, Mininet ofrece una línea de comandos para que el usuario interactúe. Ejecutando el siguiente comando se puede obtener una terminal Linux en cualquiera de los nodos.
+Luego de iniciar, Mininet ofrece una línea de comandos con la que el usuario puede interactuar. Ejecutando el siguiente comando se puede obtener una terminal Linux en cualquiera de los nodos.
 \begin{lstlisting}
 xterm {NOMBRE_NODO}
 \end{lstlisting}
 
-De aquí en adelante en este manual de usuario, cuando se diga que hay que ejecutar un determinado comando en un nodo, se lo debe ejecutar en una consola xterm en dicho nodo.
+De aquí en adelante en este manual de usuario, cuando se indique que hay que ejecutar un determinado comando en un nodo, se lo debe ejecutar en una consola xterm en dicho nodo.
 
 Habiendo iniciado el entorno virtual, hay que llevar a cabo algunos pasos más para que sea totalmente funcional:
 %%ATENCION!!
 %https://github.com/santiagovidal/LiveCode/blob/master/ryu-master/ryu/app/proyecto/businessLogic/external_interfaces.py
 \begin{enumerate}
 	\item Esperar a que OSPF termine de distribuir las rutas y actualizar las bases de datos topológicas. Este proceso en general toma menos de un minuto, y varía de acuerdo al tamaño de la topología. Una manera de verificar esto es con el comando \textbf{route} y analizando la tabla de ruteo de los nodos.
-	\item Ejecutar el comando \textbf{python telnetRouters.py} en cualquiera de los RAUSwitch. Este script escrito en Python se encarga de consultar la base de datos topológica de OSPF mediante Telnet, parsear la información y enviarla al controlador. Luego de recibir la topología, el controlador todavía necesita la siguiente información de cada RAUSwitch: nombres de interfaces, direcciones IP y direcciones MAC. Para obtener esta información, se conecta automáticamente con el nodo que tiene levantado el Web Service que hace disponible la información de cada nodo. El nodo que levanta el Web Service es el controlador mismo (o sea que se conecta consigo mismo mediante localhost) pero puede ser cualquiera, siempre y cuando esté ejecutando el script \textbf{utils/wsOVS.py}. Este script es el sustituto que se creó para suplantar a \textbf{wsSNMP.py} (recordar sección 3.3.5).
-	\item Para poder crear servicios en RAUFlow, se debe indicar cuales RAUSwitch son de borde y cuales no. En el caso de los que sean de borde, también se debe especificar la dirección IP y MAC de el nodo CE con el que el RAUSwitch está conectado. Tradicionalmente esto se hace en la interfaz web de RAUFlow, pero esto resulta tedioso y lento si se tienen muchos nodos. Para acelerar este proceso existe un script llamado \textbf{nodeInits.py} que se puede ejecutar desde cualquier nodo, y se encarga de enviar toda esa información al controlador mediante pedidos HTTP. La ejecución de este script es opcional, si el usuario desea puede ingresar los datos mediante la interfaz web. El script envía los datos que se encuentren en el archivo \textbf{init\_json.json}, y dicho archivo es creado automáticamente cuando se levanta el emulador. En la sección A.2 se explicará como indicarle al emulador que nodos son de borde, así como las direcciones de los nodos CE.
+	\item Ejecutar el comando \textbf{python telnetRouters.py} en cualquiera de los RAUSwitch. Este script escrito en Python se encarga de consultar la base de datos topológica de OSPF mediante Telnet, parsear la información y enviarla al controlador. Es importante asegurarse que el paso 1 esta completo antes de ejecutarlo, ya que en caso contrario la base de datos de OSPF estará incompleta y se estarán enviando datos incorrectos. Luego de recibir la topología, el controlador todavía necesita la siguiente información de cada RAUSwitch: nombres de interfaces, direcciones IP y direcciones MAC. Para obtener esta información, se conecta automáticamente con el nodo que tiene levantado el Web Service que hace disponible la información de cada nodo. El nodo que levanta el Web Service es el controlador mismo (es decir, se conecta consigo mismo mediante localhost) pero puede ser cualquiera, siempre y cuando esté ejecutando el script \textbf{utils/wsOVS.py}. Este script es el sustituto que se creó para suplantar a \textbf{wsSNMP.py} (recordar sección 3.3.5).
+	\item Para poder crear servicios en RAUFlow, se debe indicar cuales RAUSwitch son de borde y cuales no. En el caso de los que son de borde, también se debe especificar la dirección IP y MAC del nodo CE (que típicamente será un RAUHost o QuaggaRouter) con el que el RAUSwitch está conectado. Tradicionalmente esto se hace en la interfaz web de RAUFlow, pero esto resulta tedioso y lento si se tienen muchos nodos. Para acelerar este proceso se creó un script llamado \textbf{nodeInits.py} que se puede ejecutar desde cualquier nodo, y se encarga de enviar toda esa información al controlador mediante pedidos HTTP. La ejecución de este script es opcional; si el usuario desea puede ingresar los datos mediante la interfaz web. El script envía los datos que se encuentren en el archivo \textbf{init\_json.json}, y dicho archivo es creado automáticamente cuando se levanta el emulador. En caso de hacerse, la ejecución de este script debe ser posterior a la de telnetRouters.py, ya que en caso contrario se estarían mandando datos de nodos que el controlador todavía no conoce. En la sección A.2 se explicará como indicarle al emulador que nodos son de borde, así como las direcciones de los nodos CE.
 \end{enumerate}
 
 Luego de que el entorno está levantado y listo para usarse, se puede empezar a crear servicios. Para usar la interfaz web de RAUFlow se debe levantar un explorador desde el nodo controlador. Esto se puede lograr primero iniciando una consola xterm en dicho nodo, y luego ejecutando el comando que inicie el explorador. Una vez en la interfaz web de RAUFlow, se puede interactuar con ella de forma normal.
@@ -38,23 +38,25 @@ Luego de que el entorno está levantado y listo para usarse, se puede empezar a 
 \section{Cómo interactuar con cada instancia de Open vSwitch}
 Como se explica en el capítulo 3, cada RAUSwitch tiene su propia instancia de Open vSwitch ejecutándose en modo userspace. Esto modifica un poco la manera de usar sus comandos, ya que cada comando se debe 'apuntar' a la instancia con la que se desea interactuar.
 
-Cada RAUSwitch tiene un directorio bajo /tmp donde se almacenan los archivos relacionados con su instancia de Open vSwitch y Quagga. Por ejemplo, si un nodo se llama 'switch1', tendrá lo siguiente:
+Cada RAUSwitch tiene un directorio bajo /tmp donde se almacenan los archivos relacionados con su instancia de Open vSwitch y Quagga. El siguiente diagrama explica la estructura de archivos correspondiente a un nodo llamado 'switch1'. 
 \dirtree{%
 	.1 /.
 	.2 tmp.
 	.3 switch1.
 	.4 ovs.
+	.5 db.sock.
+	.5 ovs-vswitchd.ctl.
 	.4 quagga.
 }
 
+El diagrama muestra dos archivos que son vitales para poder comunicarse con la instancia de Open vSwitch del nodo 'switch1'. Estos son: \textbf{db.sock} y \textbf{ovs-vswitchd.ctl}. El propósito de estos archivos se explicará más adelante. Los demás archivos que se mantienen en estos directorios son los relacionados con Quagga, y se omiten por simplicidad.
 
-Open vSwitch tiene varias herramientas para consultar datos y realizar configuraciones. Las de interés en este contexto son: ovs-appctl, ovs-vsctl, ovs-ofctl y ovs-dpctl. A continuación se explicará en que consiste cada una y como usarla en una instancia en particular.
-
+Open vSwitch tiene varias herramientas que permiten consultar datos y realizar configuraciones. Las de interés en este contexto son: ovs-appctl, ovs-vsctl, ovs-ofctl y ovs-dpctl. A continuación se explicará en que consiste cada una y como usarla apuntando a un nodo específico.
 \begin{itemize}
-	\item \textbf{ovs-appctl} \cite{ovs-appctl}
-	\item \textbf{ovs-vsctl} \cite{ovs-vsctl}
-	\item \textbf{ovs-ofctl} \cite{ovs-ofctl}
-	\item \textbf{ovs-dpctl} \cite{ovs-dpctl}
+	\item \textbf{ovs-appctl} \cite{ovs-appctl} es una herramienta que permite enviarle comandos al demonio ovs-vswitchd. Se le puede consultar cosas como flujos, logs, etc, así como realizar configuraciones en tiempo de ejecución. El entorno virtual tendrá múltiples instancias de este demonio ejecutando, así que es necesario indicar a qué instancia debe ser dirigido un comando. Esto se hace con la opción \textbf{-t} o \textbf{--target} seguido por el socket de Unix en el cual la instancia está escuchando por conexiones de control. Aquí entra en juego el archivo \textbf{ovs-vswitchd.ctl} mencionado anteriormente. Al iniciarse, cada instancia de Open vSwitch almacenará ese socket en el directorio privado de su nodo. Por lo tanto, para apuntar un comando 'ovs-appctl' hacia un nodo específico se debe hacer: \textit{ovs-appctl --target=/tmp/nombre\_nodo/ovs/ovs-vswitchd.ctl nombre\_comando}.
+	\item \textbf{ovs-vsctl} \cite{ovs-vsctl} permite conectarse con el proceso ovsdb-server, quien se encarga de mantener la base de datos de configuración de Open vSwitch. ovs-vsctl permite consultar y modificar dicha base de datos. Igual que en el caso de ovs-appctl, se debe especificar a que instancia se desea apuntar el comando. Esto se logra con la opción \textbf{--db}, que indica el modo de conexión que se utilizará. Este puede ser: un socket de Unix o la red. En caso de usar un socket de Unix, se debe indicar la ruta al archivo \textbf{db.sock} que le corresponde al nodo, de la siguiente manera: \textit{ovs-vsctl --db=unix:/tmp/nombre\_nodo/ovs/db.sock nombre\_comando}. Por otro lado, si se desea enviar el comando a través de la red, se debe ejecutar: \textit{ovs-vsctl --db=tcp:dirección\_ip:6640 nombre\_comando} usando la dirección IP del nodo de interés.
+	\item \textbf{ovs-ofctl} \cite{ovs-ofctl} permite monitorear y administrar el switch OpenFlow. Por ejemplo, un uso frecuente es el de consultar el contenido de las tablas de flujos de un switch, que se hace con el siguiente comando: \textit{ovs-ofctl -O OpenFlow13 dump-flows nombre\_nodo}. A diferencia de las herramientas anteriores, no hace falta indicar de una forma especial a qué nodo apunta el comando. Alcanza con ejecutarlo en una consola xterm en el nodo que se busca administrar.
+	\item \textbf{ovs-dpctl} \cite{ovs-dpctl} es un programa que permite consultar y administrar los flujos de los datapaths externos a ovs-vswitchd, como el datapath del kernel. El datapath del kernel no es utilizado en el entorno (debido a las múltiples instancias de Open vSwitch), por lo tanto no es posible usar esta herramienta. Para administrar el datapath en el userspace (también llamado netdev) se puede utilizar la familia de comandos \textit{dpctl/*} de ovs-appctl. Por ejemplo, \textit{ovs-appctl  --target=/tmp/nombre\_nodo/ovs/ovs-vswitchd.ctl dpctl/show} muestra las estadísticas del cache de flujos para un determinado nodo.
 \end{itemize}
 
 \section{API para configurar las topologias}
