@@ -359,7 +359,7 @@ class QuaggaRouter(Host):
   quaggaPath = '/usr/lib/quagga/'
   baseDIR = "/tmp"
   
-  def __init__(self, name, ips, ce_mac_address, gw=None, *args, **kwargs ):
+  def __init__(self, name, ips, ce_mac_address=None, gw=None, *args, **kwargs ):
     dirs = ['/var/log/', '/var/log/quagga', '/var/run', '/var/run/quagga']
     Host.__init__(self, name, privateDirs=dirs, *args, **kwargs )
     self.ips = ips
@@ -370,8 +370,9 @@ class QuaggaRouter(Host):
   def start(self):
     info("%s " % self.name)
 
-    # Se configura la MAC de la interfaz con la red backbone
-    self.intfList()[0].setMAC(self.ce_mac_address)
+    if self.ce_mac_address is not None:
+      # Se configura la MAC de la interfaz con la red backbone
+      self.intfList()[0].setMAC(self.ce_mac_address)
     
     # Se asignan las direcciones IP a las interfaces
     setIPAddressesToInterfaces(self.name, self.intfList(), self.ips)     
@@ -421,14 +422,11 @@ class QuaggaRouter(Host):
     self.cmd("chown quagga.quaggavty %s/zebra.pid" % self.path_quagga)
     self.cmd("chown quagga.quaggavty %s/ospfd.pid" % self.path_quagga)
     
-    #zserv = open(self.path_quagga + "/zserv.api","w")
-    #zserv.close()
-    #self.cmd("chmod -R 777 %s/zserv.api" % self.path_quagga)
-    #self.cmd("chown quagga.quagga %s/zserv.api" % self.path_quagga)
-    #
 
-    # self.cmd("%s -f %s/zebra.conf -A 127.0.0.1 -i %s/zebra.pid &" %(self.zebra_exec, self.path_quagga, self.path_quagga))
-    # self.cmd("%s -f %s/ospfd.conf -A 127.0.0.1 -i %s/ospfd.pid &" %(self.ospfd_exec, self.path_quagga, self.path_quagga))
+    # Iniciar Quagga
+    self.cmd("%s -f %s/zebra.conf -A 127.0.0.1 -i %s/zebra.pid &" %(self.zebra_exec, self.path_quagga, self.path_quagga))
+    self.cmd("%s -f %s/ospfd.conf -A 127.0.0.1 -i %s/ospfd.pid &" %(self.ospfd_exec, self.path_quagga, self.path_quagga))
+    
     self.cmd('sysctl -w net.ipv4.ip_forward=1')
 
     if self.gw is not None:

@@ -221,3 +221,4 @@ wsOVS lo levanta el controlador
 archivo .ctl no es mas 9999.ctl
 ruta de inicio ahora debe ser completa
 investigar si se puede levantar varios datapaths en el kernel datapath
+probar quaggarouters (estuvo desactivado mucho tiempo)

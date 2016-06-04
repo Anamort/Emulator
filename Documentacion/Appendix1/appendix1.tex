@@ -1,5 +1,7 @@
 % ******************************* Thesis Appendix A ****************************
 
+\graphicspath{{Appendix1/Figs/}}
+
 \chapter{Manual de usuario del emulador}
 
 \section{Modo de uso}
@@ -60,33 +62,140 @@ Open vSwitch tiene varias herramientas que permiten consultar datos y realizar c
 \end{itemize}
 
 \section{API para configurar las topologias}
-%En Mininet estándar, las topologias se crean mediante la API en Python. Se crea un objeto de tipo Topology, se le agregan los nodos que se desee, y se establecen los enlaces virtuales entre esos nodos. Como el entorno es en esencia una extensión de Mininet, hereda su facilidad de uso. La única diferencia radica en que las entidades de este entorno requieren parámetros adicionales para su creación, que serán detallados en el Anexo.
-%Parámetros necesarios para instanciar los objetos:
+La API que se debe usar para crear y personalizar las topologias es, en esencia, la misma que Mininet estándar. Cada topología debe ser configurada por un script Python, que debe definir una subclase de la clase \textit{Topo} de Mininet. A dicha subclase se le debe agregar nodos y enlaces mediante los métodos \textit{addHost}, \textit{addSwitch}, y \textit{addLink}. En el caso de los dos primeros, es necesario indicar la clase de nodo que se está agregando, y los parámetros necesarios para inicializar esa clase. Como se explica en el capítulo 3, se crearon cuatro nuevas clases de nodos, y a continuación se detallan los parámetros que se pueden usar en sus constructores. Los resaltados con * son obligatorios. \\
 
-%%RAUHost
-%ip: Dirección IP
-%gw: Default gateway
+\underline{RAUSwitch}
+\begin{itemize}
+	\item \textbf{nombre} \textcolor{red}{*}. Nombre del switch.
+	\item \textbf{ips} \textcolor{red}{*}. Lista con todas las direcciones IP (en formato CIDR, A.B.C.D/E) para el switch.
+	\item \textbf{dpid} \textcolor{red}{*}. Datapath ID del switch. Debe ser un string hexadecimal de largo 16. En caso de no proveer este valor, el datapath ID se derivará del nombre del switch. Por ejemplo: si el nombre es \textit{switch8}, su datapath ID será 8.
+	\item \textbf{controller\_ip} \textcolor{red}{*}. Dirección IP del controlador.
+	\item \textbf{border}. Número entre 0 o 1 que indica si el switch es de borde o no. Si no se provee, se asume que border=0.
+	\item \textbf{ce\_ip\_address}. Dirección IP del nodo CE con el que está conectado. Solo aplica si el switch es de borde.
+	\item \textbf{ce\_mac\_address}. Dirección MAC del nodo CE con el que está conectado. Solo aplica si el switch es de borde.
+\end{itemize}
 
-%%RAUSwitch
-%loopback: Dirección de loopback
-%ips: Direcciones IP de todas las interfaces (formato A.B.C.D/E)
-%La primera direccion IP debe ser la de la red de gestion
-%La ultima direccion IP debe ser la de la interfaz que lo conecta con el router CE (en caso que sea borde)
-%El orden debe ser coherente con la numeración de las interfaces al agregar los links (ver en topo.py como se agregan los links)
-%dpid: Datapath ID
-%controller_ip: Dirección IP del controlador
-%border: 0 o 1 dependiendo de si es router de borde o no
-%ce_ip_addresss: Direccion IP del router CE (aplica solo si es de borde)
-%ce_mac_address: Direccion MAC del router CE (aplica solo si es de borde)
+\underline{RAUHost}
 
-%%RAUController
-%ip: Dirección IP
+\begin{itemize}
+	\item \textbf{nombre} \textcolor{red}{*}. Nombre del host.
+	\item \textbf{ips} \textcolor{red}{*}. Lista con todas las direcciones IP (en formato CIDR, A.B.C.D/E) para el host. En general tendrá una única dirección IP, pero por las dudas se permite que tenga varias.
+	\item \textbf{gw}.  Dirección IP del default gateway.
+	\item \textbf{ce\_mac\_address}. En caso de que el host se esté usando como nodo CE, este parámetro indica la dirección MAC que debe tener la interfaz que lo conecta con el RAUSwitch. En caso de existir, dicha interfaz debe ser la menor de todas.
+\end{itemize}
 
-%QuaggaRouter
-%loopback: Dirección de loopback
-%ips: Direcciones IP de todas las interfaces (formato A.B.C.D/E)
-%La primera direccion IP debe ser la de la interfaz que lo conecta con el backbone
-%ce_mac_address: Direccion MAC de la interfaz que lo conecta con el backbone
+\underline{RAUController}
+
+\begin{itemize}
+	\item \textbf{nombre} \textcolor{red}{*}. Nombre del controlador.
+	\item \textbf{ips} \textcolor{red}{*}. Lista con todas las direcciones IP (en formato CIDR, A.B.C.D/E) para el controlador. En general tendrá una única dirección IP, pero por las dudas se permite que tenga varias.
+\end{itemize}
+
+\underline{QuaggaRouter}
+
+\begin{itemize}
+	\item \textbf{nombre} \textcolor{red}{*}. Nombre del router.
+	\item \textbf{ips} \textcolor{red}{*}. Lista con todas las direcciones IP (en formato CIDR, A.B.C.D/E) para el router.
+	\item \textbf{gw}.  Dirección IP del default gateway.
+	\item \textbf{ce\_mac\_address}. En caso de que el router se esté usando como nodo CE, este parámetro indica la dirección MAC que debe tener la interfaz que lo conecta con el RAUSwitch. En caso de existir, dicha interfaz debe ser la menor de todas.
+\end{itemize}
+
+Cada nodo tendrá un conjunto de interfaces de red, definidas de acuerdo a como se creen los enlaces de ese nodo. Por ejemplo, el siguiente fragmento de código crea enlaces entre tres nodos llamados \textit{switch1}, \textit{switch2} y \textit{switch3}:
+\begin{lstlisting}
+addLink(switch1, switch2, 0, 0)
+addLink(switch1, switch3, 1, 0)
+\end{lstlisting}
+
+Los últimos dos parámetros indican qué número de interfaz debe tener cada nodo. La primera línea significa que tanto el switch1 como el switch2 tendrán eth0 conectadas a ese enlace. La segunda indica que el switch1 usará eth1 para el enlace, mientras que el switch3 usará eth0. Es importante prestar especial atención a esto, ya que el parámetro \textit{ips} con el que se inicializa cada nodo debe cumplir ciertas reglas:
+\begin{itemize}
+	\item La cantidad de direcciones IP debe coincidir con la cantidad de interfaces de red.
+	\item Las direcciones IP serán asignadas según el orden en el que están en la lista, empezando desde la interfaz más baja.
+	\item Si se trata de un RAUSwitch, la primera interfaz (y por ende la primera dirección IP de la lista) debe ser la de la red de gestión.
+	\item Si se trata de un RAUSwitch y es de borde, la última interfaz debe ser la que lo conecte con el nodo CE, ya sea un RAUHost o un QuaggaRouter.
+	\item Si se trata de un RAUHost o QuaggaRouter que actúa como nodo CE (es decir, está conectado a un RAUSwitch), la primera interfaz debe ser la que lo conecte con el RAUSwitch.
+\end{itemize}
+
+\subsection{Ejemplo}
+\begin{figure}[t]
+	\caption{Topología de ejemplo}
+	\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{topo-ejemplo}
+	\centering
+	\label{fig:topo_ejemplo}
+\end{figure}
+
+En la figura \ref{fig:topo_ejemplo} se puede ver una pequeña topología de ejemplo que consiste de 3 RAUSwitch, 1 QuaggaRouter actuando como CE, un RAUHost actuando como CE y otro RAUHost conectado al QuaggaRouter. También se puede ver la red de gestión marcada con rojo. A continuación se muestra el código que implementa esa topología:
+
+\begin{minted}{python}
+	from mininet.topo import Topo
+	from rau_nodes import RAUSwitch, QuaggaRouter, RAUController, RAUHost
+	
+	class CustomTopology( Topo ):
+	def __init__( self ):
+	Topo.__init__( self )
+	
+	# Hosts
+	h0 = self.addHost('h0', ips=['10.0.1.2/24'], gw='10.0.1.1', cls=RAUHost)
+	h1 = self.addHost('h1', ips=['10.1.1.2/24'], gw='10.1.1.1', cls=RAUHost)
+	
+	routerLan1 = self.addHost('routerLan1', ips=['10.0.0.1/24', '10.0.1.1/24'],
+	ce_mac_address='00:00:00:00:00:01',
+	gw='10.0.0.2', cls=QuaggaRouter)
+	
+	routerLan2 = self.addHost('routerLan2', ips=['10.1.0.1/24', '10.1.1.1/24'],
+	ce_mac_address='00:00:00:00:00:02',
+	gw='10.1.0.2', cls=QuaggaRouter)
+	
+	# Galois
+	galois = self.addHost('galois', ips=['192.168.1.11/24','10.10.1.1/24','10.10.5.1/24','10.10.4.1/24'],
+	dpid='0000000000000001', controller_ip="192.168.1.10",
+	cls=RAUSwitch)
+	# Oz
+	oz = self.addHost('oz', ips=['192.168.1.12/24','10.10.1.2/24','10.10.6.2/24','10.10.3.1/24', '10.1.0.2/24'],
+	dpid='0000000000000002', controller_ip="192.168.1.10",
+	border=1, ce_ip_address='10.1.0.1', ce_mac_address='00:00:00:00:00:02',
+	cls=RAUSwitch)
+	
+	# Possion
+	possion = self.addHost('possion', ips=['192.168.1.13/24','10.10.2.1/24','10.10.6.1/24','10.10.4.2/24'],
+	dpid='0000000000000003', controller_ip="192.168.1.10",
+	cls=RAUSwitch)
+	
+	# Alice
+	alice = self.addHost('alice', ips=['192.168.1.14/24','10.10.2.2/24','10.10.5.2/24','10.10.3.2/24', '10.0.0.2/24'],
+	dpid='0000000000000004', controller_ip="192.168.1.10",
+	border=1, ce_ip_address='10.0.0.1', ce_mac_address='00:00:00:00:00:01',
+	cls=RAUSwitch)
+	
+	# Controlador
+	root = self.addHost('controller', cls=RAUController, ips=['192.168.1.10/24'])
+	
+	# Switch de la red de gestion
+	man_switch = self.addSwitch('s1', protocols='OpenFlow13', failMode='standalone')
+	
+	# Enlaces
+	self.addLink(man_switch, galois, 2, 0)
+	self.addLink(man_switch, oz, 3, 0)
+	self.addLink(man_switch, possion, 4, 0)
+	self.addLink(man_switch, alice, 5, 0)
+	self.addLink(man_switch, root, 1, 0)
+	
+	self.addLink(galois, alice, 2, 2)
+	self.addLink(galois, possion, 3, 3)
+	self.addLink(galois, oz, 1, 1)
+	self.addLink(alice, possion, 1, 1)
+	self.addLink(alice, oz, 3, 3)
+	self.addLink(oz, possion, 2, 2)
+	
+	self.addLink(alice, routerLan1, 4, 0)
+	
+	self.addLink(oz, routerLan2, 4, 0)
+	
+	self.addLink(h0, routerLan1, 0, 1)
+	
+	self.addLink(h1, routerLan2, 0, 1)
+	
+\end{minted}
+
 
 \section{GraphML Loader}
 
