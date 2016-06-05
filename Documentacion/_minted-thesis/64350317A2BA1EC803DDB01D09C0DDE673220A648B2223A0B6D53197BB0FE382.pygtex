@@ -1,0 +1,67 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k+kn}{from} \PYG{n+nn}{mininet.topo} \PYG{k+kn}{import} \PYG{n}{Topo}
+\PYG{k+kn}{from} \PYG{n+nn}{rau\PYGZus{}nodes} \PYG{k+kn}{import} \PYG{n}{RAUSwitch}\PYG{p}{,} \PYG{n}{QuaggaRouter}\PYG{p}{,} \PYG{n}{RAUController}\PYG{p}{,} \PYG{n}{RAUHost}
+
+\PYG{k}{class} \PYG{n+nc}{CustomTopology}\PYG{p}{(} \PYG{n}{Topo} \PYG{p}{):}
+  \PYG{k}{def} \PYG{n+nf}{\PYGZus{}\PYGZus{}init\PYGZus{}\PYGZus{}}\PYG{p}{(} \PYG{n+nb+bp}{self} \PYG{p}{):}
+	\PYG{n}{Topo}\PYG{o}{.}\PYG{n}{\PYGZus{}\PYGZus{}init\PYGZus{}\PYGZus{}}\PYG{p}{(} \PYG{n+nb+bp}{self} \PYG{p}{)}
+
+	\PYG{c+c1}{\PYGZsh{} Hosts}
+	\PYG{n}{host1} \PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{addHost}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}host1\PYGZsq{}}\PYG{p}{,}
+		\PYG{n}{ips}\PYG{o}{=}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}10.1.1.2/24\PYGZsq{}}\PYG{p}{],}
+		\PYG{n}{cls}\PYG{o}{=}\PYG{n}{RAUHost}\PYG{p}{)}
+	\PYG{n}{host2} \PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{addHost}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}host2\PYGZsq{}}\PYG{p}{,}
+		\PYG{n}{ips}\PYG{o}{=}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}10.0.0.1/24\PYGZsq{}}\PYG{p}{],}
+		\PYG{n}{ce\PYGZus{}mac\PYGZus{}address}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}00:00:00:00:00:02\PYGZsq{}}\PYG{p}{,}
+		\PYG{n}{cls}\PYG{o}{=}\PYG{n}{RAUHost}\PYG{p}{)}
+
+	\PYG{c+c1}{\PYGZsh{} Router}
+	\PYG{n}{router1} \PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{addHost}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}router1\PYGZsq{}}\PYG{p}{,}
+		\PYG{n}{ips}\PYG{o}{=}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}10.1.0.1/24\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}10.1.1.1/24\PYGZsq{}}\PYG{p}{],}
+		\PYG{n}{ce\PYGZus{}mac\PYGZus{}address}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}00:00:00:00:00:01\PYGZsq{}}\PYG{p}{,}
+		\PYG{n}{cls}\PYG{o}{=}\PYG{n}{QuaggaRouter}\PYG{p}{)}
+
+	\PYG{c+c1}{\PYGZsh{} Switches}
+	\PYG{c+c1}{\PYGZsh{} Los dpid se omiten ya que se pueden derivar de los nombres}
+	\PYG{n}{switch1} \PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{addHost}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}switch1\PYGZsq{}}\PYG{p}{,}
+		\PYG{n}{ips}\PYG{o}{=}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}192.168.1.11/24\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}10.10.2.1/24\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}10.10.1.1/24\PYGZsq{}}\PYG{p}{],}
+		\PYG{n}{controller\PYGZus{}ip}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}192.168.1.10\PYGZdq{}}\PYG{p}{,}
+		\PYG{n}{cls}\PYG{o}{=}\PYG{n}{RAUSwitch}\PYG{p}{)}
+
+	\PYG{n}{switch2} \PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{addHost}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}switch2\PYGZsq{}}\PYG{p}{,}
+		\PYG{n}{ips}\PYG{o}{=}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}192.168.1.12/24\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}10.10.2.2/24\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}10.1.0.2/24\PYGZsq{}}\PYG{p}{],}
+		\PYG{n}{controller\PYGZus{}ip}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}192.168.1.10\PYGZdq{}}\PYG{p}{,}
+		\PYG{n}{border}\PYG{o}{=}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{ce\PYGZus{}ip\PYGZus{}address}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}10.1.0.1\PYGZsq{}}\PYG{p}{,}
+		\PYG{n}{ce\PYGZus{}mac\PYGZus{}address}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}00:00:00:00:00:01\PYGZsq{}}\PYG{p}{,}
+		\PYG{n}{cls}\PYG{o}{=}\PYG{n}{RAUSwitch}\PYG{p}{)}
+
+	\PYG{n}{switch3} \PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{addHost}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}switch3\PYGZsq{}}\PYG{p}{,}
+		\PYG{n}{ips}\PYG{o}{=}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}192.168.1.13/24\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}10.10.1.2/24\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}10.0.0.2/24\PYGZsq{}}\PYG{p}{],}
+		\PYG{n}{controller\PYGZus{}ip}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}192.168.1.10\PYGZdq{}}\PYG{p}{,}
+		\PYG{n}{border}\PYG{o}{=}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{ce\PYGZus{}ip\PYGZus{}address}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}10.0.0.1\PYGZsq{}}\PYG{p}{,}
+		\PYG{n}{ce\PYGZus{}mac\PYGZus{}address}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}00:00:00:00:00:02\PYGZsq{}}\PYG{p}{,}
+		\PYG{n}{cls}\PYG{o}{=}\PYG{n}{RAUSwitch}\PYG{p}{)}
+
+	\PYG{c+c1}{\PYGZsh{} Controlador}
+	\PYG{n}{controller} \PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{addHost}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}controller\PYGZsq{}}\PYG{p}{,}
+		\PYG{n}{ips}\PYG{o}{=}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}192.168.1.10/24\PYGZsq{}}\PYG{p}{],}
+		\PYG{n}{cls}\PYG{o}{=}\PYG{n}{RAUController}\PYG{p}{)}
+
+	\PYG{c+c1}{\PYGZsh{} Switch de la red de gestion}
+	\PYG{n}{man\PYGZus{}switch} \PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{addSwitch}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}s1\PYGZsq{}}\PYG{p}{,}
+		\PYG{n}{protocols}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}OpenFlow13\PYGZsq{}}\PYG{p}{,}
+		\PYG{n}{failMode}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}standalone\PYGZsq{}}\PYG{p}{)}
+
+	\PYG{c+c1}{\PYGZsh{} Enlaces de la red de gestion}
+	\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{addLink}\PYG{p}{(}\PYG{n}{man\PYGZus{}switch}\PYG{p}{,} \PYG{n}{controller}\PYG{p}{,} \PYG{l+m+mi}{1}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{)}
+	\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{addLink}\PYG{p}{(}\PYG{n}{man\PYGZus{}switch}\PYG{p}{,} \PYG{n}{switch1}\PYG{p}{,} \PYG{l+m+mi}{2}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{)}
+	\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{addLink}\PYG{p}{(}\PYG{n}{man\PYGZus{}switch}\PYG{p}{,} \PYG{n}{switch2}\PYG{p}{,} \PYG{l+m+mi}{3}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{)}
+	\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{addLink}\PYG{p}{(}\PYG{n}{man\PYGZus{}switch}\PYG{p}{,} \PYG{n}{switch3}\PYG{p}{,} \PYG{l+m+mi}{4}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{)}
+	\PYG{c+c1}{\PYGZsh{} Enlaces de la red interna}
+	\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{addLink}\PYG{p}{(}\PYG{n}{switch1}\PYG{p}{,} \PYG{n}{switch2}\PYG{p}{,} \PYG{l+m+mi}{1}\PYG{p}{,} \PYG{l+m+mi}{1}\PYG{p}{)}
+	\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{addLink}\PYG{p}{(}\PYG{n}{switch1}\PYG{p}{,} \PYG{n}{switch3}\PYG{p}{,} \PYG{l+m+mi}{2}\PYG{p}{,} \PYG{l+m+mi}{1}\PYG{p}{)}
+	\PYG{c+c1}{\PYGZsh{} Enlaces de las redes cliente}
+	\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{addLink}\PYG{p}{(}\PYG{n}{switch2}\PYG{p}{,} \PYG{n}{router1}\PYG{p}{,} \PYG{l+m+mi}{2}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{)}
+	\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{addLink}\PYG{p}{(}\PYG{n}{router1}\PYG{p}{,} \PYG{n}{host1}\PYG{p}{,} \PYG{l+m+mi}{1}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{)}
+	\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{addLink}\PYG{p}{(}\PYG{n}{switch3}\PYG{p}{,} \PYG{n}{host2}\PYG{p}{,}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{)}
+\end{Verbatim}
