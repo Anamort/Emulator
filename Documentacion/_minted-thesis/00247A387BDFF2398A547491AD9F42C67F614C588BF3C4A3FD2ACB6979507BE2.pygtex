@@ -1,0 +1,41 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{c+cp}{\PYGZlt{}?xml version=\PYGZdq{}1.0\PYGZdq{} encoding=\PYGZdq{}utf\PYGZhy{}8\PYGZdq{}?\PYGZgt{}}
+\PYG{n+nt}{\PYGZlt{}graphml} \PYG{n+na}{xmlns=}\PYG{l+s}{\PYGZdq{}http://graphml.graphdrawing.org/xmlns\PYGZdq{}}\PYG{n+nt}{\PYGZgt{}}
+  \PYG{n+nt}{\PYGZlt{}graph} \PYG{n+na}{edgedefault=}\PYG{l+s}{\PYGZdq{}undirected\PYGZdq{}}\PYG{n+nt}{\PYGZgt{}}
+    \PYG{n+nt}{\PYGZlt{}node} \PYG{n+na}{id=}\PYG{l+s}{\PYGZdq{}0\PYGZdq{}}\PYG{n+nt}{\PYGZgt{}}
+      \PYG{n+nt}{\PYGZlt{}data} \PYG{n+na}{key=}\PYG{l+s}{\PYGZdq{}type\PYGZdq{}}\PYG{n+nt}{\PYGZgt{}}rauswitch\PYG{n+nt}{\PYGZlt{}/data\PYGZgt{}}
+    \PYG{n+nt}{\PYGZlt{}/node\PYGZgt{}}
+    \PYG{n+nt}{\PYGZlt{}node} \PYG{n+na}{id=}\PYG{l+s}{\PYGZdq{}1\PYGZdq{}}\PYG{n+nt}{\PYGZgt{}}
+      \PYG{n+nt}{\PYGZlt{}data} \PYG{n+na}{key=}\PYG{l+s}{\PYGZdq{}type\PYGZdq{}}\PYG{n+nt}{\PYGZgt{}}rauswitch\PYG{n+nt}{\PYGZlt{}/data\PYGZgt{}}
+    \PYG{n+nt}{\PYGZlt{}/node\PYGZgt{}}
+    \PYG{n+nt}{\PYGZlt{}node} \PYG{n+na}{id=}\PYG{l+s}{\PYGZdq{}2\PYGZdq{}}\PYG{n+nt}{\PYGZgt{}}
+      \PYG{n+nt}{\PYGZlt{}data} \PYG{n+na}{key=}\PYG{l+s}{\PYGZdq{}type\PYGZdq{}}\PYG{n+nt}{\PYGZgt{}}rauswitch\PYG{n+nt}{\PYGZlt{}/data\PYGZgt{}}
+    \PYG{n+nt}{\PYGZlt{}/node\PYGZgt{}}
+    \PYG{n+nt}{\PYGZlt{}node} \PYG{n+na}{id=}\PYG{l+s}{\PYGZdq{}3\PYGZdq{}}\PYG{n+nt}{\PYGZgt{}}
+      \PYG{n+nt}{\PYGZlt{}data} \PYG{n+na}{key=}\PYG{l+s}{\PYGZdq{}type\PYGZdq{}}\PYG{n+nt}{\PYGZgt{}}rauswitch\PYG{n+nt}{\PYGZlt{}/data\PYGZgt{}}
+    \PYG{n+nt}{\PYGZlt{}/node\PYGZgt{}}
+    \PYG{n+nt}{\PYGZlt{}node} \PYG{n+na}{id=}\PYG{l+s}{\PYGZdq{}4\PYGZdq{}}\PYG{n+nt}{\PYGZgt{}}
+      \PYG{n+nt}{\PYGZlt{}data} \PYG{n+na}{key=}\PYG{l+s}{\PYGZdq{}type\PYGZdq{}}\PYG{n+nt}{\PYGZgt{}}quaggarouter\PYG{n+nt}{\PYGZlt{}/data\PYGZgt{}}
+    \PYG{n+nt}{\PYGZlt{}/node\PYGZgt{}}
+    \PYG{n+nt}{\PYGZlt{}node} \PYG{n+na}{id=}\PYG{l+s}{\PYGZdq{}5\PYGZdq{}}\PYG{n+nt}{\PYGZgt{}}
+      \PYG{n+nt}{\PYGZlt{}data} \PYG{n+na}{key=}\PYG{l+s}{\PYGZdq{}type\PYGZdq{}}\PYG{n+nt}{\PYGZgt{}}quaggarouter\PYG{n+nt}{\PYGZlt{}/data\PYGZgt{}}
+    \PYG{n+nt}{\PYGZlt{}/node\PYGZgt{}}
+    \PYG{n+nt}{\PYGZlt{}node} \PYG{n+na}{id=}\PYG{l+s}{\PYGZdq{}6\PYGZdq{}}\PYG{n+nt}{\PYGZgt{}}
+      \PYG{n+nt}{\PYGZlt{}data} \PYG{n+na}{key=}\PYG{l+s}{\PYGZdq{}type\PYGZdq{}}\PYG{n+nt}{\PYGZgt{}}rauhost\PYG{n+nt}{\PYGZlt{}/data\PYGZgt{}}
+    \PYG{n+nt}{\PYGZlt{}/node\PYGZgt{}}
+    \PYG{n+nt}{\PYGZlt{}node} \PYG{n+na}{id=}\PYG{l+s}{\PYGZdq{}7\PYGZdq{}}\PYG{n+nt}{\PYGZgt{}}
+      \PYG{n+nt}{\PYGZlt{}data} \PYG{n+na}{key=}\PYG{l+s}{\PYGZdq{}type\PYGZdq{}}\PYG{n+nt}{\PYGZgt{}}rauhost\PYG{n+nt}{\PYGZlt{}/data\PYGZgt{}}
+    \PYG{n+nt}{\PYGZlt{}/node\PYGZgt{}}
+    \PYG{n+nt}{\PYGZlt{}edge} \PYG{n+na}{source=}\PYG{l+s}{\PYGZdq{}0\PYGZdq{}} \PYG{n+na}{target=}\PYG{l+s}{\PYGZdq{}1\PYGZdq{}}\PYG{n+nt}{\PYGZgt{}\PYGZlt{}/edge\PYGZgt{}}
+    \PYG{n+nt}{\PYGZlt{}edge} \PYG{n+na}{source=}\PYG{l+s}{\PYGZdq{}0\PYGZdq{}} \PYG{n+na}{target=}\PYG{l+s}{\PYGZdq{}2\PYGZdq{}}\PYG{n+nt}{\PYGZgt{}\PYGZlt{}/edge\PYGZgt{}}
+    \PYG{n+nt}{\PYGZlt{}edge} \PYG{n+na}{source=}\PYG{l+s}{\PYGZdq{}0\PYGZdq{}} \PYG{n+na}{target=}\PYG{l+s}{\PYGZdq{}3\PYGZdq{}}\PYG{n+nt}{\PYGZgt{}\PYGZlt{}/edge\PYGZgt{}}
+    \PYG{n+nt}{\PYGZlt{}edge} \PYG{n+na}{source=}\PYG{l+s}{\PYGZdq{}1\PYGZdq{}} \PYG{n+na}{target=}\PYG{l+s}{\PYGZdq{}2\PYGZdq{}}\PYG{n+nt}{\PYGZgt{}\PYGZlt{}/edge\PYGZgt{}}
+    \PYG{n+nt}{\PYGZlt{}edge} \PYG{n+na}{source=}\PYG{l+s}{\PYGZdq{}1\PYGZdq{}} \PYG{n+na}{target=}\PYG{l+s}{\PYGZdq{}3\PYGZdq{}}\PYG{n+nt}{\PYGZgt{}\PYGZlt{}/edge\PYGZgt{}}
+    \PYG{n+nt}{\PYGZlt{}edge} \PYG{n+na}{source=}\PYG{l+s}{\PYGZdq{}2\PYGZdq{}} \PYG{n+na}{target=}\PYG{l+s}{\PYGZdq{}3\PYGZdq{}}\PYG{n+nt}{\PYGZgt{}\PYGZlt{}/edge\PYGZgt{}}
+    \PYG{n+nt}{\PYGZlt{}edge} \PYG{n+na}{source=}\PYG{l+s}{\PYGZdq{}2\PYGZdq{}} \PYG{n+na}{target=}\PYG{l+s}{\PYGZdq{}4\PYGZdq{}}\PYG{n+nt}{\PYGZgt{}\PYGZlt{}/edge\PYGZgt{}}
+    \PYG{n+nt}{\PYGZlt{}edge} \PYG{n+na}{source=}\PYG{l+s}{\PYGZdq{}3\PYGZdq{}} \PYG{n+na}{target=}\PYG{l+s}{\PYGZdq{}5\PYGZdq{}}\PYG{n+nt}{\PYGZgt{}\PYGZlt{}/edge\PYGZgt{}}
+    \PYG{n+nt}{\PYGZlt{}edge} \PYG{n+na}{source=}\PYG{l+s}{\PYGZdq{}4\PYGZdq{}} \PYG{n+na}{target=}\PYG{l+s}{\PYGZdq{}6\PYGZdq{}}\PYG{n+nt}{\PYGZgt{}\PYGZlt{}/edge\PYGZgt{}}
+    \PYG{n+nt}{\PYGZlt{}edge} \PYG{n+na}{source=}\PYG{l+s}{\PYGZdq{}5\PYGZdq{}} \PYG{n+na}{target=}\PYG{l+s}{\PYGZdq{}7\PYGZdq{}}\PYG{n+nt}{\PYGZgt{}\PYGZlt{}/edge\PYGZgt{}}
+  \PYG{n+nt}{\PYGZlt{}/graph\PYGZgt{}}
+\PYG{n+nt}{\PYGZlt{}/graphml\PYGZgt{}}
+\end{Verbatim}

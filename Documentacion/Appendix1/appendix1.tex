@@ -117,7 +117,7 @@ Los últimos dos parámetros indican qué número de interfaz debe tener cada no
 	\item Si se trata de un RAUHost o QuaggaRouter que actúa como nodo CE (es decir, está conectado a un RAUSwitch), la primera interfaz debe ser la que lo conecte con el RAUSwitch.
 \end{itemize}
 
-Estas restricciones son necesarias dado que el código que inicializa los nodos debe poder distinguir los distintos tipos de interfaces (red de gestión, red interna, customer edge). Una posible alternativa sería que el usuario cree las interfaces sin ningún tipo de restricción de orden, y con parámetros adicionales indique, para cada nodo, el tipo de cada interfaz. Se opta entonces por esta solución, que evita el uso de más parámetros, pero deja a cargo del usuario asegurarse que se cumplen las reglas establecidas.
+Estas restricciones son necesarias dado que el código que inicializa los nodos debe poder distinguir los distintos tipos de interfaces (red de gestión, red interna, customer edge). Una posible alternativa sería que el usuario cree las interfaces sin ningún tipo de restricción de orden, y con parámetros adicionales indique, para cada nodo, el tipo de cada interfaz. Se opta entonces por la solución que evita el uso de más parámetros, pero deja a cargo del usuario asegurarse que se cumplen las reglas establecidas.
 
 \subsection{Ejemplo}
 \begin{figure}[t]
@@ -203,7 +203,7 @@ class CustomTopology( Topo ):
 
 
 \section{GraphML Loader}
-Como se explica en el capítulo 3, GraphML Loader es un módulo que se desarrolló con el objetivo de asistir al usuario en el proceso de crear topologias. Recibe como entrada un archivo de tipo \textit{graphml}, un formato que se puede encontrar, entre otros, en Topology Zoo \cite{topology-zoo}, y produce el archivo Python que crea la topología dictada por el grafo. Se invoca de la siguiente manera:
+Como se explica en el capítulo 3, GraphML Loader es un módulo que se desarrolló con el objetivo de asistir al usuario en el proceso de crear topologias. Recibe como entrada un archivo de tipo \textit{graphml}, un formato que se puede encontrar, entre otros lados, en Topology Zoo \cite{topology-zoo}, y produce el archivo Python que crea la topología dictada por el grafo. Se invoca de la siguiente manera:
 \begin{lstlisting}
 python graphml_loader.py --file ruta_archivo_graphml
                          --output ruta_archivo_python
@@ -217,16 +217,132 @@ Un archivo graphml define un grafo mediante elementos que tienen el tag \textit{
 
 Los datos que GraphML Loader genera automáticamente son:
 \begin{itemize}
-	\item Controlador. Este nodo no debería estar en el grafo, así que se lo genera automáticamente. Su dirección IP toma el valor 192.168.1.10/24.
-	\item Switch de gestión. Tanto el switch de gestión como sus enlaces con los nodos de la topología son autogenerados, ya que no son parte de los grafos de entrada.
+	\item Red de gestión. Tanto el controlador, como el switch genérico que lo conecta con los RAUSwitch son autogenerados, ya que no son parte de los grafos de entrada. La dirección IP del controlador toma el valor 192.168.1.10/24.
 	\item Direcciones IP de los nodos. En el caso de los RAUSwitch, la dirección correspondiente a la interfaz de gestión tiene el formato \textbf{192.168.1.X/24}. Las otras interfaces de los RAUSwitch, y las interfaces de los demás nodos, llevan direcciones IP de tipo \textbf{10.10.X.Y/24}.
 	\item Nombre de los nodos. Como se explica anteriormente, el nombre de los nodos es generado a partir del identificador que se encuentra en el archivo graphml.
 	\item El módulo detecta automáticamente los enlaces de borde, es decir, entre un RAUSwitch y un RAUHost o QuaggaRouter, y agrega los parámetros necesarios para indicar que dicho switch es de borde.
-	\item A los nodos CE (que están conectados con un RAUSwitch) les indica el default gateway como el switch con el que están conectados.
+	\item A los nodos CE (que están conectados con un RAUSwitch) les indica el default gateway como el switch con el que están conectados. Esto es útil para utilizar VPN de capa 3.
 \end{itemize}
 
 \subsection{Ejemplo}
-Para hacer: poner un ejemplo de archivo graphml y su topología resultante.
+A continuación se muestra un ejemplo de archivo de tipo \textit{graphml} que describe una topología full mesh con 4 RAUSwitch y dos subredes cliente conectada a ella. Cada subred cliente está compuesta por un QuaggaRouter y un RAUHost.
+\begin{minted}{xml}
+<?xml version="1.0" encoding="utf-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns">
+  <graph edgedefault="undirected">
+    <node id="0">
+      <data key="type">rauswitch</data>
+    </node>
+    <node id="1">
+      <data key="type">rauswitch</data>
+    </node>
+    <node id="2">
+      <data key="type">rauswitch</data>
+    </node>
+    <node id="3">
+      <data key="type">rauswitch</data>
+    </node>
+    <node id="4">
+      <data key="type">quaggarouter</data>
+    </node>
+    <node id="5">
+      <data key="type">quaggarouter</data>
+    </node>
+    <node id="6">
+      <data key="type">rauhost</data>
+    </node>
+    <node id="7">
+      <data key="type">rauhost</data>
+    </node>
+    <edge source="0" target="1"></edge>
+    <edge source="0" target="2"></edge>
+    <edge source="0" target="3"></edge>
+    <edge source="1" target="2"></edge>
+    <edge source="1" target="3"></edge>
+    <edge source="2" target="3"></edge>
+    <edge source="2" target="4"></edge>
+    <edge source="3" target="5"></edge>
+    <edge source="4" target="6"></edge>
+    <edge source="5" target="7"></edge>
+  </graph>
+</graphml>
+\end{minted}
+Este archivo de ejemplo muestra sólo los datos que el módulo necesita, es decir, \textit{nodes} y \textit{edges}, y el \textit{type} e \textit{id} de cada nodo. Los archivos disponibles en Topology Zoo contienen mucha más información que no se usa, y se omite para simplificar el ejemplo.
+A continuación se muestra la topología de salida que genera el módulo GraphML Loader. Dicha topología está lista para ser cargada al emulador.
+\begin{minted}{python}
+"""
+Custom topology for Mininet, generated by GraphML Loader.
+"""
+from mininet.topo import Topo
+from rau_nodes import RAUSwitch, QuaggaRouter, RAUController, RAUHost
+
+class CustomTopology( Topo ):
+  def __init__(self):
+  "Create a topology."
+    # Initialize Topology
+    Topo.__init__(self)
+    # Add controller
+    root = self.addHost('controller',
+                        cls=RAUController,
+                        ips=['192.168.1.10/24'])
+      
+    # Add management network switch
+    man_switch = self.addSwitch('s1',
+                                protocols='OpenFlow13',
+                                failMode='standalone')
+      
+    # Add switches, hosts and routers
+    switch2 = self.addHost('switch2', cls=RAUSwitch,
+                           controller_ip='192.168.1.10',
+                           ips=['192.168.1.11/24', '10.10.1.2/24',
+                                '10.10.4.1/24', '10.10.5.1/24'])
+    switch1 = self.addHost('switch1', cls=RAUSwitch,
+                           controller_ip='192.168.1.10',
+                           ips=['192.168.1.12/24', '10.10.1.1/24',
+                                '10.10.2.1/24', '10.10.3.1/24'])
+    switch4 = self.addHost('switch4', cls=RAUSwitch,
+                           controller_ip='192.168.1.10',
+                           ips=['192.168.1.13/24', '10.10.3.2/24',
+                                '10.10.5.2/24', '10.10.6.2/24',
+                                '10.10.8.1/24'],
+                           border=1, ce_ip_address='10.10.8.2',
+                           ce_mac_address='00:00:00:00:00:2')
+    switch3 = self.addHost('switch3', cls=RAUSwitch,
+	                       controller_ip='192.168.1.10',
+	                       ips=['192.168.1.14/24', '10.10.2.2/24',
+	                            '10.10.4.2/24', '10.10.6.1/24',
+	                            '10.10.7.1/24'],
+	                       border=1, ce_ip_address='10.10.7.2',
+	                       ce_mac_address='00:00:00:00:00:1')
+    router6 = self.addHost('router6', cls=QuaggaRouter,
+                           ips=['10.10.8.2/24', '10.10.10.1/24'],
+                           ce_mac_address='00:00:00:00:00:2',
+                           gw='10.10.8.1')
+    router5 = self.addHost('router5', cls=QuaggaRouter,
+                           ips=['10.10.7.2/24', '10.10.9.1/24'],
+                           ce_mac_address='00:00:00:00:00:1',
+                           gw='10.10.7.1')
+    host8 = self.addHost('host8', cls=RAUHost,
+                         ips=['10.10.10.2/24'])
+    host7 = self.addHost('host7', cls=RAUHost,
+                         ips=['10.10.9.2/24'])
+    # Add links between nodes
+    self.addLink(man_switch, root, 1, 0)
+    self.addLink(man_switch, switch2, 2, 0)
+    self.addLink(man_switch, switch1, 3, 0)
+    self.addLink(man_switch, switch4, 4, 0)
+    self.addLink(man_switch, switch3, 5, 0)
+    self.addLink(switch2, switch1, 1, 1)
+    self.addLink(switch1, switch3, 2, 1)
+    self.addLink(switch1, switch4, 3, 1)
+    self.addLink(switch2, switch3, 2, 2)
+    self.addLink(switch2, switch4, 3, 2)
+    self.addLink(switch4, switch3, 3, 3)
+    self.addLink(switch3, router5, 4, 0)
+    self.addLink(switch4, router6, 4, 0)
+    self.addLink(router5, host7, 1, 0)
+    self.addLink(router6, host8, 1, 0)
+\end{minted}
 
 
 
