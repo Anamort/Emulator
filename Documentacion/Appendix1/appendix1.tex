@@ -37,6 +37,8 @@ Habiendo iniciado el entorno virtual, hay que llevar a cabo algunos pasos más p
 
 Luego de que el entorno está levantado y listo para usarse, se puede empezar a crear servicios. Para usar la interfaz web de RAUFlow se debe levantar un explorador desde el nodo controlador. Esto se puede lograr primero iniciando una consola xterm en dicho nodo, y luego ejecutando el comando que inicie el explorador. Una vez en la interfaz web de RAUFlow, se puede interactuar con ella de forma normal.
 
+Al agregar VPN, es importante tener en cuenta que las rutas de los nodos clientes involucrados deben estar correctamente configuradas, ya sea tratándose de una VPN de capa 2 o 3. Esto se puede lograr con el comando \textit{route} tradicional de Linux. En el caso de las VPN de capa 3, esto se puede evitar mediante el uso del parámetro \textbf{gw} al configurar la topología.
+
 \section{Cómo interactuar con cada instancia de Open vSwitch}
 Como se explica en el capítulo 3, cada RAUSwitch tiene su propia instancia de Open vSwitch ejecutándose en modo userspace. Esto modifica un poco la manera de usar sus comandos, ya que cada comando se debe 'apuntar' a la instancia con la que se desea interactuar.
 
@@ -62,7 +64,7 @@ Open vSwitch tiene varias herramientas que permiten consultar datos y realizar c
 \end{itemize}
 
 \section{API para configurar las topologias}
-La API que se debe usar para crear y personalizar las topologias es, en esencia, la misma que Mininet estándar. Cada topología debe ser configurada por un script Python, que debe definir una subclase de la clase \textit{Topo} de Mininet. A dicha subclase se le debe agregar nodos y enlaces mediante los métodos \textit{addHost}, \textit{addSwitch}, y \textit{addLink}. En el caso de los dos primeros, es necesario indicar la clase de nodo que se está agregando, y los parámetros necesarios para inicializar esa clase. Como se explica en el capítulo 3, se crearon cuatro nuevas clases de nodos, y a continuación se detallan los parámetros que se pueden usar en sus constructores. Los resaltados con * son obligatorios. \\
+La API que se debe usar para crear y personalizar las topologias es, en esencia, la misma que la de Mininet estándar. Cada topología debe ser configurada por un script Python, que debe definir una subclase de la clase \textit{Topo} de Mininet. A dicha subclase se le debe agregar nodos y enlaces mediante los métodos \textit{addHost}, \textit{addSwitch}, y \textit{addLink}. En el caso de los dos primeros, es necesario indicar la clase de nodo que se está agregando, y los parámetros necesarios para inicializar esa clase. Como se explica en el capítulo 3, se crearon cuatro nuevas clases de nodos, y a continuación se detallan los parámetros que se pueden usar en sus constructores. Los resaltados con * son obligatorios. \\
 
 \underline{RAUSwitch}
 \begin{itemize}
@@ -79,8 +81,8 @@ La API que se debe usar para crear y personalizar las topologias es, en esencia,
 
 \begin{itemize}
 	\item \textbf{nombre} \textcolor{red}{*}. Nombre del host.
-	\item \textbf{ips} \textcolor{red}{*}. Lista con todas las direcciones IP (en formato CIDR, A.B.C.D/E) para el host. En general tendrá una única dirección IP, pero por las dudas se permite que tenga varias.
-	\item \textbf{gw}.  Dirección IP del default gateway.
+	\item \textbf{ips} \textcolor{red}{*}. Lista con todas las direcciones IP (en formato CIDR, A.B.C.D/E) para el host. En general tendrá una única dirección IP, pero por si acaso se permite que tenga varias.
+	\item \textbf{gw}.  Dirección IP del default gateway. Es útil para el uso de VPN de capa 3.
 	\item \textbf{ce\_mac\_address}. En caso de que el host se esté usando como nodo CE, este parámetro indica la dirección MAC que debe tener la interfaz que lo conecta con el RAUSwitch. En caso de existir, dicha interfaz debe ser la menor de todas.
 \end{itemize}
 
@@ -88,7 +90,7 @@ La API que se debe usar para crear y personalizar las topologias es, en esencia,
 
 \begin{itemize}
 	\item \textbf{nombre} \textcolor{red}{*}. Nombre del controlador.
-	\item \textbf{ips} \textcolor{red}{*}. Lista con todas las direcciones IP (en formato CIDR, A.B.C.D/E) para el controlador. En general tendrá una única dirección IP, pero por las dudas se permite que tenga varias.
+	\item \textbf{ips} \textcolor{red}{*}. Lista con todas las direcciones IP (en formato CIDR, A.B.C.D/E) para el controlador. En general tendrá una única dirección IP, pero por si acaso se permite que tenga varias.
 \end{itemize}
 
 \underline{QuaggaRouter}
@@ -96,7 +98,7 @@ La API que se debe usar para crear y personalizar las topologias es, en esencia,
 \begin{itemize}
 	\item \textbf{nombre} \textcolor{red}{*}. Nombre del router.
 	\item \textbf{ips} \textcolor{red}{*}. Lista con todas las direcciones IP (en formato CIDR, A.B.C.D/E) para el router.
-	\item \textbf{gw}.  Dirección IP del default gateway.
+	\item \textbf{gw}.  Dirección IP del default gateway. Es útil para el uso de VPN de capa 3.
 	\item \textbf{ce\_mac\_address}. En caso de que el router se esté usando como nodo CE, este parámetro indica la dirección MAC que debe tener la interfaz que lo conecta con el RAUSwitch. En caso de existir, dicha interfaz debe ser la menor de todas.
 \end{itemize}
 
@@ -114,6 +116,8 @@ Los últimos dos parámetros indican qué número de interfaz debe tener cada no
 	\item Si se trata de un RAUSwitch y es de borde, la última interfaz debe ser la que lo conecte con el nodo CE, ya sea un RAUHost o un QuaggaRouter.
 	\item Si se trata de un RAUHost o QuaggaRouter que actúa como nodo CE (es decir, está conectado a un RAUSwitch), la primera interfaz debe ser la que lo conecte con el RAUSwitch.
 \end{itemize}
+
+Estas restricciones son necesarias dado que el código que inicializa los nodos debe poder distinguir los distintos tipos de interfaces (red de gestión, red interna, customer edge). Una posible alternativa sería que el usuario cree las interfaces sin ningún tipo de restricción de orden, y con parámetros adicionales indique, para cada nodo, el tipo de cada interfaz. Se opta entonces por esta solución, que evita el uso de más parámetros, pero deja a cargo del usuario asegurarse que se cumplen las reglas establecidas.
 
 \subsection{Ejemplo}
 \begin{figure}[t]
@@ -180,6 +184,8 @@ class CustomTopology( Topo ):
 		failMode='standalone')
 		
 	# Enlaces de la red de gestion
+	# La primera interfaz de los RAUSwitch debe
+	# contectarse con esta red
 	self.addLink(man_switch, controller, 1, 0)
 	self.addLink(man_switch, switch1, 2, 0)
 	self.addLink(man_switch, switch2, 3, 0)
@@ -188,11 +194,39 @@ class CustomTopology( Topo ):
 	self.addLink(switch1, switch2, 1, 1)
 	self.addLink(switch1, switch3, 2, 1)
 	# Enlaces de las redes cliente
+	# La última interfaz de los nodos CE (router1 y host2) debe ser
+	# la que lo conecte con la red SDN
 	self.addLink(switch2, router1, 2, 0)
 	self.addLink(router1, host1, 1, 0)	
-	self.addLink(switch3, host2,2, 0)
+	self.addLink(switch3, host2, 2, 0)
 \end{minted}
 
 
 \section{GraphML Loader}
+Como se explica en el capítulo 3, GraphML Loader es un módulo que se desarrolló con el objetivo de asistir al usuario en el proceso de crear topologias. Recibe como entrada un archivo de tipo \textit{graphml}, un formato que se puede encontrar, entre otros, en Topology Zoo \cite{topology-zoo}, y produce el archivo Python que crea la topología dictada por el grafo. Se invoca de la siguiente manera:
+\begin{lstlisting}
+python graphml_loader.py --file ruta_archivo_graphml
+                         --output ruta_archivo_python
+\end{lstlisting}
+
+Un archivo graphml define un grafo mediante elementos que tienen el tag \textit{node} o \textit{edge}. La topología resultante de la ejecución del módulo será equivalente a dicho grafo, teniendo en cuenta que la red de gestión no debe estar incluida en el mismo. Naturalmente, las topologias disponibles en Topology Zoo (o cualquier otra fuente) no tienen todos los parámetros necesarios para instanciar una topología de forma completa. Como se verá a continuación, hay ciertos datos sobre los nodos que se pueden extraer a partir del archivo graphml, y otros que deben ser autogenerados por el módulo. La información que el módulo obtiene del archivo graphml es:
+\begin{itemize}
+	\item \textbf{Tipo de nodo (type)}. Indica si el nodo es \textit{rauhost}, \textit{quaggarouter} o \textit{rauswitch}. Naturalmente, este dato no estará presente en ninguna topología obtenida en Topology Zoo, o cualquier otra fuente. Por lo tanto, se requiere que el usuario lo ingrese manualmente. Si un nodo no especifica tipo, se asume que es \textit{rauswitch}.
+	\item \textbf{Identificador (id)}. Cada nodo tiene un identificador numérico, y dicho valor se utiliza para construir el nombre del nodo. Por ejemplo, si un nodo es de tipo \textit{rauswitch} y tiene id=3, su nombre en la topología será \textit{switch4}. Se suma uno al valor del identificador ya que es posible que haya un nodo con id=0, y \textit{switch0} no es un nombre válido ya que 0 no es un datapath ID válido (como se explica anteriormente, se deriva el datapath ID a partir del nombre).
+\end{itemize}
+
+Los datos que GraphML Loader genera automáticamente son:
+\begin{itemize}
+	\item Controlador. Este nodo no debería estar en el grafo, así que se lo genera automáticamente. Su dirección IP toma el valor 192.168.1.10/24.
+	\item Switch de gestión. Tanto el switch de gestión como sus enlaces con los nodos de la topología son autogenerados, ya que no son parte de los grafos de entrada.
+	\item Direcciones IP de los nodos. En el caso de los RAUSwitch, la dirección correspondiente a la interfaz de gestión tiene el formato \textbf{192.168.1.X/24}. Las otras interfaces de los RAUSwitch, y las interfaces de los demás nodos, llevan direcciones IP de tipo \textbf{10.10.X.Y/24}.
+	\item Nombre de los nodos. Como se explica anteriormente, el nombre de los nodos es generado a partir del identificador que se encuentra en el archivo graphml.
+	\item El módulo detecta automáticamente los enlaces de borde, es decir, entre un RAUSwitch y un RAUHost o QuaggaRouter, y agrega los parámetros necesarios para indicar que dicho switch es de borde.
+	\item A los nodos CE (que están conectados con un RAUSwitch) les indica el default gateway como el switch con el que están conectados.
+\end{itemize}
+
+\subsection{Ejemplo}
+Para hacer: poner un ejemplo de archivo graphml y su topología resultante.
+
+
 

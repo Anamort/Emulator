@@ -146,19 +146,25 @@ for n in node_set:
     #finally get all needed values
     for d in data_set:
 
-        #node name
-        if d.attrib['key'] == node_label_name_in_graphml:
-            #strip all whitespace from names so they can be used as id's
-            node_name = re.sub(r'\s+', '', d.text)
-
-            #save id:data couple
-            id_node_name_dict[node_id] = node_name
-
         #node type
         if d.attrib['key'] == "type":
             node_type = d.text
             # save id:type to dict
             id_node_type_dict[node_id] = node_type
+
+    #node name
+    # we assume that the ids are integers so that the switches are named "switchX" being X an integer
+    # this is necessary because the datapath-id for the switch is the integer extracted from the name
+    # we add 1 to i while naming the name because some graphs may have a node with id="0" and
+    # the datapath-id can't be 0 for a switch
+    node_type = id_node_type_dict[node_id]
+    if node_type == "rauswitch":
+        node_name = "switch" + str(int(i)+1)
+    elif node_type == "rauhost":
+        node_name = "host" + str(int(i)+1)
+    else:
+        node_name = "router" + str(int(i)+1)
+    id_node_name_dict[node_id] = node_name
 
 # GET COLLECTION OF EDGES
 for e in edge_set:
@@ -194,27 +200,20 @@ for e in edge_set:
 
 # FIRST CREATE THE NODES
 tempstring = ""
-for i in id_node_name_dict.keys():
-    node_name = id_node_name_dict[i]
+for i in id_node_type_dict.keys():
     node_type = id_node_type_dict[i]
+    node_name = id_node_name_dict[i]
+
     temp1 =  "        "
     temp1 += node_name
 
-    # we assume that the ids are integers so that the switches are named "switchX" being X an integer
-    # this is necessary because the datapath-id for the switch is the integer extracted from the name
-    # we add 1 to i while naming the name because some graphs may have a node with id="0" and
-    # the datapath-id can't be 0 for a switch
-    if node_type == "rauswitch":
-        console_name = "switch" + str(int(i)+1)
-    else:
-        console_name = node_type + str(int(i)+1)
     node_class = "RAUSwitch"
-    if node_type == "router":
+    if node_type == "quaggarouter":
         node_class = "QuaggaRouter"
-    elif node_type == "host":
+    elif node_type == "rauhost":
         node_class = "RAUHost"
     
-    temp1 += " = self.addHost('" + console_name + "', cls=" + node_class + ", "
+    temp1 += " = self.addHost('" + node_name + "', cls=" + node_class + ", "
     if node_type == "rauswitch":
         temp1 += "controller_ip='" + controller_ip + "', "
 

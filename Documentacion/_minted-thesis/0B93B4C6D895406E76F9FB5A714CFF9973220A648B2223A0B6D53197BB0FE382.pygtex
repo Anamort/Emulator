@@ -53,6 +53,8 @@
 		\PYG{n}{failMode}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}standalone\PYGZsq{}}\PYG{p}{)}
 
 	\PYG{c+c1}{\PYGZsh{} Enlaces de la red de gestion}
+	\PYG{c+c1}{\PYGZsh{} La primera interfaz de los RAUSwitch debe}
+	\PYG{c+c1}{\PYGZsh{} contectarse con esta red}
 	\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{addLink}\PYG{p}{(}\PYG{n}{man\PYGZus{}switch}\PYG{p}{,} \PYG{n}{controller}\PYG{p}{,} \PYG{l+m+mi}{1}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{)}
 	\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{addLink}\PYG{p}{(}\PYG{n}{man\PYGZus{}switch}\PYG{p}{,} \PYG{n}{switch1}\PYG{p}{,} \PYG{l+m+mi}{2}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{)}
 	\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{addLink}\PYG{p}{(}\PYG{n}{man\PYGZus{}switch}\PYG{p}{,} \PYG{n}{switch2}\PYG{p}{,} \PYG{l+m+mi}{3}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{)}
@@ -61,7 +63,9 @@
 	\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{addLink}\PYG{p}{(}\PYG{n}{switch1}\PYG{p}{,} \PYG{n}{switch2}\PYG{p}{,} \PYG{l+m+mi}{1}\PYG{p}{,} \PYG{l+m+mi}{1}\PYG{p}{)}
 	\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{addLink}\PYG{p}{(}\PYG{n}{switch1}\PYG{p}{,} \PYG{n}{switch3}\PYG{p}{,} \PYG{l+m+mi}{2}\PYG{p}{,} \PYG{l+m+mi}{1}\PYG{p}{)}
 	\PYG{c+c1}{\PYGZsh{} Enlaces de las redes cliente}
+	\PYG{c+c1}{\PYGZsh{} La última interfaz de los nodos CE (router1 y host2) debe ser}
+	\PYG{c+c1}{\PYGZsh{} la que lo conecte con la red SDN}
 	\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{addLink}\PYG{p}{(}\PYG{n}{switch2}\PYG{p}{,} \PYG{n}{router1}\PYG{p}{,} \PYG{l+m+mi}{2}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{)}
 	\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{addLink}\PYG{p}{(}\PYG{n}{router1}\PYG{p}{,} \PYG{n}{host1}\PYG{p}{,} \PYG{l+m+mi}{1}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{)}
-	\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{addLink}\PYG{p}{(}\PYG{n}{switch3}\PYG{p}{,} \PYG{n}{host2}\PYG{p}{,}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{)}
+	\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{addLink}\PYG{p}{(}\PYG{n}{switch3}\PYG{p}{,} \PYG{n}{host2}\PYG{p}{,} \PYG{l+m+mi}{2}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{)}
 \end{Verbatim}
