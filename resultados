@@ -223,4 +223,4 @@ ruta de inicio ahora debe ser completa
 investigar si se puede levantar varios datapaths en el kernel datapath
 probar quaggarouters (estuvo desactivado mucho tiempo)
 probar la topologia de ejemplo
-probar los cambios al graphml_loader
+probar los cambios al graphml_loader (y probar topologia de prueba del informe)

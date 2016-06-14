@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?><graphml xmlns="http://graphml.graphdrawing.org/xmlns">
+  <graph edgedefault="undirected">
+    <node id="0">
+      <data key="type">rauswitch</data>
+    </node>
+    <node id="1">
+      <data key="type">rauswitch</data>
+    </node>
+    <node id="2">
+      <data key="type">rauswitch</data>
+    </node>
+    <node id="3">
+      <data key="type">rauswitch</data>
+    </node>
+    <node id="4">
+      <data key="type">quaggarouter</data>
+    </node>
+    <node id="5">
+      <data key="type">quaggarouter</data>
+    </node>
+    <node id="6">
+      <data key="type">rauhost</data>
+    </node>
+    <node id="7">
+      <data key="type">rauhost</data>
+    </node>
+    <edge source="0" target="1"></edge>
+    <edge source="0" target="2"></edge>
+    <edge source="0" target="3"></edge>
+    <edge source="1" target="2"></edge>
+    <edge source="1" target="3"></edge>
+    <edge source="2" target="3"></edge>
+    <edge source="2" target="4"></edge>
+    <edge source="3" target="5"></edge>
+    <edge source="4" target="6"></edge>
+    <edge source="5" target="7"></edge>
+  </graph>
+</graphml>
