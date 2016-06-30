@@ -49,7 +49,13 @@ Conceptos básicos
 Conceptos básicos
 
 \section{Aplicaciones de SDN}
-\subsection{Implementación de VPN}
+El paradigma SDN, por definición, está basado en el software. Esto implica que el rango de aplicaciones o modos de uso que se le puede dar al paradigma es enorme. En esta sección se estudiarán algunas aplicaciones existentes sobre SDN, haciendo foco en la implementación de redes privadas virtuales, debido a que es el servicio que provee RAUFlow.
+\subsection{Implementación de VPNs}
+El desarrollo de redes privadas virtuales (VPN) es un tema relativamente común en SDN, ya que es un servicio de gran utilidad. A continuación se estudiarán algunas implementaciones existentes de VPN sobre SDN. \\ \\
+\textbf{Proyecto CoCo} \\
+CoCo \cite{coco-paper} es un proyecto que estudia el desarrollo de un servicio de VPN multipunto enfocado hacia investigadores, para permitirles intercambiar información de modo confiable y seguro. Uno de sus principales enfoques es la facilidad de uso, lo cual es una ventaja frente a las implementaciones tradicionales (no SDN) de este servicio. Sólo requiere que el administrador haga una configuración inicial de la red, y luego los usuarios finales pueden crear, modificar y  eliminar VPNs a demanda mediante un portal web. \\ \\
+La arquitectura de CoCo consiste de múltiples dominios, y cada dominio tiene una infraestructura basada en OpenFlow. Los switches OpenFlow de cada dominio son manejados por un controlador OpenDaylight, llamado agente CoCo. Cada agente CoCo se encarga de administrar el plano de datos de su dominio (esto es: reglas de forwarding, descubrimiento de topología, etc) y de conectarse con los otros agentes, es decir, con los otros dominios. Esto último lo hace mediante el protocolo BGP.
+
 %https://blog.surf.nl/en/coco-an-exploration-of-software-defined-networking/
 %http://www.nec.com/en/global/techrep/journal/g13/n02/pdf/130212.pdf
 %http://yuba.stanford.edu/~nickm/papers/ofc11-saurav-mpls.pdf
@@ -57,6 +63,8 @@ Conceptos básicos
 Monitorización de red
 Load balancing / QoS
 Prevención de DoS
+%http://ieeexplore.ieee.org.proxy.timbo.org.uy:443/stamp/stamp.jsp?tp=&arnumber=6567024
+%http://ieeexplore.ieee.org.proxy.timbo.org.uy:443/stamp/stamp.jsp?tp=&arnumber=6983147
 Implementación de Servicios de red
 
 \section{Simuladores y emuladores}
