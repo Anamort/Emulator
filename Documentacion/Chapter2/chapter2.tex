@@ -101,16 +101,32 @@ En la sección anterior se presentaron algunas implementaciones de VPNs en SDN, 
 \end{itemize}
 
 \section{Simuladores y emuladores}
+El avance de las redes definidas por software ha motivado el desarrollo de nuevas herramientas que permitan la virtualización de este paradigma, para ayudar a los investigadores y administradores en el desarrollo y testing de sus arquitecturas. En esta sección se estudiarán las herramientas que pueden ser útiles para estudiar y probar la arquitectura RAUFlow en un entorno virtual.
+
+Dado que la naturaleza híbrida (SDN/Legacy) de RAUFlow no es un concepto muy común, no existe una herramienta de virtualización con ese enfoque particular. También es importante estudiar la escalabilidad de las herramientas, es decir, la magnitud de los experimentos de los cuales son capaces. 
+
+Las siguientes secciones estudian las herramientas más relevantes para estos objetivos, al momento de hacer este trabajo. En la última sección se hace una mención aparte para un tipo de herramientas especial, que no sirve para hacer pruebas funcionales de una red como conjunto, sino que para hacer pruebas de estrés sobre cada elemento de la red por separado.
 \subsection{DOT} %es distribuido, asi que no aplicaria mucho, pero esta bueno, asi que capaz que si
 \subsection{Estinet} %si
 \subsection{fs-sdn} %si
 \subsection{Mininet} %si
-Mininet es un emulador de redes SDN que permite emular hosts, switches, controladores y enlaces. Utiliza virtualización basada en procesos para ejecutar múltiples instancias (hasta 4096) de hosts y switches en un unico kernel de sistema operativo. También utiliza una capacidad de Linux denominada \textit{network namespace} que permite crear "interfaces de red virtuales", y de esta manera dotar a los nodos con sus propias interfaces, tablas de ruteo y tablas ARP. Lo que en realidad hace Mininet es utilizar la arquitectura \textit{Linux container}, que tiene la capacidad de proveer virtualización completa, pero de un modo reducido ya que no requiere de todas sus capacidades. Mininet también utiliza \textit{virtual ethernet (veth)} para crear los enlaces virtuales entre los nodos.
+Mininet es un emulador de redes SDN muy utilizado en la actualidad, que permite emular hosts, switches y enlaces. Utiliza \textit{virtualización ligera} en Linux para levantar una red completa en un único kernel. La virtualización ligera, también llamada virtualización en el nivel de sistema operativo, consiste en un conjunto de funcionalidades de Linux que le permiten a un sistema ser separado en múltiples \textit{containers} (contenedores) más chicos. Esto se combina con la capacidad de crear links virtuales entre dichos containers. Mininet no provee ni emula un controlador; el mismo se debe ejecutar como una aplicación común y corriente.
 
-Mencionar MaxiNet (está en las referencias)
-Capaz mencionar Mininet-HiFi (buscar en el survey) %http://tiny-tera.stanford.edu/~nickm/papers/p253.pdf
-Capaz mencionar Mininet CE (buscar en el survey)
-Capaz mencionar SDN Cloud DC (buscar en el survey)
+Este modo de funcionamiento logra que Mininet pueda ser mucho más rápido y escalable que emuladores que utilizan máquinas virtuales completas. Analizando con un poco más de detalle, a continuación se listan los componentes de Mininet y sus características:
+\begin{itemize}
+	\item Hosts. Un host emulado por Mininet es un grupo de procesos de usuario que ejecutan dentro de un \textit{network namespace}. Un network namespace le provee a un grupo de procesos sus propias interfaces de red, puertos, tablas de ruteo y tablas ARP.
+	\item Enlaces. Los enlaces son emulados con virtual Ethernet (\textit{veth}), que actúa como un cable que conecta dos interfaces virtuales. Los paquetes enviados por una interfaz son recibidos por la otra, y cada interfaz virtual es vista como un puerto Ethernet totalmente funcional, tanto para el sistema como para las aplicaciones. El ancho de banda de los enlaces virtuales es controlado por Linux Traffic Control (\textit{tc}).
+	\item Switches. Mininet puede utilizar el bridge de Linux o Open vSwitch para emular a los switches. El segundo es el que se utiliza para emular switches OpenFlow. Para emular múltiples switches OpenFlow se define un bridge por cada switch, todos ejecutándose en una única instancia de Open vSwitch. A diferencia de los hosts, que están en su propio network namespace, los switches de Open vSwitch comparten el root namespace, es decir, el namespace del sistema operativo. Como el controlador se ejecuta como una aplicación normal (no se ejecuta en un container ni tiene su propio network namespace), se puede comunicar con los switches mediante la interfaz de loopback del root namespace.
+\end{itemize}
+
+Mininet tiene una API en Python (el lenguaje en el que está escrito el emulador) que permite crear todo tipo de topologias. También tiene una línea de comandos que permite realizar acciones una vez la red virtual está levantada. Esas acciones pueden ser ejecutar un determinado comando en un host o switch, hacer una prueba de ping entre todos los hosts, etc.
+
+Debido a su buena documentación y la forma en que está desarrollado, Mininet puede ser fácilmente extensible para lograr experimentos que la versión estándar no contempla. Existen diversos trabajos donde se presentan extensiones a Mininet, para lograr objetivos específicos:
+\begin{itemize}
+	\item Mininet-HiFi \cite{mininet-hifi} intenta mejorar el realismo de la emulación en Mininet, agregando mecanismos de reserva de recusos y monitoreo para los mismos.
+	\item MaxiNet \cite{maxinet} y Mininet CE \cite{mininet-ce} son extensiones para hacer emulaciones distribuidas, es decir, con múltiples máquinas físicas.
+	\item Mininet DC \cite{mininet-dc} es un trabajo que extiende Mininet y el controlador POX para hacer experimentos orientados a data centers en la nube.
+\end{itemize}
 \subsection{NS-3} %si
 %The popular network simulator NS-3 also offers an OpenFlow simulation model [8]. However, this model in its current version does not model the OpenFlow controller as an external entity. Therefore, it is not possible to quantify the effects of the control channel or simulate multiple switches connected to a single OpenFlow controller.
 %tambien lo de openflow 1.3
@@ -129,21 +145,6 @@ Capaz mencionar SDN Cloud DC (buscar en el survey)
 %\subsection{Omnet++} %puede ser, pero no se puede usar rauflow, asi que capaz que no
 %\subsection{Opencontrail} %creo que no, es un controlador asi que pareceria  que no
 %\subsection{CORE} %usa ovs, asi que se podria mencionar aca
-
-%\section{Simuladores/emuladores no SDN}
-%\subsection{Unified Networking Lab} %no
-%\subsection{VNX y VNUML} %no
-%\subsection{OpenStack} %no
-%\subsection{OPNET} %no
-%\subsection{Psimulator2} %no
-%\subsection{Shadow} %no
-%\subsection{MLN} %no
-%\subsection{Netkit}
-%\subsection{NetSim} %no
-%\subsection{GNS3} %no
-%\subsection{LINE} %no
-%\subsection{Marionnet} %no
-%\subsection{Cloonix} %no
 
 \section{Herramientas para pruebas de estrés y benchmarking}
 Existen múltiples herramientas de testing aplicables en el paradigma SDN. De ellas se puede destacar un grupo, que no tienen como objetivo verificar aspectos funcionales, sino que apuntan a algo mucho más específico: las pruebas de estrés y el benchmarking. Ayudan a los administradores de red e investigadores a conocer los niveles de rendimiento de los cuales sus dispositivos y redes son capaces. Asimismo, pueden ser elementos de investigación útiles en el contexto de la nueva Red Académica, ya que podrían utilizarse, por ejemplo, para validar ciertos aspectos de rendimiento de los RAUSwitch.
