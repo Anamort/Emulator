@@ -103,13 +103,54 @@ En la sección anterior se presentaron algunas implementaciones de VPNs en SDN, 
 \section{Simuladores y emuladores}
 El avance de las redes definidas por software ha motivado el desarrollo de nuevas herramientas que permitan la virtualización de este paradigma, para ayudar a los investigadores y administradores en el desarrollo y testing de sus arquitecturas. En esta sección se estudiarán las herramientas que pueden ser útiles para estudiar y probar la arquitectura RAUFlow en un entorno virtual.
 
-Dado que la naturaleza híbrida (SDN/Legacy) de RAUFlow no es un concepto muy común, no existe una herramienta de virtualización con ese enfoque particular. También es importante estudiar la escalabilidad de las herramientas, es decir, la magnitud de los experimentos de los cuales son capaces. 
+Dado que la naturaleza híbrida (SDN/Legacy) de RAUFlow no es un concepto muy común, no existe una herramienta de virtualización con ese enfoque particular. También es importante tener en cuenta la escalabilidad de las herramientas, es decir, la magnitud de los experimentos de los cuales son capaces. 
 
 Las siguientes secciones estudian las herramientas más relevantes para estos objetivos, al momento de hacer este trabajo. En la última sección se hace una mención aparte para un tipo de herramientas especial, que no sirve para hacer pruebas funcionales de una red como conjunto, sino que para hacer pruebas de estrés sobre cada elemento de la red por separado.
-\subsection{DOT} %es distribuido, asi que no aplicaria mucho, pero esta bueno, asi que capaz que si
-\subsection{Estinet} %si
-\subsection{fs-sdn} %si
-\subsection{Mininet} %si
+\subsection{DOT}
+DOT (Distributed OpenFlow Testbed) \cite{dot} es un emulador open source distribuido de redes OpenFlow. Está diseñado para experimentos de gran escala, es decir, con muchos nodos. La idea principal es utilizar múltiples máquinas físicas para distribuir la carga de cómputo.
+
+\begin{figure}[t]
+	\caption{Arquitectura de gestión de DOT. Imagen extraída de \cite{dot}}
+	\includegraphics[scale=0.85]{dot_mgmt_arch}
+	\centering
+	\label{fig:dot_mgmt_arch}
+\end{figure}
+
+\begin{figure}[t]
+	\caption{Arquitectura de cada nodo DOT físico. Imagen extraída de \cite{dot}}
+	\includegraphics[scale=0.85]{dot_node_arch}
+	\centering
+	\label{fig:dot_node_arch}
+\end{figure}
+
+En la figura \ref{fig:dot_mgmt_arch} se puede ver la arquitectura de gestión de DOT. Se pueden distinguir dos tipos de componentes:
+\begin{itemize}
+	\item Central Manager. Este manejador (que puede estar en su propia máquina física) es responsable de gestionar los recursos para la red emulada indicada por el usuario. Está compuesto por dos módulos. El \textit{Provisioning Module} se encarga de ejecutar un algoritmo que decide cómo utilizar los recursos físicos (las máquinas físicas disponibles) de la manera más óptima para lograr emular la red deseada. Luego le comunica los resultados del algoritmo a cada nodo físico, para que cada uno sepa los recursos debe crear. El \textit{Statistics Collection Module} recolecta la información estadística que recibe de los nodos.
+	\item Node Manager. Cada máquina física tiene uno, y está compuesto por dos módulos. El \textit{Host Provisioning Module} es responsable de instanciar y configurar los recursos que indica el manejador central. Esos recursos serán los hosts, switches y links virtuales. El \textit{Logging Module} recolecta estadísticas locales a cada nodo, como utilización de recursos, throughput, delay y mensajes OpenFlow.
+\end{itemize}
+
+La arquitectura interna de cada nodo físico en DOT se puede ver en la figura \ref{fig:dot_node_arch}. Los hosts virtuales (VM) son provistos por un hypervisor (KVM). En la figura también se observan múltiples switches virtuales (VS) que son implementados por Open vSwitch. Cada nodo físico también tiene un Gateway Switch (GS), que se encarga de reenviar paquetes entre switches virtuales alojados en distintas máquinas físicas. El Gateway Switch es transparente para el usuario.
+
+\subsection{Estinet}
+EstiNet \cite{estinet} es un emulador y simulador para redes OpenFlow, desarrollado por EstiNet Technologies Inc \footnote{http://www.estinet.com/ns/}.
+
+\begin{figure}[t]
+	\caption{Arquitectura de simulación de EstiNet. Imagen extraída de \cite{estinet}}
+	\includegraphics[scale=0.85]{estinet_simulation_archi}
+	\centering
+	\label{fig:estinet_simulation_archi}
+\end{figure}
+
+Gracias a una técnica llamada \textit{kernel re-entering}, EstiNet intenta combinar lo mejor de la simulación y emulación, para aprovechar sus ventajas y no sufrir las desventajas de cada una. El motor de simulación es capaz de simular hosts y switches OpenFlow, y utiliza interfaces de red de túnel para interceptar paquetes enviados entre aplicaciones reales. En la figura \ref{fig:estinet_simulation_archi}.a se puede ver como dos aplicaciones reales de Linux pueden ejecutar (desde cierto punto de vista) en dos hosts simulados, y conectarse entre sí. Cada host simulado es dotado con una interfaz y un stack de protocolos de capa 1 y 2. Las aplicaciones envían los paquetes a los hosts simulados mediante los túneles de Linux, luego los paquetes son enviados de un host a otro en el simulador y finalmente son entregados a la aplicación destinataria mediante su túnel correspondiente.
+
+La figura \ref{fig:estinet_simulation_archi}.b muestra como se puede usar la misma técnica para permitir que controladores OpenFlow reales puedan comunicarse con los switches simulados. Un controlador es una aplicación que corre sobre Linux, por lo tanto se puede correr en un host simulado como muestra el ejemplo anterior. Un switch OpenFlow simulado puede utilizar una interfaz de túnel (en el ejemplo sería \textit{Tunnel 2}) para iniciar una conexión TCP OpenFlow con el controlador.
+
+Este modo dual de EstiNet permite que se pueda integrar con aplicaciones reales, particularmente controladores OpenFlow reales, (algo que otros simuladores no pueden) y al mismo tiempo posea las ventajas de un simulador, como por ejemplo un reloj de simulación que garantiza la correctitud y precisión de los resultados que genera. Este enfoque también tiene ventajas en la escalabilidad, ya que se pueden conducir experimentos grandes a pesar de la limitación en el poder de cómputo de la computadora; el reloj del simulador se adecua al poder de cómputo disponible para asegurar la correctitud del experimento.
+
+Una desventaja importante que tiene EstiNet es que, de acuerdo a \cite{estinet}, la versión máxima de OpenFlow que soporta es la 1.1.0, mientras que la versión que utiliza RAUFlow es la 1.3.1.
+
+\subsection{fs-sdn}
+\subsection{Mininet}
 Mininet es un emulador de redes SDN muy utilizado en la actualidad, que permite emular hosts, switches y enlaces. Utiliza \textit{virtualización ligera} en Linux para levantar una red completa en un único kernel. La virtualización ligera, también llamada virtualización en el nivel de sistema operativo, consiste en un conjunto de funcionalidades de Linux que le permiten a un sistema ser separado en múltiples \textit{containers} (contenedores) más chicos. Esto se combina con la capacidad de crear links virtuales entre dichos containers. Mininet no provee ni emula un controlador; el mismo se debe ejecutar como una aplicación común y corriente.
 
 Este modo de funcionamiento logra que Mininet pueda ser mucho más rápido y escalable que emuladores que utilizan máquinas virtuales completas. Analizando con un poco más de detalle, a continuación se listan los componentes de Mininet y sus características:
@@ -127,10 +168,9 @@ Debido a su buena documentación y la forma en que está desarrollado, Mininet p
 	\item MaxiNet \cite{maxinet} y Mininet CE \cite{mininet-ce} son extensiones para hacer emulaciones distribuidas, es decir, con múltiples máquinas físicas.
 	\item Mininet DC \cite{mininet-dc} es un trabajo que extiende Mininet y el controlador POX para hacer experimentos orientados a data centers en la nube.
 \end{itemize}
-\subsection{NS-3} %si
+\subsection{NS-3}
 %The popular network simulator NS-3 also offers an OpenFlow simulation model [8]. However, this model in its current version does not model the OpenFlow controller as an external entity. Therefore, it is not possible to quantify the effects of the control channel or simulate multiple switches connected to a single OpenFlow controller.
 %tambien lo de openflow 1.3
-\subsection{OFNet} %si, aunque parece estar muy en desarrollo todavia
 
 \subsection{Otras herramientas}
 \begin{itemize}
@@ -145,6 +185,7 @@ Debido a su buena documentación y la forma en que está desarrollado, Mininet p
 %\subsection{Omnet++} %puede ser, pero no se puede usar rauflow, asi que capaz que no
 %\subsection{Opencontrail} %creo que no, es un controlador asi que pareceria  que no
 %\subsection{CORE} %usa ovs, asi que se podria mencionar aca
+%\subsection{OFNet}
 
 \section{Herramientas para pruebas de estrés y benchmarking}
 Existen múltiples herramientas de testing aplicables en el paradigma SDN. De ellas se puede destacar un grupo, que no tienen como objetivo verificar aspectos funcionales, sino que apuntan a algo mucho más específico: las pruebas de estrés y el benchmarking. Ayudan a los administradores de red e investigadores a conocer los niveles de rendimiento de los cuales sus dispositivos y redes son capaces. Asimismo, pueden ser elementos de investigación útiles en el contexto de la nueva Red Académica, ya que podrían utilizarse, por ejemplo, para validar ciertos aspectos de rendimiento de los RAUSwitch.
