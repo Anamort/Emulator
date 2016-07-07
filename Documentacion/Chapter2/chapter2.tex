@@ -101,11 +101,39 @@ En la sección anterior se presentaron algunas implementaciones de VPNs en SDN, 
 \end{itemize}
 
 \section{Simuladores y emuladores}
-El avance de las redes definidas por software ha motivado el desarrollo de nuevas herramientas que permitan la virtualización de este paradigma, para ayudar a los investigadores y administradores en el desarrollo y testing de sus arquitecturas. En esta sección se estudiarán las herramientas que pueden ser útiles para estudiar y probar la arquitectura RAUFlow en un entorno virtual.
+El avance de las redes definidas por software ha motivado el desarrollo de nuevas herramientas que permitan la virtualización de este paradigma, para ayudar a los investigadores y administradores en el desarrollo y testing de sus arquitecturas. Como se explica en el capítulo 1, uno de los objetivos del proyecto es mover la arquitectura RAUFlow a una plataforma virtual. Por lo tanto, es importante hacer un estudio del estado del arte en lo que respecta a simuladores y emuladores de redes, con énfasis en los que contemplan el paradigma SDN.
 
-Dado que la naturaleza híbrida (SDN/Legacy) de RAUFlow no es un concepto muy común, no existe una herramienta de virtualización con ese enfoque particular. También es importante tener en cuenta la escalabilidad de las herramientas, es decir, la magnitud de los experimentos de los cuales son capaces. 
+La principal observación que se debe hacer es que ninguna de las herramientas estudiadas permite o contempla una naturaleza híbrida SDN/Legacy como la que plantea RAUFlow, donde los switches OpenFlow puedan comportarse como routers tradicionales. La tabla \ref{table:emuladores-y-simuladores} muestra las herramientas estudiadas. La segunda columna indica si la herramienta está orientada al concepto SDN. En las últimas dos columnas se pueden ver dos propiedades que aplican sólo a las herramientas orientadas a SDN. La penúltima indica la versión de OpenFlow que soporta, y la última indica si dicha herramienta puede ser utilizada con un controlador Ryu externo, en particular, el controlador RAUFlow.
 
-Las siguientes secciones estudian las herramientas más relevantes para estos objetivos, al momento de hacer este trabajo. En la última sección se hace una mención aparte para un tipo de herramientas especial, que no sirve para hacer pruebas funcionales de una red como conjunto, sino que para hacer pruebas de estrés sobre cada elemento de la red por separado.
+La cuarta columna especifica si se trata de un emulador o simulador (en algunos casos se da que es un híbrido) y la quinta columna detalla cómo es el modo de virtualización que aplica la herramienta. Esta columna es de especial interés para analizar la escalabilidad de la herramienta. Si se trata de un motor de simulación o una emulación con virtualización ligera, es esperable que la herramienta pueda realizar experimentos con muchos nodos. Por otro lado, si utiliza máquinas virtuales completas para representar a los nodos, probablemente se trate de una herramienta diseñada para hacer experimentos chicos, con pocos nodos.
+
+Las siguientes secciones estudian con más detalle las herramientas que se consideran más apropiadas para los objetivos que se plantearon. En la última sección se hace una mención aparte para un tipo de herramientas especial, que no sirve para hacer pruebas funcionales de una red como conjunto, sino que para hacer pruebas de estrés sobre cada elemento de la red por separado.
+
+\begin{table}
+\caption{Lista de emuladores y simuladores más relevantes para este trabajo.}
+\centering
+\resizebox{\textwidth}{!}{%
+	\begin{tabular}{ | l | l | l | p{2.2cm} | p{4.0cm} | p{3.0cm} | p{2.8cm} |}
+		\hline \hline
+		\textbf{Herramienta} & \textbf{SDN} & \textbf{Open Source} & \textbf{Simulador o emulador} & \textbf{Modo de virtualización} & \textbf{OpenFlow} & \textbf{Permite Ryu/RAUFlow} \\ \hline
+		Cloonix \cite{cloonix} & No & Si & Emulador & Máquinas virtuales completas & - & - \\ \hline
+		DOT \cite{dot} & Si & Si & Emulador & Máquinas virtuales (hosts) y Open vSwitch (switches) & 1.3 (con Open vSwitch) & Si \\ \hline
+		EstiNet \cite{estinet} & Si & No & Ambos & Simulación con mecanismos para ejecutar aplicaciones reales & 1.1.0 & Si \\ \hline
+		FlowSim \cite{flowsim} & Si & Si & Simulador & Simulación & 1.3 & No \\ \hline
+		fs-sdn \cite{fs-sdn} & Si & Si & Simulador & Simulación & No especifica & No \\ \hline
+		GNS3 \cite{gns3} & No & Si & Ambos & Simulación con soporte para máquinas virtuales completas y ligeras & - & - \\ \hline
+		CORE \cite{core} & No & Si & Emulador & Virtualización ligera (containers) & - & - \\ \hline
+		Mininet \cite{mininet-paper} & Si & Si & Emulador & Virtualización ligera (containers) & 1.3 (con Open vSwitch) & Si \\ \hline
+		MLN \cite{mln} & No & Si & Emulador & Máquinas virtuales completas & - & - \\ \hline
+		Netkit \cite{netkit} & No & Si & Emulador & Máquinas virtuales completas & - & - \\ \hline
+		NS-3 (extensión OpenFlow) \cite{ns-3-openflow} & Si & Si & Simulador & Simulación & 0.8.9 (1.3 con ciertas extensiones no oficiales) & Si \\ \hline
+		Omnet++ (extensión OpenFlow) \cite{omnet-openflow} & Si & Si & Simulador & Simulación & 1.2 & No \\ \hline
+		SDN Troubleshooting System \cite{sdn-troubleshooting-system} & Si & Si & Simulador & Simulación & 1.0 & Si \\ \hline
+		VNX \cite{vnx} & No & Si & Emulador & Máquinas virtuales completas / Virtualización ligera & - & - \\ \hline
+	\end{tabular}}
+	\label{table:emuladores-y-simuladores}
+\end{table}
+
 \subsection{DOT}
 DOT (Distributed OpenFlow Testbed) \cite{dot} es un emulador open source distribuido de redes OpenFlow. Está diseñado para experimentos de gran escala, es decir, con muchos nodos. La idea principal es utilizar múltiples máquinas físicas para distribuir la carga de cómputo.
 
@@ -149,7 +177,6 @@ Este modo dual de EstiNet permite que se pueda integrar con aplicaciones reales,
 
 Una desventaja importante que tiene EstiNet es que, de acuerdo a \cite{estinet}, la versión máxima de OpenFlow que soporta es la 1.1.0, mientras que la versión que utiliza RAUFlow es la 1.3.1.
 
-\subsection{fs-sdn}
 \subsection{Mininet}
 Mininet es un emulador de redes SDN muy utilizado en la actualidad, que permite emular hosts, switches y enlaces. Utiliza \textit{virtualización ligera} en Linux para levantar una red completa en un único kernel. La virtualización ligera, también llamada virtualización en el nivel de sistema operativo, consiste en un conjunto de funcionalidades de Linux que le permiten a un sistema ser separado en múltiples \textit{containers} (contenedores) más chicos. Esto se combina con la capacidad de crear links virtuales entre dichos containers. Mininet no provee ni emula un controlador; el mismo se debe ejecutar como una aplicación común y corriente.
 
@@ -170,36 +197,21 @@ Debido a su buena documentación y la forma en que está desarrollado, Mininet p
 \end{itemize}
 \subsection{NS-3}
 %The popular network simulator NS-3 also offers an OpenFlow simulation model [8]. However, this model in its current version does not model the OpenFlow controller as an external entity. Therefore, it is not possible to quantify the effects of the control channel or simulate multiple switches connected to a single OpenFlow controller.
-%tambien lo de openflow 1.3
+%tambien lo de openflow 1.3 (http://www.lrc.ic.unicamp.br/ofswitch13/)
 
-\subsection{Otras herramientas}
-\begin{itemize}
-	\item Flowsim
-	\item STS
-	\item Omnet++
-	\item Opencontrail
-	\item CORE
-\end{itemize}
-%\subsection{Flowsim} %es mas bien didactico asi que no
-%\subsection{STS} %es orientado a troubleshooting asi que no
-%\subsection{Omnet++} %puede ser, pero no se puede usar rauflow, asi que capaz que no
-%\subsection{Opencontrail} %creo que no, es un controlador asi que pareceria  que no
-%\subsection{CORE} %usa ovs, asi que se podria mencionar aca
-%\subsection{OFNet}
+\subsection{CORE y VNX}
 
-\section{Herramientas para pruebas de estrés y benchmarking}
-Existen múltiples herramientas de testing aplicables en el paradigma SDN. De ellas se puede destacar un grupo, que no tienen como objetivo verificar aspectos funcionales, sino que apuntan a algo mucho más específico: las pruebas de estrés y el benchmarking. Ayudan a los administradores de red e investigadores a conocer los niveles de rendimiento de los cuales sus dispositivos y redes son capaces. Asimismo, pueden ser elementos de investigación útiles en el contexto de la nueva Red Académica, ya que podrían utilizarse, por ejemplo, para validar ciertos aspectos de rendimiento de los RAUSwitch.
+\subsection{Herramientas para pruebas de estrés y benchmarking}
+Existen múltiples herramientas de testing aplicables en el paradigma SDN. De ellas se puede destacar un grupo, que no tienen como objetivo verificar aspectos funcionales, sino que apuntan a algo mucho más específico: las pruebas de estrés y el benchmarking. Ayudan a los administradores de red e investigadores a conocer los niveles de rendimiento de los cuales sus dispositivos y controladores son capaces. Asimismo, pueden ser elementos de investigación útiles en el contexto de la nueva Red Académica, ya que podrían utilizarse, por ejemplo, para validar ciertos aspectos de rendimiento de los RAUSwitch.
 
-En esta sección se estudiarán algunos ejemplos de estas herramientas, agrupándolas en dos grupos, de acuerdo a la entidad que intentan probar: switches y controladores. Para mantener la relevancia con el contexto de este trabajo, se limitará a herramientas enfocadas a OpenFlow.
-
-\subsection{Testing de switches}
+En esta sección se estudiarán algunos ejemplos de estas herramientas, agrupándolas en dos grupos, de acuerdo a la entidad que intentan probar: switches y controladores. Para mantener la relevancia con el contexto de este trabajo, se limitará a herramientas enfocadas a OpenFlow. \\ \\
+\textbf{Testing de switches} \\
 El testing y benchmarking de switches OpenFlow tiene como objetivo analizar cuál es el nivel máximo de rendimiento que puede alcanzar un switch. Esto por lo general se logra simulando las condiciones de una red que está bajo mucha carga, y sometiendo al switch a dichas condiciones, monitoreando su comportamiento. A continuación se listan algunas herramientas que hacen esto:
 \begin{itemize}
 	\item \textbf{OFLOPS} \cite{oflops} (OpenFlow Operations Per Second) es un framework open source para el testing y benchmarking de switches OpenFlow, tanto físicos como virtuales. Está desarrollado en el lenguaje C, y utiliza librerías de manipulación de paquetes para emular un controlador OpenFlow y tráfico de uso. Fue diseñado con un enfoque multi-thread para aprovechar las arquitecturas multi-core y así aumentar la potencia de la plataforma. Consiste de cinco threads paralelos, cada uno cumpliendo una función específica: 1) generación de paquetes, 2) captura de paquetes, 3) administración del canal de control (mensajes OpenFlow), 4) administración de un canal SNMP para hacer consultas asíncronas, y 5) un manejador de tiempo. Todo esto lo ofrece mediante una API, permitiendo a los usuarios crear sus propios módulos para escribir pruebas que se adapten a su realidad.
-	\item \textbf{Spirent OpenFlow Controller Emulation} \cite{spirent-controller-emulation} es una herramienta desarrollada por la empresa Spirent\footnote{http://spirent.com/} que, igual que OFLOPS, tiene como propósito el testing y benchmarking de switches OpenFlow. Puede emular un controlador OpenFlow, definir millones de flujos y aplicar patrones de tráfico a esos flujos, y de ese modo medir el rendimiento, disponibilidad, seguridad y escalabilidad del switch. Entre sus funcionalidades, se destaca que puede probar todos los aspectos de OpenFlow 1.3, y que puede trabajar con switches híbridos. Estos dos puntos lo hacen una valiosa herramienta para el testing de la arquitectura RAUFlow.
+	\item \textbf{Spirent OpenFlow Controller Emulation} \cite{spirent-controller-emulation} es una herramienta desarrollada por la empresa Spirent\footnote{http://spirent.com/} que, igual que OFLOPS, tiene como propósito el testing y benchmarking de switches OpenFlow. Puede emular un controlador OpenFlow, definir millones de flujos y aplicar patrones de tráfico a esos flujos, y de ese modo medir el rendimiento, disponibilidad, seguridad y escalabilidad del switch. Entre sus funcionalidades, se destaca que puede probar todos los aspectos de OpenFlow 1.3, y que puede trabajar con switches híbridos. Estos dos puntos lo hacen una valiosa herramienta para el testing del RAUSwitch.
 \end{itemize}
-
-\subsection{Testing de controladores}
+\textbf{Testing de controladores} \\
 Similar al caso de los switches, las pruebas de estrés sobre controladores OpenFlow consisten en someterlos a condiciones de mucha carga y estudiar determinadas métricas de su comportamiento. En general los principales aspectos que se buscan estudiar son 1) la cantidad de sesiones paralelas con switches OpenFlow que puede mantener el controlador y 2) el ritmo de mensajes packet\_in que puede manejar. No sólo es útil conocer esos umbrales, sino que también es muy valioso saber cual es el comportamiento esperado si se exceden dichos umbrales. Al ser RAUFlow un controlador de estilo proactivo, el aspecto número dos no es relevante aquí, ya que la red no genera paquetes de tipo packet\_in. A continuación se listan algunas de las herramientas disponibles:
 \begin{itemize}
 	\item \textbf{Cbench} \cite{cbench} es una herramienta para benchmarking de controladores, y es parte del proyecto OFLOPS. Su funcionamiento es muy simple: el usuario indica una cantidad \textit{n} de switches, la herramienta crea \textit{n} sesiones OpenFlow paralelas con el controlador, y luego comienza a enviar mensajes de tipo packet\_in y mide el tiempo que demora el controlador en responder a esos mensajes.
