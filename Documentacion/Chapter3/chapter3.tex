@@ -29,6 +29,9 @@ El segundo grupo de requerimientos es más genérico, ya que son los que surgen 
 \end{itemize}
 
 \section{Elección de la herramienta}
+En la tabla \ref{table:emuladores-y-simuladores} se listan herramientas que no fueron diseñadas para virtualizar redes OpenFlow, ni tienen extensiones con ese propósito. Sin embargo pueden ser utilizadas con esa intención, ya que al ser herramientas de propósito general, en definitiva lo que proveen son nodos virtuales Linux genéricos. Tomando como base lo hecho por el proyecto RRAP en los nodos físicos, es posible implementar la arquitectura RAUFlow en dichos nodos virtuales.
+
+El problema de este enfoque no es de tipo funcional, ya que si se puede en sistemas Linux físicos debería ser posible en sistemas Linux virtuales, sino que radica en la escalabilidad. Las herramientas que utilizan máquinas virtuales completas no son un buena opción, ya que cada nodo necesita demasiados recursos de cómputo y no sería viable hacer experimentos de escala.
 %No es realista construirlo de cero, asi que se necesita una herramienta.
 %Esta basado en Open vSwitch
 %Provee ejemplos sobre como usar Quagga

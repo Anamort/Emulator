@@ -117,18 +117,20 @@ Las siguientes secciones estudian con más detalle las herramientas que se consi
 		\hline \hline
 		\textbf{Herramienta} & \textbf{SDN} & \textbf{Open Source} & \textbf{Simulador o emulador} & \textbf{Modo de virtualización} & \textbf{OpenFlow} & \textbf{Permite Ryu/RAUFlow} \\ \hline
 		Cloonix \cite{cloonix} & No & Si & Emulador & Máquinas virtuales completas & - & - \\ \hline
+		CORE \cite{core} & No & Si & Emulador & Virtualización ligera (containers) & - & - \\ \hline
 		DOT \cite{dot} & Si & Si & Emulador & Máquinas virtuales (hosts) y Open vSwitch (switches) & 1.3 (con Open vSwitch) & Si \\ \hline
 		EstiNet \cite{estinet} & Si & No & Ambos & Simulación con mecanismos para ejecutar aplicaciones reales & 1.1.0 & Si \\ \hline
 		FlowSim \cite{flowsim} & Si & Si & Simulador & Simulación & 1.3 & No \\ \hline
-		fs-sdn \cite{fs-sdn} & Si & Si & Simulador & Simulación & No especifica & No \\ \hline
+		fs-sdn \cite{fs-sdn} & Si & Si & Simulador & Simulación & No especifica versión & No \\ \hline
 		GNS3 \cite{gns3} & No & Si & Ambos & Simulación con soporte para máquinas virtuales completas y ligeras & - & - \\ \hline
-		CORE \cite{core} & No & Si & Emulador & Virtualización ligera (containers) & - & - \\ \hline
+		IMUNES \cite{imunes} & No & Si & Emulador & Virtualización ligera (containers) & - & - \\ \hline
 		Mininet \cite{mininet-paper} & Si & Si & Emulador & Virtualización ligera (containers) & 1.3 (con Open vSwitch) & Si \\ \hline
 		MLN \cite{mln} & No & Si & Emulador & Máquinas virtuales completas & - & - \\ \hline
 		Netkit \cite{netkit} & No & Si & Emulador & Máquinas virtuales completas & - & - \\ \hline
-		NS-3 (extensión OpenFlow) \cite{ns-3-openflow} & Si & Si & Simulador & Simulación & 0.8.9 (1.3 con ciertas extensiones no oficiales) & Si \\ \hline
+		NS-3 (extensión OpenFlow) \cite{ns-3-openflow} & Si & Si & Simulador & Simulación con mecanismos para ejecutar aplicaciones reales & 0.8.9 (con soporte para MPLS) & Posiblemente, pero sin confirmar \\ \hline
 		Omnet++ (extensión OpenFlow) \cite{omnet-openflow} & Si & Si & Simulador & Simulación & 1.2 & No \\ \hline
 		SDN Troubleshooting System \cite{sdn-troubleshooting-system} & Si & Si & Simulador & Simulación & 1.0 & Si \\ \hline
+		Shadow \cite{shadow} & No & Si & Ambos & Simulación con mecanismos para ejecutar aplicaciones reales & - & - \\ \hline
 		VNX \cite{vnx} & No & Si & Emulador & Máquinas virtuales completas / Virtualización ligera & - & - \\ \hline
 	\end{tabular}}
 	\label{table:emuladores-y-simuladores}
@@ -178,7 +180,7 @@ Este modo dual de EstiNet permite que se pueda integrar con aplicaciones reales,
 Una desventaja importante que tiene EstiNet es que, de acuerdo a \cite{estinet}, la versión máxima de OpenFlow que soporta es la 1.1.0, mientras que la versión que utiliza RAUFlow es la 1.3.1.
 
 \subsection{Mininet}
-Mininet es un emulador de redes SDN muy utilizado en la actualidad, que permite emular hosts, switches y enlaces. Utiliza \textit{virtualización ligera} en Linux para levantar una red completa en un único kernel. La virtualización ligera, también llamada virtualización en el nivel de sistema operativo, consiste en un conjunto de funcionalidades de Linux que le permiten a un sistema ser separado en múltiples \textit{containers} (contenedores) más chicos. Esto se combina con la capacidad de crear links virtuales entre dichos containers. Mininet no provee ni emula un controlador; el mismo se debe ejecutar como una aplicación común y corriente.
+Mininet es un emulador de redes SDN muy utilizado en la actualidad, que permite emular hosts, switches y enlaces. Utiliza \textit{virtualización ligera} en Linux para levantar una red completa en un único kernel. La virtualización ligera, también llamada virtualización en el nivel de sistema operativo, consiste en un conjunto de funcionalidades de Linux que le permiten a un sistema ser separado en múltiples \textit{containers} (contenedores) más chicos. Cada container tiene sus propios recursos, pero todos ejecutan sobre el mismo kernel, lo cual los hace más rápidos y livianos. Esto se combina con la capacidad de crear links virtuales entre dichos containers. Mininet no provee ni emula un controlador; el mismo se debe ejecutar como una aplicación común y corriente.
 
 Este modo de funcionamiento logra que Mininet pueda ser mucho más rápido y escalable que emuladores que utilizan máquinas virtuales completas. Analizando con un poco más de detalle, a continuación se listan los componentes de Mininet y sus características:
 \begin{itemize}
@@ -196,10 +198,22 @@ Debido a su buena documentación y la forma en que está desarrollado, Mininet p
 	\item Mininet DC \cite{mininet-dc} es un trabajo que extiende Mininet y el controlador POX para hacer experimentos orientados a data centers en la nube.
 \end{itemize}
 \subsection{NS-3}
-%The popular network simulator NS-3 also offers an OpenFlow simulation model [8]. However, this model in its current version does not model the OpenFlow controller as an external entity. Therefore, it is not possible to quantify the effects of the control channel or simulate multiple switches connected to a single OpenFlow controller.
-%tambien lo de openflow 1.3 (http://www.lrc.ic.unicamp.br/ofswitch13/)
+NS-3 es un simulador de redes open source basado en eventos discretos. Es una herramienta desarrollada para ser extensible por módulos escritos por los usuarios. Es por esta característica que puede ser utilizada para usar OpenFlow, a pesar de no ser una herramienta enfocada hacia el paradigma SDN.
 
-\subsection{CORE y VNX}
+Existe una implementación de OpenFlow \cite{ns-3-openflow} (llamada OFSID - \textit{OpenFlow software implementation distribution}) que se puede integrar con ns-3 en modalidad de librería externa. Esta extensión implementa una versión antigua de OpenFlow, la 0.8.9, pero agrega soporte para MPLS.
+
+Un problema de esta extensión es que la entidad controlador es modelada internamente en el simulador. Esto implica que no es posible que el simulador funcione con un controlador externo. Esto podría resolverse con una funcionalidad llamada \textit{Direct Code Execution} (DCE), que permite la ejecución de aplicaciones externas dentro de ns-3. Sin embargo, DCE sólo soporta, de forma oficial, aplicaciones C/C++, y el soporte para Python por el momento es experimental.
+
+Otro detalle importante es que no es posible modelar la conexión SSL entre un switch OpenFlow y el controlador (ya que es interno). Esto baja la calidad de la simulación ya que podría ser un punto interesante de estudio.
+
+En resumen, NS-3 es un simulador muy usado en la actualidad pero su soporte para redes OpenFlow podría etiquetarse como experimental por el momento. Es necesario hacer un estudio muy detallado para determinar si se puede utilizar con la arquitectura RAUFlow, pero no se descarta que así sea.
+
+\subsection{IMUNES y otros emuladores de propósito general}
+IMUNES \cite{imunes} es un emulador open source para Linux y FreeBSD. Funciona con nodos virtuales ligeros (o containers) conectados entre sí por enlaces emulados.
+
+Para implementar redes virtuales en Linux usa dos tecnologías: Docker y Open vSwitch. Docker es una herramienta open source que utiliza virtualización a nivel de sistema operativo (o virtualización ligera) para crear \textit{containers}. Estos nodos virtuales o \textit{containers} son muy similares a los que implementa Mininet, y tienen como gran ventaja que son mucho más rápidos y utilizan menos recursos que las máquinas virtuales completas.
+
+IMUNES es similar a otras herramientas que usan virtualización ligera como VNX \cite{vnx}, CORE \cite{core} y GNS3 \cite{gns3}. Son opciones bastante más escalables que otros emuladores como Cloonix \cite{cloonix}, MLN \cite{mln} y Netkit \cite{netkit}, que utilizan máquinas virtuales completas.
 
 \subsection{Herramientas para pruebas de estrés y benchmarking}
 Existen múltiples herramientas de testing aplicables en el paradigma SDN. De ellas se puede destacar un grupo, que no tienen como objetivo verificar aspectos funcionales, sino que apuntan a algo mucho más específico: las pruebas de estrés y el benchmarking. Ayudan a los administradores de red e investigadores a conocer los niveles de rendimiento de los cuales sus dispositivos y controladores son capaces. Asimismo, pueden ser elementos de investigación útiles en el contexto de la nueva Red Académica, ya que podrían utilizarse, por ejemplo, para validar ciertos aspectos de rendimiento de los RAUSwitch.
