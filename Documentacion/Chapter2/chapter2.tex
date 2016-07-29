@@ -107,7 +107,7 @@ La principal observación que se debe hacer es que ninguna de las herramientas e
 
 La cuarta columna especifica si se trata de un emulador o simulador (en algunos casos se da que es un híbrido) y la quinta columna detalla cómo es el modo de virtualización que aplica la herramienta. Esta columna es de especial interés para analizar la escalabilidad de la herramienta. Si se trata de un motor de simulación o una emulación con virtualización ligera, es esperable que la herramienta pueda realizar experimentos con muchos nodos. Por otro lado, si utiliza máquinas virtuales completas para representar a los nodos, probablemente se trate de una herramienta diseñada para hacer experimentos chicos, con pocos nodos.
 
-Las siguientes secciones estudian con más detalle las herramientas que se consideran más apropiadas para los objetivos que se plantearon. En la última sección se hace una mención aparte para un tipo de herramientas especial, que no sirve para hacer pruebas funcionales de una red como conjunto, sino que para hacer pruebas de estrés sobre cada elemento de la red por separado.
+Las siguientes secciones estudian con más detalle las herramientas que se consideran más apropiadas para virtualizar la arquitectura RAUFlow/RAUSwitch. En la última sección se hace una mención aparte para un tipo de herramientas especial, que no sirve para hacer pruebas funcionales de una red como conjunto, sino que para hacer pruebas de estrés sobre cada elemento de la red por separado.
 
 \begin{table}
 \caption{Lista de emuladores y simuladores más relevantes para este trabajo.}
@@ -164,7 +164,7 @@ La arquitectura interna de cada nodo físico en DOT se puede ver en la figura \r
 \subsection{Estinet}
 EstiNet \cite{estinet} es un emulador y simulador para redes OpenFlow, desarrollado por EstiNet Technologies Inc \footnote{http://www.estinet.com/ns/}.
 
-\begin{figure}[t]
+\begin{figure}[H]
 	\caption{Arquitectura de simulación de EstiNet. Imagen extraída de \cite{estinet}}
 	\includegraphics[scale=0.85]{estinet_simulation_archi}
 	\centering

@@ -1,7 +1,28 @@
 \chapter{Introducción}
+La Red Académica Uruguaya (RAU) es un emprendimiento de la Universidad de la República que ya lleva 28 años, y es administrado por el Servicio Central de Informática Universitario (SeCIU). Al igual que las redes académicas de muchos otros países, tiene como objetivo proveer a docentes e investigadores una infraestructura aislada de las redes comerciales, que les ofrezca altas velocidades para diversas aplicaciones de enseñanza e investigación. La RAU actualmente consta de 64 nodos y brinda servicios a 31 instituciones, abarcando un total aproximado de 8.000 docentes, 4.000 técnicos y 100.000 estudiantes\footnote{Cifras obtenidas del informe del proyecto RRAP}.
 
+En la actualidad se está trabajando en renovar la RAU con una nueva infraestructura que permita proveer más y mejores servicios. Este esfuerzo se denominó RAU2. Los principales objetivos de esta renovación son: 1) extender y mejorar la calidad del servicio, y 2) implementar servicios e infraestructuras que maximicen la sinergia entre las instituciones. Para esto, se plantean tres áreas principales de trabajo: re-diseñar la topología de la red y aumentar el ancho de banda, mejorar la controlabilidad de la red, y desarrollar una plataforma integrada y global para los servicios académicos.
+
+Uno de los enfoques propuestos para la RAU2 se denomina RAUFlow y está basado en un concepto llamado Redes Definidas por Software (SDN por sus siglas en inglés). SDN es un paradigma de red que ha tomado fuerza en los últimos años, que plantea desacoplar el plano de control (donde se determina qué hacer con los paquetes de datos) del plano de datos (donde se toman las acciones sobre los paquetes). Propone una infraestructura enfocada en otorgar, de forma más económica y eficiente, un mayor control a los operadores de red para adaptar y optimizar sus redes para los servicios y capacidades que necesitan proveer.
+
+A pesar de la fuerza que han ganado las redes definidas por software en el último tiempo, están lejos de ser el estándar, y las redes legadas aún son muy utilizadas en la actualidad. Por esta razón es necesario estudiar soluciones que aprovechen las ventajas que ofrece SDN, y al mismo tiempo puedan coexistir con las redes legadas y beneficiarse de las mismas. RAUFlow es una propuesta que sigue ese mismo principio de redes híbridas, y es la base sobre la que se construye este trabajo.
 % **************************** Define Graphics Path **************************
 \graphicspath{{Chapter1/Figs/}}
 
-\section{Contexto}
+\section{RAUFlow}
 %Por esta razón tiene sentido pensar en RAUFlow como el conjunto de todas estas componentes las cuales interactuando entre ellas implementan efectivamente el plano de control.
+
+\section{Objetivos}
+El objetivo principal de este trabajo es estudiar la escalabilidad de la arquitectura RAUFlow mediante simulaciones con grandes cantidades de nodos. Dada la ausencia de trabajos relacionados a la virtualización de enfoques híbridos SDN/Legacy, es necesario un estudio a fondo de las tecnologías de virtualización disponibles y un posterior trabajo de construcción del entorno deseado.
+
+\section{Resultados esperados}
+Se espera que este trabajo produzca los siguientes resultados:
+\begin{itemize}
+	\item El estado del arte en lo que refiere a implementación de VPNs y otras aplicaciones en SDN, así como las herramientas de virtualización disponibles, prestando especial atención a aquellas que pueden ser aplicables al enfoque híbrido SDN/Legacy y al mismo tiempo sean escalables.
+	\item Una herramienta que permita virtualizar la arquitectura RAUFlow, y que sea razonablemente escalable. Es importante considerar dicha herramienta como un resultado que pueda mantenerse útil incluso afuera del contexto de RAUFlow, como herramienta de investigación autocontenida.
+	\item Diseñar y llevar a cabo una serie de pruebas de escala sobre RAUFlow que detecten posibles errores, y permitan hacer un análisis sobre su escalabilidad.
+\end{itemize}
+
+\section{Estructura del documento}
+
+
