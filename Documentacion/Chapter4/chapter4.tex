@@ -187,6 +187,86 @@ El segundo punto puede explicar esto porque si hay congestión en la red, entonc
 
 %Posible explicacion: https://www.ibm.com/support/knowledgecenter/SSLTBW_1.13.0/com.ibm.zos.r13.ieag200/cputvari.htm%23cputvari
 
+\begin{tikzpicture}
+\begin{axis}[
+title={Distribución del tiempo de creación de VPNs de capa 2 en la topología mediana},
+xlabel={Largo del camino},
+ylabel={Porcentaje del tiempo total},
+xtick={0,1,2,4,6,8,10,12},
+ytick={0,10,20,30,40,50,60,70,80,90,100},
+scaled x ticks = false,
+x tick label style={/pgf/number format/fixed},
+legend pos=outer north east,
+ymajorgrids=true,
+grid style=dashed,
+]
+\addplot[
+color=blue,
+mark=square,
+]
+coordinates {
+	(1,25)(2,18)(4,18)(6,18)(8,19)(10,16)(12,16)
+};
+\addlegendentry{Cálculo del camino}
+\addplot[
+color=green,
+mark=square,
+]
+coordinates {
+	(1,0)(2,1)(4,1)(6,1)(8,1)(10,1)(12,2)
+};
+\addlegendentry{Manejo de etiquetas MPLS}
+\addplot[
+color=red,
+mark=square,
+]
+coordinates {
+	(1,74)(2,81)(4,80)(6,80)(8,79)(10,83)(12,81)
+};
+\addlegendentry{Instalación de flujos}
+\end{axis}
+\end{tikzpicture}
+
+\begin{tikzpicture}
+\begin{axis}[
+title={Distribución del tiempo de creación de VPNs de capa 3 en la topología mediana},
+xlabel={Largo del camino},
+ylabel={Porcentaje del tiempo total},
+xtick={0,1,2,4,6,8,10,12},
+ytick={0,10,20,30,40,50,60,70,80,90,100},
+scaled x ticks = false,
+x tick label style={/pgf/number format/fixed},
+legend pos=outer north east,
+ymajorgrids=true,
+grid style=dashed,
+]
+\addplot[
+color=blue,
+mark=square,
+]
+coordinates {
+	(1,90)(2,79)(4,72)(6,75)(8,72)(10,64)(12,63)
+};
+\addlegendentry{Cálculo del camino}
+\addplot[
+color=green,
+mark=square,
+]
+coordinates {
+	(1,2)(2,5)(4,9)(6,7)(8,9)(10,11)(12,13)
+};
+\addlegendentry{Manejo de etiquetas MPLS}
+\addplot[
+color=red,
+mark=square,
+]
+coordinates {
+	(1,4)(2,11)(4,14)(6,14)(8,17)(10,19)(12,22)
+};
+\addlegendentry{Instalación de flujos}
+\end{axis}
+\end{tikzpicture}
+
 **Algunas conclusiones de estos resultados.
 
 

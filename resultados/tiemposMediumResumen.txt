@@ -12,16 +12,15 @@ Camino largo 2:
 	VPN Capa 2 -- Promedio Flujos: 80.5556526035
 	VPN Capa 3 -- Promedio Camino: 78.9080779954
 	VPN Capa 3 -- Promedio MPLS: 5.0073337758
-	VPN Capa 3 -- Promedio Flujos: 10.7229403594                  (HAY QUE REVISAR MANUALMENTE LOS NUMEROS Y DESCARTAR
-																   LOS QUE SON RAROS)
+	VPN Capa 3 -- Promedio Flujos: 10.7229403594                  
 
 Camino largo 4:
 	VPN Capa 2 -- Promedio Camino: 17.6736187636
 	VPN Capa 2 -- Promedio MPLS: 1.18267328812
 	VPN Capa 2 -- Promedio Flujos: 80.3866610269
-	VPN Capa 3 -- Promedio Camino: 67.6951209986
-	VPN Capa 3 -- Promedio MPLS: 9.06389431757
-	VPN Capa 3 -- Promedio Flujos: 14.1005432173
+	VPN Capa 3 -- Promedio Camino: 71.6644534565
+	VPN Capa 3 -- Promedio MPLS: 9.16868064205
+	VPN Capa 3 -- Promedio Flujos: 13.8925510612
 
 Camino largo 6:
 	VPN Capa 2 -- Promedio Camino: 17.7740689502
@@ -32,7 +31,25 @@ Camino largo 6:
 	VPN Capa 3 -- Promedio Flujos: 13.9275129099
 
 Camino largo 8:
+	VPN Capa 2 -- Promedio Camino: 18.6803592281
+	VPN Capa 2 -- Promedio MPLS: 1.01310806702
+	VPN Capa 2 -- Promedio Flujos: 79.4517258596
+	VPN Capa 3 -- Promedio Camino: 71.5146005989
+	VPN Capa 3 -- Promedio MPLS: 8.88436185855
+	VPN Capa 3 -- Promedio Flujos: 16.7935904214
 
 Camino largo 10:
+	VPN Capa 2 -- Promedio Camino: 15.6471968607
+	VPN Capa 2 -- Promedio MPLS: 1.14216374253
+	VPN Capa 2 -- Promedio Flujos: 82.5663669697
+	VPN Capa 3 -- Promedio Camino: 63.6353664474
+	VPN Capa 3 -- Promedio MPLS: 10.5652417394
+	VPN Capa 3 -- Promedio Flujos: 19.3449892629
 
 Camino largo 12:
+	VPN Capa 2 -- Promedio Camino: 15.6089689602
+	VPN Capa 2 -- Promedio MPLS: 1.77700381222
+	VPN Capa 2 -- Promedio Flujos: 81.2334167857
+	VPN Capa 3 -- Promedio Camino: 62.8699486591
+	VPN Capa 3 -- Promedio MPLS: 13.1994812614
+	VPN Capa 3 -- Promedio Flujos: 21.7703445849
