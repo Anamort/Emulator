@@ -102,7 +102,7 @@ print res
 if (res.count('"freeInterfaces": 1') > 2):
     print "ERROR: LSDB indicates there are more than 2 edge routers. If this is correct then comment this conditional in telnetRouters.py#102"
     print "If this is incorrect, run the script again."
-elif (len(res) == 4):
+elif (len(res) < 10):
     print "ERROR: LSDB empty. Run the script again."
 else:
     print "INFO: Sending data to controller"
