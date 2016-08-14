@@ -1,4 +1,4 @@
-f = open("resultados/tiemposBasic.txt","r")
+f = open("resultados/tiemposLarge4.txt","r")
 
 lines = f.readlines()
 

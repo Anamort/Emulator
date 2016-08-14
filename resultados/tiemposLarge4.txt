@@ -84,10 +84,10 @@ Tiempo total: 1869974
 Tiempo camino: 823294
 Tiempo MPLS: 1154
 Tiempo flujos: 1044813
-Porcentajes:
-Capa3    --> Camino: 44.0270292528%
-Capa3    --> MPLS: 0.0617120879756%
-Capa3    --> Flujos 55.8731297868%
+Porcentajes:											(NO SE USA, MUY ALEJADO DE LOS OTROS DATOS)
+NO    --> Camino: 44.0270292528%
+NO    --> MPLS: 0.0617120879756%
+NO    --> Flujos 55.8731297868%
 ************************************************************************************************************************************************************************************************************************************************************************************************************
 Tiempo total: 553165
 Tiempo camino: 505815
@@ -111,7 +111,7 @@ Tiempo total: 1785086
 Tiempo camino: 222031
 Tiempo MPLS: 1555549
 Tiempo flujos: 6808
-Porcentajes:                                    (NO SE USA, DATOS INCOSISTENTES)
+Porcentajes:                                    (NO SE USA, DATOS INCONSISTENTES)
 NO    --> Camino: 12.4381122254%
 NO    --> MPLS: 87.1414038315%
 NO    --> Flujos 0.381382185508%

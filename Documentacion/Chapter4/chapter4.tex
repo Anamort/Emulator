@@ -173,8 +173,9 @@ El objetivo de este escenario es estudiar como impacta el tamaño de la topolog�
 
 Las tablas \ref{table:tiempo_topo_basica}, \ref{table:tiempo_topo_chica}, \ref{table:tiempo_topo_mediana} y \ref{table:tiempo_topo_grande} muestran los resultados obtenidos en el escenario. Cada tabla corresponde a una topología. En cada tabla se muestran los tiempos obtenidos para cada largo de camino. Cada caso fue ejecutado cuatro veces, y para cada conjunto de ejecuciones se calcula la media, mediana, desviación estándar y coeficiente de variación (CV). \\
 
-El primer dato que se puede extraer de los resultados obtenidos es que hay una diferencia de tiempo significativa entre una VPN de capa 2 y una de capa 3. Esto es esperable y tiene sentido, dado que un servicio de capa 2 debe instalar 42 flujos en cada nodo que compone el camino, porque debe instalar un flujo por cada ethertype posible (esto se explica en X). Por otro lado, un servicio de capa 3 solo debe instalar un flujo en cada nodo del camino.
-También se puede observar que los tiempos tienden a incrementarse a medida que el camino por el que pasa la VPN es mayor. Esto se debe principalmente a que mientras más nodos haya en el camino, más flujos deben instalarse. Hay un caso particular en este comportamiento; el caso en que la VPN pasa por dos nodos (es decir, un camino de largo uno). En esa situación, la baja en el tiempo es más acentuada. Esto se debe a que cuando la VPN pasa por un camino de largo mayor que uno, el controlador debe configurar dos niveles de etiquetas. Esto requiere más tiempo de computo, y instalar un flujo (confirmar) adicional.
+El primer dato que se puede extraer de los resultados obtenidos es que hay una diferencia de tiempo significativa entre una VPN de capa 2 y una de capa 3. Esto es esperable dado que un servicio de capa 2 debe instalar 42 flujos en cada nodo que compone el camino, porque debe instalar un flujo por cada ethertype posible (esto se explica en X). Por otro lado, un servicio de capa 3 solo debe instalar un flujo en cada nodo del camino.
+
+También se puede observar que los tiempos tienden a incrementarse a medida que el camino por el que pasa la VPN es mayor. Esto se debe principalmente a que mientras más nodos haya en el camino, más flujos deben instalarse. Se observa una diferencia de tiempo más acentuada entre el camino de largo 1 y el de 2. Esto se debe a que cuando la VPN pasa por un camino de largo uno el controlador debe configurar sólo un nivel de etiquetas MPLS, mientras que si el camino es de largo mayor, corresponden dos niveles de etiquetas. Esto requiere más tiempo de computo, e instalar al menos un flujo adicional.
 
 Si se comparan los resultados entre cada topología, también hay observaciones importantes. En primer lugar, se puede ver que para caminos de igual largo, si la topología es más grande entonces se necesita más tiempo para crear la VPN. Ese comportamiento se explica con los siguientes puntos:
 \begin{itemize}
@@ -183,22 +184,176 @@ Si se comparan los resultados entre cada topología, también hay observaciones 
 	\item Como se está usando un entorno virtual, tener más nodos implica que el procesador anfitrión debe repartir el tiempo de cómputo entre más procesos. Naturalmente, esto resulta en una lentitud generalizada que afecta a todo el entorno virtual. A diferencia de los puntos anteriores, este fenómeno no se observaría en un despliegue real de la red, así que es relevante solo en este ambiente de pruebas.
 \end{itemize}
 Los dos últimos puntos también ayudan a explicar otro detalle importante que muestran las tablas: el coeficiente de variación (CV). Se puede observar que este valor es mayor a medida que crece la topología, y que incluso llega a 0.99 (o 99\%) cuando se realizaron las ejecuciones para un camino de largo 2 en la topología grande. Esto implica que a medida que la topología crece, la variabilidad de los tiempos que se miden es mayor, y por lo tanto son menos confiables.
-El segundo punto puede explicar esto porque si hay congestión en la red, entonces la variabilidad del RTT (round-trip time) va a ser mayor (referencia o explicacion?). El tercer punto también puede influir en un CV más alto, ya que es posible que una sobrecarga en la CPU introduzca variabilidad al tiempo de CPU que recibe cada proceso, o quizás también una variabilidad en las tareas que puede desempeñar un proceso dado un determinado tiempo de CPU. La variabilidad que introduce la CPU no se comprueba en este trabajo, y se deja para trabajos futuros profundizar en el tema.
+El segundo punto puede explicar esto porque si hay congestión en la red, entonces la variabilidad del RTT (round-trip time) va a ser mayor (referencia o explicacion?). El tercer punto también puede influir en un CV más alto, ya que es posible que una sobrecarga en la CPU introduzca variabilidad al tiempo de CPU que recibe cada proceso, o quizás también una variabilidad en las tareas que puede desempeñar un proceso dado un determinado tiempo de CPU. \\
+
+Con el objetivo de hacer un análisis más fino sobre el tiempo de creación de las VPNs, se repitieron las pruebas pero agregando modificaciones al código del controlador que permitan analizar cuánto tiempo dedica a cada parte del proceso. Se identificaron tres partes fundamentales: el cálculo del camino óptimo, todo lo relacionado al cálculo y manejo de las etiquetas MPLS, y la instalación de los flujos OpenFlow. La ejecución de esas tres tareas abarca la mayoría (más del 90\%) del tiempo de creación de una VPN. Las modificaciones en el código consistieron de agregar \textit{timestamps}\footnote{Marca temporal que indica la hora en la que se lleva a cabo un evento.} en las partes claves del código. Luego, analizando el log del controlador se hace la resta de los diferentes timestamps para determinar cuánto tiempo se tomó para cada tarea. Es importante tener en cuenta que este método tiene un margen de error no despreciable, ya que está a la merced del tiempo de CPU que se le asigna al controlador. De hecho, algunas ejecuciones fueron descartadas de los resultados ya que se alejan demasiado del resto, probablemente porque la CPU fue asignada durante la creación de una VPN a otros procesos por demasiado tiempo.
 
 %Posible explicacion: https://www.ibm.com/support/knowledgecenter/SSLTBW_1.13.0/com.ibm.zos.r13.ieag200/cputvari.htm%23cputvari
 
+Las figuras \ref{fig:gráfica_tiempo_básica}, \ref{fig:gráfica_tiempo_chica}, \ref{fig:gráfica_tiempo_mediana} y \ref{fig:gráfica_tiempo_grande} a continuación muestran, para cada topología, cómo se descompone el tiempo de ejecución para cada largo de camino. Para cada topología y largo de camino se realizaron 8 ejecuciones, se descartaron las que se alejan demasiado del resto y se calculó el promedio de las restantes.
+
+\begin{figure}[H]
+	\caption{Distribución del tiempo de creación de VPNs en la topología básica}
+	\centering
+	\label{fig:gráfica_tiempo_básica}
+	\begin{tikzpicture}
+	\begin{axis}[
+	xlabel={Largo del camino},
+	ylabel={Porcentaje del tiempo total},
+	xtick={0,1,2,4,6,8,10,12},
+	ytick={0,10,20,30,40,50,60,70,80,90,100},
+	scaled x ticks = false,
+	x tick label style={/pgf/number format/fixed},
+	legend pos= outer north east,
+	ymajorgrids=true,
+	grid style=dashed,
+	width=5cm,
+	height=10cm,
+	legend cell align=left,
+	]
+	\addplot[
+	color=blue,
+	mark=square,
+	]
+	coordinates {
+		(1,0.5)
+	};
+	\addlegendentry{[Capa 2] Cálculo del camino}
+	\addplot[
+	color=green,
+	mark=square,
+	]
+	coordinates {
+		(1,1.1)
+	};
+	\addlegendentry{[Capa 2] Manejo de etiquetas MPLS}
+	\addplot[
+	color=red,
+	mark=square,
+	]
+	coordinates {
+		(1,96)
+	};
+	\addlegendentry{[Capa 2] Instalación de flujos}
+	\addplot[
+	color=blue,
+	mark=square,
+	dashed,
+	]
+	coordinates {
+		(1,10)
+	};
+	\addlegendentry{[Capa 3] Cálculo del camino}
+	\addplot[
+	color=green,
+	mark=square,
+	dashed,
+	]
+	coordinates {
+		(1,21)
+	};
+	\addlegendentry{[Capa 3] Manejo de etiquetas MPLS}
+	\addplot[
+	color=red,
+	mark=square,
+	dashed,
+	]
+	coordinates {
+		(1,38)
+	};
+	\addlegendentry{[Capa 3] Instalación de flujos}
+	\end{axis}
+	\end{tikzpicture}
+
+	\caption{Distribución del tiempo de creación de VPNs en la topología chica}
+	\centering
+	\label{fig:gráfica_tiempo_chica}
+	\begin{tikzpicture}
+	\begin{axis}[
+	xlabel={Largo del camino},
+	ylabel={Porcentaje del tiempo total},
+	xtick={0,1,2,4,6,8,10,12},
+	ytick={0,10,20,30,40,50,60,70,80,90,100},
+	scaled x ticks = false,
+	x tick label style={/pgf/number format/fixed},
+	legend style={at={(0.5,-0.2)},anchor=north},
+	ymajorgrids=true,
+	grid style=dashed,
+	width=11cm,
+	legend cell align=left,
+	]
+	\addplot[
+	color=blue,
+	mark=square,
+	]
+	coordinates {
+		(1,2)(2,2)(4,1)(6,1)(8,1)
+	};
+	\addlegendentry{[Capa 2] Cálculo del camino}
+	\addplot[
+	color=green,
+	mark=square,
+	]
+	coordinates {
+		(1,0)(2,1)(4,2)(6,3)(8,1)
+	};
+	\addlegendentry{[Capa 2] Manejo de etiquetas MPLS}
+	\addplot[
+	color=red,
+	mark=square,
+	]
+	coordinates {
+		(1,96)(2,96)(4,95)(6,94)(8,96)
+	};
+	\addlegendentry{[Capa 2] Instalación de flujos}
+	\addplot[
+	color=blue,
+	mark=square,
+	dashed,
+	]
+	coordinates {
+		(1,30)(2,24)(4,18)(6,25)(8,12)
+	};
+	\addlegendentry{[Capa 3] Cálculo del camino}
+	\addplot[
+	color=green,
+	mark=square,
+	dashed,
+	]
+	coordinates {
+		(1,15)(2,20)(4,28)(6,29)(8,36)
+	};
+	\addlegendentry{[Capa 3] Manejo de etiquetas MPLS}
+	\addplot[
+	color=red,
+	mark=square,
+	dashed,
+	]
+	coordinates {
+		(1,27)(2,42)(4,41)(6,39)(8,43)
+	};
+	\addlegendentry{[Capa 3] Instalación de flujos}
+	\end{axis}
+	\end{tikzpicture}
+\end{figure}
+
+\begin{figure}[H]
+	\caption{Distribución del tiempo de creación de VPNs en la topología mediana}
+	\centering
+	\label{fig:gráfica_tiempo_mediana}
 \begin{tikzpicture}
 \begin{axis}[
-title={Distribución del tiempo de creación de VPNs de capa 2 en la topología mediana},
 xlabel={Largo del camino},
 ylabel={Porcentaje del tiempo total},
 xtick={0,1,2,4,6,8,10,12},
 ytick={0,10,20,30,40,50,60,70,80,90,100},
 scaled x ticks = false,
 x tick label style={/pgf/number format/fixed},
-legend pos=outer north east,
+legend style={at={(0.5,-0.2)},anchor=north},
 ymajorgrids=true,
 grid style=dashed,
+width=11cm,
+legend cell align=left,
 ]
 \addplot[
 color=blue,
@@ -207,7 +362,7 @@ mark=square,
 coordinates {
 	(1,25)(2,18)(4,18)(6,18)(8,19)(10,16)(12,16)
 };
-\addlegendentry{Cálculo del camino}
+\addlegendentry{[Capa 2] Cálculo del camino}
 \addplot[
 color=green,
 mark=square,
@@ -215,7 +370,7 @@ mark=square,
 coordinates {
 	(1,0)(2,1)(4,1)(6,1)(8,1)(10,1)(12,2)
 };
-\addlegendentry{Manejo de etiquetas MPLS}
+\addlegendentry{[Capa 2] Manejo de etiquetas MPLS}
 \addplot[
 color=red,
 mark=square,
@@ -223,49 +378,110 @@ mark=square,
 coordinates {
 	(1,74)(2,81)(4,80)(6,80)(8,79)(10,83)(12,81)
 };
-\addlegendentry{Instalación de flujos}
-\end{axis}
-\end{tikzpicture}
-
-\begin{tikzpicture}
-\begin{axis}[
-title={Distribución del tiempo de creación de VPNs de capa 3 en la topología mediana},
-xlabel={Largo del camino},
-ylabel={Porcentaje del tiempo total},
-xtick={0,1,2,4,6,8,10,12},
-ytick={0,10,20,30,40,50,60,70,80,90,100},
-scaled x ticks = false,
-x tick label style={/pgf/number format/fixed},
-legend pos=outer north east,
-ymajorgrids=true,
-grid style=dashed,
-]
+\addlegendentry{[Capa 2] Instalación de flujos}
 \addplot[
 color=blue,
 mark=square,
+dashed,
 ]
 coordinates {
 	(1,90)(2,79)(4,72)(6,75)(8,72)(10,64)(12,63)
 };
-\addlegendentry{Cálculo del camino}
+\addlegendentry{[Capa 3] Cálculo del camino}
 \addplot[
 color=green,
 mark=square,
+dashed,
 ]
 coordinates {
 	(1,2)(2,5)(4,9)(6,7)(8,9)(10,11)(12,13)
 };
-\addlegendentry{Manejo de etiquetas MPLS}
+\addlegendentry{[Capa 3] Manejo de etiquetas MPLS}
 \addplot[
 color=red,
 mark=square,
+dashed,
 ]
 coordinates {
 	(1,4)(2,11)(4,14)(6,14)(8,17)(10,19)(12,22)
 };
-\addlegendentry{Instalación de flujos}
+\addlegendentry{[Capa 3] Instalación de flujos}
 \end{axis}
 \end{tikzpicture}
+\end{figure}
+
+\begin{figure}[H]
+	\caption{Distribución del tiempo de creación de VPNs en la topología grande}
+	\centering
+	\label{fig:gráfica_tiempo_grande}
+	\begin{tikzpicture}
+	\begin{axis}[
+	xlabel={Largo del camino},
+	ylabel={Porcentaje del tiempo total},
+	xtick={0,1,2,4,6,8,10,12},
+	ytick={0,10,20,30,40,50,60,70,80,90,100},
+	scaled x ticks = false,
+	x tick label style={/pgf/number format/fixed},
+	legend style={at={(0.5,-0.2)},anchor=north},
+	ymajorgrids=true,
+	grid style=dashed,
+	width=11cm,
+	legend cell align=left,
+	]
+	\addplot[
+	color=blue,
+	mark=square,
+	]
+	coordinates {
+		(1,55)(2,44)(4,43)(6,60)(8,55)(10,60)(12,46)
+	};
+	\addlegendentry{[Capa 2] Cálculo del camino}
+	\addplot[
+	color=green,
+	mark=square,
+	]
+	coordinates {
+		(1,0.5)(2,0)(4,0)(6,0.3)(8,0.5)(10,0.5)(12,0.7)
+	};
+	\addlegendentry{[Capa 2] Manejo de etiquetas MPLS}
+	\addplot[
+	color=red,
+	mark=square,
+	]
+	coordinates {
+		(1,44)(2,55)(4,53)(6,38)(8,44)(10,38)(12,53)
+	};
+	\addlegendentry{[Capa 2] Instalación de flujos}
+	\addplot[
+	color=blue,
+	mark=square,
+	dashed,
+	]
+	coordinates {
+		(1,98)(2,98)(4,91)(6,90)(8,93)(10,90)(12,87)
+	};
+	\addlegendentry{[Capa 3] Cálculo del camino}
+	\addplot[
+	color=green,
+	mark=square,
+	dashed,
+	]
+	coordinates {
+		(1,0.2)(2,0.2)(4,1)(6,4)(8,1)(10,4)(12,3)
+	};
+	\addlegendentry{[Capa 3] Manejo de etiquetas MPLS}
+	\addplot[
+	color=red,
+	mark=square,
+	dashed,
+	]
+	coordinates {
+		(1,1)(2,1)(4,7)(6,5)(8,5)(10,6)(12,8)
+	};
+	\addlegendentry{[Capa 3] Instalación de flujos}
+	\end{axis}
+	\end{tikzpicture}
+\end{figure}
 
 **Algunas conclusiones de estos resultados.
 
