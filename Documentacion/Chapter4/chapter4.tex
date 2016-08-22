@@ -3,10 +3,12 @@
 % **************************** Define Graphics Path **************************
 \graphicspath{{Chapter4/Figs/}}
 
-Con el entorno de simulación construido, el siguiente objetivo es realizar pruebas de escala sobre la arquitectura. Se realizan dos tipos de pruebas de escala: (a) verificar cómo funciona la arquitectura para topologias de escala, (b) realizar estudios de escala sobre la cantidad de servicios. En este capítulo se explicará el propósito de cada prueba, las condiciones bajo las cuales se ejecuta cada una de ellas (topologias, tipos de tráfico, etc) y por último, los resultados que arrojan. Las pruebas fueron realizadas en el servidor del Instituto de Computación, con una máquina virtual Lubuntu 14.04 sobre KVM, con 32GB de RAM y un procesador AMD Opteron 23xx.
+Con el entorno de simulación construido, el siguiente objetivo es realizar pruebas de escala sobre la arquitectura. Se realizan dos tipos de pruebas de escala: (a) verificar cómo funciona la arquitectura para topologias de escala, (b) realizar estudios de escala sobre la cantidad de servicios que soporta. En este capítulo se explicará el propósito de cada prueba, las condiciones bajo las cuales se ejecuta cada una de ellas (topologias, tipos de tráfico, etc) y por último, los resultados que arrojan. Las pruebas fueron realizadas en el servidor del Instituto de Computación, con una máquina virtual Lubuntu 14.04 sobre KVM, con 32GB de RAM y un procesador AMD Opteron 23xx.
 
 \section{Topologias de escala}
-Es importante poder asegurar que la arquitectura puede ser fácilmente migrada a redes reales. Para poder asegurar esto, se diseñan los dos siguientes escenarios de prueba. El primero consiste en verificar los aspectos críticos de la arquitectura, como el algoritmo de ruteo y la clasificación de tráfico. En el segundo escenario se intenta estudiar como impacta el largo del camino y las características de la topología sobre el tiempo que demora el controlador en dar de alta una red privada virtual. Ambos escenarios utilizan un conjunto de topologias de prueba, que se listan a continuación:
+El objetivo de estas pruebas es aplicar topologias de diferentes tamaños y características a la arquitectura y estudiar el proceso de creación de las redes privadas virtuales en cada realidad.
+
+Las topologias utilizadas se listan a continuación:
 \begin{itemize}
 	\item \textbf{Básica}: 4 nodos en topología de full mesh. Es la utilizada en el prototipo físico. Figura \ref{fig:topo_basica}.
 	\item \textbf{Chica}: topología arbitraria de 11 nodos (fuente: Topology Zoo). Figura \ref{fig:topo_chica}.
@@ -21,157 +23,81 @@ Todas las topologias tienen las siguientes características:
 	\item El controlador se conecta con un switch virtual genérico (gracias a la clase Switch de Mininet, en el modo \textit{standalone}), que a su vez se conectará con los RAUSwitch. Esta será la red de gestión. Por simplicidad, dicha red se omite en las imágenes.
 \end{itemize}
 
-\begin{figure}[t]
+\begin{figure}[H]
 	\caption{Topología básica}
 	\includegraphics[scale=0.4]{topo_basica}
 	\centering
 	\label{fig:topo_basica}
 \end{figure}
 
-\begin{figure}[t]
+\begin{figure}[H]
 	\caption{Topología chica}
 	\includegraphics[scale=0.4]{topo_chica}
 	\centering
 	\label{fig:topo_chica}
 \end{figure}
 
-\begin{figure}[t]
+\begin{figure}[H]
 	\caption{Topología mediana}
 	\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{topo_mediana}
 	\centering
 	\label{fig:topo_mediana}
 \end{figure}
 
-\begin{figure}[t]
+\begin{figure}[H]
 	\caption{Topología grande}
 	\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{topo_grande}
 	\centering
 	\label{fig:topo_grande}
 \end{figure}
 
-\subsection{Escenario 1}
-En este escenario se crea una VPN punto a punto de capa 3 entre las dos subredes cliente, y se controla que tanto la creación de la VPN como el uso de la misma con tráfico, funciona correctamente. Esto se repite para cada topología de prueba. Los puntos específicos que se busca verificar se detallan a continuación: \\ \\
-\textbf{Algoritmo de ruteo} \\
-Se verifican dos aspectos claves: que el camino se corresponde con el camino esperado (calculado previamente de forma manual), y que el camino es correctamente instalado en forma de reglas de reenvío (en base a conmutación de etiquetas MPLS) en las respectivas tablas de flujos OpenFlow de cada nodo del camino. Todo esto se puede comprobar analizando las tablas de flujos de cada nodo, que se pueden ver utilizando el comando \textbf{dump-flows} de Open vSwitch. También se puede utilizar la interfaz gráfica de RAUFlow, aunque no se recomienda su uso con topologias grandes (como pueden ser la mediana o grande, en este caso) ya que la forma de presentar los nodos se vuelve demasiado caótica. Desde las tablas de flujos se puede reconstruir el camino que computó la aplicación, y también comprobar que los flujos manipulan correctamente las etiquetas MPLS. \\ \\
-\textbf{Clasificación de tráfico} \\
-La idea es verificar que realmente se están asignando las etiquetas MPLS al tráfico entrante, así como comprobar que el mismo es reenviado por los nodos correctos. Para probar esto se utilizará una VPN de capa 3, que permitirá tráfico con ethertype 0x0800, es decir, del protocolo IPv4. Se generará tráfico de este tipo utilizando el comando \textbf{ping} y la herramienta \textbf{iperf}. Con la herramienta tcpdump, se verificará que el tráfico pasa correctamente por cada nodo del camino. \\
+Es importante tener en cuenta que realizar esta serie de pruebas es posible gracias al proceso de verificación funcional explicado en la sección 3.5. En ella se explica la detección y corrección de algunos problemas de escalabilidad tanto del entorno virtual como de la arquitectura RAUFlow misma. Por lo tanto, estas pruebas se pueden considerar como una continuación del estudio de escalabilidad presentado en dicha sección.
 
-\begin{table}[ht]
-	\caption{Pasos que cumple cada caso en la creación y uso exitoso de un servicio.}
-	\centering 
-	\resizebox{\textwidth}{!}{%
-		\begin{tabular}{c c c c c}
-			\hline\hline
-			Largo del camino (topología) & Servicio & Camino & Flujos  & Clasificación de tráfico \\ [0.5ex]
-			\hline
-			1 (básica) & X & X & X & X \\
-			7 (chica) & X & X &  &  \\
-			10 (mediana) &  &  &  &  \\
-			12 (grande) &  &  &  &  \\ [1ex]
-			\hline
-		\end{tabular}
-	}
-	\label{table:problemas_por_topologia}
-\end{table}
+\subsection{Escenario}
+El objetivo es estudiar como impacta el tamaño de la topología y el largo del camino en el tiempo que demora la arquitectura en establecer una VPN. Se espera que ese tiempo sea influenciado en gran medida por dos factores: el tiempo que demora el controlador en calcular el camino óptimo y el tiempo que demora en configurar los flujos en cada nodo. Dado que los servicios se crean enviando pedidos HTTP POST al controlador, el tiempo de creación de los mismos se medirá como el tiempo que demore el controlador en devolver las respuestas HTTP indicando que fueron creados con éxito (esta información está disponible en los logs). Para lograr resultados representativos y reducir el margen de error, en lugar de crear una VPN y medir su tiempo solamente, se realizan cuatro ejecuciones y se calculan las métricas estadísticas relevantes. Para agilizar la ejecución de esta prueba se utiliza un script en Python que manda los pedidos HTTP POST al controlador para crear las VPN, y de este modo no hay necesidad de hacerlo manualmente a través de la interfaz web.
 
-Con el propósito de hacer un diagnóstico más preciso sobre el proceso de creación y uso de una VPN, se lo descompone de 4 pasos conceptuales en los cuales podría haber fallas. Estos pasos son: (a) se crea con éxito el servicio, (b) el camino que se calcula es correcto, (c) los flujos de cada nodo del camino son correctos, (d) se clasifica correctamente el tráfico. Si se cumplen los 3 primeros pasos quiere decir que el servicio (y por ende la VPN que lo utilice) se establece correctamente y si se cumple el último paso entonces el tráfico pasa sin problemas por el servicio creado. En la tabla \ref{table:problemas_por_topologia} se detallan los comportamientos observados para algunos de los casos estudiados. En ella se indica con una X los pasos que funcionaron correctamente para cada caso. Las celdas vacías indican qué paso falló en cada caso. \\
-
-Analizando la tabla \ref{table:problemas_por_topologia} se pueden observar como mínimo dos problemas. El primero es que en el caso de la topología chica y un camino de 7 saltos, el servicio se crea y los flujos están en los nodos correctos (los del camino más corto entre las subredes cliente), pero los mismos no son correctos. El segundo comportamiento que se observa es que para el caso del camino de 10 saltos en la topología mediana, y el de 12 saltos en la topología grande, el servicio ni siquiera llega a crearse correctamente, es decir, la aplicación sufre una excepción de Python al intentar hacerlo. Las razones que explican esto, así como sus respectivas soluciones (si son posibles) se encuentran en la anterior sección 3.5, donde se explican los problemas encontrados y/o resueltos en el entorno. El resto de las pruebas que se mencionan en este capítulo fueron realizadas con dichas correcciones ya hechas.
-
-\subsection{Escenario 2}
-El objetivo de este escenario es estudiar como impacta el tamaño de la topología y el largo del camino en el tiempo que demora la arquitectura en establecer una VPN. Se espera que ese tiempo sea influenciado en gran medida por dos factores: el tiempo que demora el controlador en calcular el camino óptimo y el tiempo que demora en configurar los flujos en cada nodo. Dado que los servicios se crean enviando pedidos HTTP POST al controlador, el tiempo de creación de los mismos se medirá como el tiempo que demore el controlador en devolver las respuestas HTTP indicando que fueron creados con éxito (esta información está disponible en los logs). Para lograr resultados representativos y reducir el margen de error, en lugar de crear una VPN y medir su tiempo solamente, se realizan cuatro ejecuciones y se calculan las métricas estadísticas relevantes. Para agilizar la ejecución de esta prueba se utiliza un script en Python que manda los pedidos HTTP POST al controlador para crear las VPN, y de este modo no hay necesidad de hacerlo manualmente a través de la interfaz web.
-\begin{table}[!h]
-	\caption{Tiempo de demora en crear VPN en la topología básica. El tiempo se mide en ms. Los valores de color marrón se corresponden con la VPN de capa 2, y los azules con la de capa 3.}
-	\centering 
-	\begin{tabular}{p{3.2cm} p{1.8cm}}
-		\hline
-		Largo del camino & 1 \\ [0.5ex]
-		\hline
-		Ejecución & \\
-		1 & \textcolor{brown}{188} / \textcolor{blue}{14} \\
-		2 & \textcolor{brown}{188} / \textcolor{blue}{23} \\
-		3 & \textcolor{brown}{199} / \textcolor{blue}{15} \\
-		4 & \textcolor{brown}{188} / \textcolor{blue}{15} \\
-		& \\
-		Media & \textcolor{brown}{191} / \textcolor{blue}{17} \\
-		Mediana & \textcolor{brown}{188} / \textcolor{blue}{15} \\
-		Desv. Estandar & \textcolor{brown}{6} / \textcolor{blue}{4} \\
-		CV & \textcolor{brown}{0.03} / \textcolor{blue}{0.24} \\ [1ex]
-		\hline
-	\end{tabular}
-	\label{table:tiempo_topo_basica}
-\end{table}
-
-\begin{table}[!h]
-	\caption{Tiempo de demora en crear VPN en la topología chica. El tiempo se mide en ms. Los valores de color marrón se corresponden con la VPN de capa 2, y los azules con la de capa 3.}
-	\centering 
-	\begin{tabular}{p{3.2cm} p{1.8cm} p{1.8cm} p{1.8cm} p{1.8cm} p{1.8cm}}
-		\hline
-		Largo del camino & 1 & 2 & 4 & 6 & 8 \\ [0.5ex]
-		\hline
-		Ejecución & & & & & \\
-		1 & \textcolor{brown}{155} / \textcolor{blue}{29} & \textcolor{brown}{241} / \textcolor{blue}{25} & \textcolor{brown}{269} / \textcolor{blue}{52} & \textcolor{brown}{257} / \textcolor{blue}{42} & \textcolor{brown}{285} / \textcolor{blue}{51} \\
-		2 & \textcolor{brown}{208} / \textcolor{blue}{22} & \textcolor{brown}{309} / \textcolor{blue}{27} & \textcolor{brown}{298} / \textcolor{blue}{42} & \textcolor{brown}{320} / \textcolor{blue}{55} & \textcolor{brown}{333} / \textcolor{blue}{64}  \\
-		3 & \textcolor{brown}{351} / \textcolor{blue}{19} & \textcolor{brown}{317} / \textcolor{blue}{31} & \textcolor{brown}{327} / \textcolor{blue}{43} & \textcolor{brown}{348} / \textcolor{blue}{56} & \textcolor{brown}{337} / \textcolor{blue}{64}  \\
-		4 & \textcolor{brown}{220} / \textcolor{blue}{18} & \textcolor{brown}{317} / \textcolor{blue}{29} & \textcolor{brown}{301} / \textcolor{blue}{39} & \textcolor{brown}{326} / \textcolor{blue}{57} & \textcolor{brown}{342} / \textcolor{blue}{60}  \\
-		& & & & & \\
-		Media & \textcolor{brown}{234} / \textcolor{blue}{22} & \textcolor{brown}{296} / \textcolor{blue}{28} & \textcolor{brown}{299} / \textcolor{blue}{44} & \textcolor{brown}{313} / \textcolor{blue}{53} & \textcolor{brown}{324} / \textcolor{blue}{60} \\
-		Mediana & \textcolor{brown}{214} / \textcolor{blue}{21} & \textcolor{brown}{313} / \textcolor{blue}{28} & \textcolor{brown}{300} / \textcolor{blue}{43} & \textcolor{brown}{323} / \textcolor{blue}{56} & \textcolor{brown}{335} / \textcolor{blue}{62} \\
-		Desv. Estandar & \textcolor{brown}{83} / \textcolor{blue}{5} & \textcolor{brown}{37} / \textcolor{blue}{3} & \textcolor{brown}{24} / \textcolor{blue}{6} & \textcolor{brown}{39} / \textcolor{blue}{7} & \textcolor{brown}{26} / \textcolor{blue}{6} \\
-		CV & \textcolor{brown}{0.35} / \textcolor{blue}{0.23} & \textcolor{brown}{0.13} / \textcolor{blue}{0.11} & \textcolor{brown}{0.08} / \textcolor{blue}{0.14} & \textcolor{brown}{0.12} / \textcolor{blue}{0.13} & \textcolor{brown}{0.08} / \textcolor{blue}{0.10} \\ [1ex]
-		\hline
-	\end{tabular}
-	\label{table:tiempo_topo_chica}
-\end{table}
-
-\begin{table}[!h]
+\newcolumntype{?}{!{\vrule width 3pt}}
+\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
+\begin{table}
+	\caption{Tiempo que demora el controlador en dar de alta VPNs. El tiempo se mide en ms. Los valores de color marrón se corresponden con la VPN de capa 2, y los azules con la de capa 3.}
+	\centering
 	\scriptsize
-	\caption{Tiempo de demora en crear VPN en la topología mediana. El tiempo se mide en ms. Los valores de color marrón se corresponden con la VPN de capa 2, y los azules con la de capa 3.}
-	\centering 
-	\begin{tabular}{p{2.4cm} p{1.3cm} p{1.3cm} p{1.3cm} p{1.3cm} p{1.3cm} p{1.3cm} p{1.3cm}}
+	\bgroup
+	\setlength{\tabcolsep}{.17em}
+	\begin{tabular}{M{1.1cm}? M{0.8cm} | M{1.7cm} | M{1.7cm} | M{1.7cm} | M{1.7cm} | M{1.5cm} | M{1.4cm} | M{1.3cm} | M{1.3cm} |@{}m{0pt}@{}}
+		\Xhline{5\arrayrulewidth}
+		Topología & Largo del camino & Ejecución 1 (ms) & Ejecución 2 (ms) & Ejecución 3 (ms) & Ejecución 4 (ms) & Media (ms) & Mediana (ms) & Desv. Estándar (ms) & CV & \\
 		\hline
-		Largo del camino & 1 & 2 & 4 & 6 & 8 & 10 & 12 \\ [0.5ex]
-		\hline
-		Ejecución & & & & & & & \\
-		1 & \textcolor{brown}{254} / \textcolor{blue}{101} & \textcolor{brown}{567} / \textcolor{blue}{104} & \textcolor{brown}{372} / \textcolor{blue}{129} & \textcolor{brown}{364} / \textcolor{blue}{126} & \textcolor{brown}{436} / \textcolor{blue}{130} & \textcolor{brown}{414} / \textcolor{blue}{181} & \textcolor{brown}{441} / \textcolor{blue}{289} \\
-		2 & \textcolor{brown}{318} / \textcolor{blue}{92} & \textcolor{brown}{746} / \textcolor{blue}{134} & \textcolor{brown}{504} / \textcolor{blue}{105} & \textcolor{brown}{397} / \textcolor{blue}{187}  & \textcolor{brown}{515} / \textcolor{blue}{271} & \textcolor{brown}{548} / \textcolor{blue}{197} & \textcolor{brown}{519} / \textcolor{blue}{152} \\
-		3 & \textcolor{brown}{355} / \textcolor{blue}{110} & \textcolor{brown}{520} / \textcolor{blue}{112} & \textcolor{brown}{498} / \textcolor{blue}{135} & \textcolor{brown}{675} / \textcolor{blue}{164} & \textcolor{brown}{529} / \textcolor{blue}{202} & \textcolor{brown}{485} / \textcolor{blue}{214} & \textcolor{brown}{613} / \textcolor{blue}{154} \\
-		4 & \textcolor{brown}{318} / \textcolor{blue}{110} & \textcolor{brown}{611} / \textcolor{blue}{127} & \textcolor{brown}{438} / \textcolor{blue}{145} & \textcolor{brown}{529} / \textcolor{blue}{153} & \textcolor{brown}{787} / \textcolor{blue}{179} & \textcolor{brown}{477} / \textcolor{blue}{191} & \textcolor{brown}{571} / \textcolor{blue}{178} \\
-		& & & & & & & \\
-		Media & \textcolor{brown}{311} / \textcolor{blue}{103} & \textcolor{brown}{611} / \textcolor{blue}{119} & \textcolor{brown}{453} / \textcolor{blue}{129} & \textcolor{brown}{491} / \textcolor{blue}{158} & \textcolor{brown}{567} / \textcolor{blue}{196} & \textcolor{brown}{481} / \textcolor{blue}{196} & \textcolor{brown}{536} / \textcolor{blue}{193} \\
-		Mediana & \textcolor{brown}{318} / \textcolor{blue}{106} & \textcolor{brown}{589} / \textcolor{blue}{120} & \textcolor{brown}{468} / \textcolor{blue}{132} & \textcolor{brown}{463} / \textcolor{blue}{159} & \textcolor{brown}{522} / \textcolor{blue}{191} & \textcolor{brown}{481} / \textcolor{blue}{194} & \textcolor{brown}{545} / \textcolor{blue}{166} \\
-		Desv. Estandar & \textcolor{brown}{42} / \textcolor{blue}{9} & \textcolor{brown}{97} / \textcolor{blue}{14} & \textcolor{brown}{62} / \textcolor{blue}{17} & \textcolor{brown}{142} / \textcolor{blue}{25} & \textcolor{brown}{152} / \textcolor{blue}{59} & \textcolor{brown}{55} / \textcolor{blue}{14} & \textcolor{brown}{74} / \textcolor{blue}{65} \\
-		CV & \textcolor{brown}{0.14} / \textcolor{blue}{0.09} & \textcolor{brown}{0.16} / \textcolor{blue}{0.12} & \textcolor{brown}{0.14} / \textcolor{blue}{0.13} & \textcolor{brown}{0.29} / \textcolor{blue}{0.16} & \textcolor{brown}{0.27} / \textcolor{blue}{0.30} & \textcolor{brown}{0.11} / \textcolor{blue}{0.07} & \textcolor{brown}{0.14} / \textcolor{blue}{0.34} \\ [1ex]
-		\hline
+		Básica & 1 & \textcolor{brown}{188} / \textcolor{blue}{14} & \textcolor{brown}{188} / \textcolor{blue}{23} & \textcolor{brown}{199} / \textcolor{blue}{15} & \textcolor{brown}{188} / \textcolor{blue}{15} & \textcolor{brown}{191} / \textcolor{blue}{17} & \textcolor{brown}{188} / \textcolor{blue}{15} & \textcolor{brown}{6} / \textcolor{blue}{4} & \textcolor{brown}{0.03} / \textcolor{blue}{0.24} & \\[3ex]
+		\Xhline{5\arrayrulewidth}
+		& 1 & \textcolor{brown}{155} / \textcolor{blue}{29} & \textcolor{brown}{208} / \textcolor{blue}{22} & \textcolor{brown}{351} / \textcolor{blue}{19} & \textcolor{brown}{220} / \textcolor{blue}{18} & \textcolor{brown}{234} / \textcolor{blue}{22} & \textcolor{brown}{214} / \textcolor{blue}{21} & \textcolor{brown}{83} / \textcolor{blue}{5} & \textcolor{brown}{0.35} / \textcolor{blue}{0.23} & \\[3ex] \cline{2-10}
+		& 2 & \textcolor{brown}{241} / \textcolor{blue}{25} & \textcolor{brown}{309} / \textcolor{blue}{27} & \textcolor{brown}{317} / \textcolor{blue}{31} & \textcolor{brown}{317} / \textcolor{blue}{29} & \textcolor{brown}{296} / \textcolor{blue}{28} & \textcolor{brown}{313} / \textcolor{blue}{28} & \textcolor{brown}{37} / \textcolor{blue}{3} & \textcolor{brown}{0.13} / \textcolor{blue}{0.11} & \\[3ex] \cline{2-10}
+		Chica & 4 & \textcolor{brown}{269} / \textcolor{blue}{52} & \textcolor{brown}{298} / \textcolor{blue}{42} & \textcolor{brown}{327} / \textcolor{blue}{43} & \textcolor{brown}{301} / \textcolor{blue}{39} & \textcolor{brown}{299} / \textcolor{blue}{44} & \textcolor{brown}{300} / \textcolor{blue}{43} & \textcolor{brown}{24} / \textcolor{blue}{6} & \textcolor{brown}{0.08} / \textcolor{blue}{0.14} & \\[3ex] \cline{2-10}
+		& 6 & \textcolor{brown}{257} / \textcolor{blue}{42} & \textcolor{brown}{320} / \textcolor{blue}{55} & \textcolor{brown}{348} / \textcolor{blue}{56} & \textcolor{brown}{326} / \textcolor{blue}{57} & \textcolor{brown}{313} / \textcolor{blue}{53} & \textcolor{brown}{323} / \textcolor{blue}{56} & \textcolor{brown}{39} / \textcolor{blue}{7} & \textcolor{brown}{0.12} / \textcolor{blue}{0.13} & \\[3ex] \cline{2-10}
+		& 8 & \textcolor{brown}{285} / \textcolor{blue}{51} & \textcolor{brown}{333} / \textcolor{blue}{64} & \textcolor{brown}{337} / \textcolor{blue}{64} & \textcolor{brown}{342} / \textcolor{blue}{60} & \textcolor{brown}{324} / \textcolor{blue}{60} & \textcolor{brown}{335} / \textcolor{blue}{62} & \textcolor{brown}{26} / \textcolor{blue}{6} & \textcolor{brown}{0.08} / \textcolor{blue}{0.10} & \\[3ex] \cline{2-10}
+		\Xhline{5\arrayrulewidth}
+		& 1 & \textcolor{brown}{254} / \textcolor{blue}{101} & \textcolor{brown}{318} / \textcolor{blue}{92} & \textcolor{brown}{355} / \textcolor{blue}{110} & \textcolor{brown}{318} / \textcolor{blue}{110} & \textcolor{brown}{311} / \textcolor{blue}{103} & \textcolor{brown}{318} / \textcolor{blue}{106} & \textcolor{brown}{42} / \textcolor{blue}{9} & \textcolor{brown}{0.14} / \textcolor{blue}{0.09} & \\[3ex] \cline{2-10}
+		& 2 & \textcolor{brown}{567} / \textcolor{blue}{104} & \textcolor{brown}{746} / \textcolor{blue}{134} & \textcolor{brown}{520} / \textcolor{blue}{112} & \textcolor{brown}{611} / \textcolor{blue}{127} & \textcolor{brown}{611} / \textcolor{blue}{119} & \textcolor{brown}{589} / \textcolor{blue}{120} & \textcolor{brown}{97} / \textcolor{blue}{14} & \textcolor{brown}{0.16} / \textcolor{blue}{0.12} & \\[3ex] \cline{2-10}
+		& 4 & \textcolor{brown}{372} / \textcolor{blue}{129} & \textcolor{brown}{504} / \textcolor{blue}{105} & \textcolor{brown}{498} / \textcolor{blue}{135} & \textcolor{brown}{438} / \textcolor{blue}{145} & \textcolor{brown}{453} / \textcolor{blue}{129} & \textcolor{brown}{468} / \textcolor{blue}{132} & \textcolor{brown}{62} / \textcolor{blue}{17} & \textcolor{brown}{0.14} / \textcolor{blue}{0.13} & \\[3ex] \cline{2-10}
+		Mediana & 6 & \textcolor{brown}{364} / \textcolor{blue}{126} & \textcolor{brown}{397} / \textcolor{blue}{187} & \textcolor{brown}{675} / \textcolor{blue}{164} & \textcolor{brown}{529} / \textcolor{blue}{153} & \textcolor{brown}{491} / \textcolor{blue}{158} & \textcolor{brown}{463} / \textcolor{blue}{159} & \textcolor{brown}{142} / \textcolor{blue}{25} & \textcolor{brown}{0.29} / \textcolor{blue}{0.16} & \\[3ex] \cline{2-10}
+		& 8 & \textcolor{brown}{436} / \textcolor{blue}{130} & \textcolor{brown}{515} / \textcolor{blue}{271} & \textcolor{brown}{529} / \textcolor{blue}{202} & \textcolor{brown}{787} / \textcolor{blue}{179} & \textcolor{brown}{567} / \textcolor{blue}{196} & \textcolor{brown}{522} / \textcolor{blue}{191} & \textcolor{brown}{152} / \textcolor{blue}{59} & \textcolor{brown}{0.27} / \textcolor{blue}{0.30} & \\[3ex] \cline{2-10}
+		& 10 & \textcolor{brown}{414} / \textcolor{blue}{181} & \textcolor{brown}{548} / \textcolor{blue}{197} & \textcolor{brown}{485} / \textcolor{blue}{214} & \textcolor{brown}{477} / \textcolor{blue}{191} & \textcolor{brown}{481} / \textcolor{blue}{196} & \textcolor{brown}{481} / \textcolor{blue}{194} & \textcolor{brown}{55} / \textcolor{blue}{14} & \textcolor{brown}{0.11} / \textcolor{blue}{0.07} & \\[3ex] \cline{2-10}
+		& 12 & \textcolor{brown}{441} / \textcolor{blue}{289} & \textcolor{brown}{519} / \textcolor{blue}{152} & \textcolor{brown}{613} / \textcolor{blue}{154} & \textcolor{brown}{571} / \textcolor{blue}{178} & \textcolor{brown}{536} / \textcolor{blue}{193} & \textcolor{brown}{545} / \textcolor{blue}{166} & \textcolor{brown}{74} / \textcolor{blue}{65} & \textcolor{brown}{0.14} / \textcolor{blue}{0.34} & \\[3ex] \cline{2-10}
+		\Xhline{5\arrayrulewidth}
+		& 1 & \textcolor{brown}{425} / \textcolor{blue}{483} & \textcolor{brown}{940} / \textcolor{blue}{325} & \textcolor{brown}{573} / \textcolor{blue}{581} & \textcolor{brown}{428} / \textcolor{blue}{282} & \textcolor{brown}{592} / \textcolor{blue}{418} & \textcolor{brown}{501} / \textcolor{blue}{404} & \textcolor{brown}{242} / \textcolor{blue}{139} & \textcolor{brown}{0.41} / \textcolor{blue}{0.33} & \\[3ex] \cline{2-10}
+		& 2 & \textcolor{brown}{642} / \textcolor{blue}{810} & \textcolor{brown}{457} / \textcolor{blue}{223} & \textcolor{brown}{1044} / \textcolor{blue}{319} & \textcolor{brown}{2671} / \textcolor{blue}{1346} & \textcolor{brown}{1204} / \textcolor{blue}{675} & \textcolor{brown}{843} / \textcolor{blue}{565} & \textcolor{brown}{1009} / \textcolor{blue}{516} & \textcolor{brown}{0.99} / \textcolor{blue}{0.76} & \\[3ex] \cline{2-10}
+		& 4 & \textcolor{brown}{1692} / \textcolor{blue}{1000} & \textcolor{brown}{2457} / \textcolor{blue}{2209} & \textcolor{brown}{1543} / \textcolor{blue}{1070} & \textcolor{brown}{1613} / \textcolor{blue}{668} & \textcolor{brown}{1826} / \textcolor{blue}{1237} & \textcolor{brown}{1653} / \textcolor{blue}{1035} & \textcolor{brown}{425} / \textcolor{blue}{672} & \textcolor{brown}{0.23} / \textcolor{blue}{0.54} & \\[3ex] \cline{2-10}
+		Grande & 6 & \textcolor{brown}{1669} / \textcolor{blue}{722} & \textcolor{brown}{1254} / \textcolor{blue}{1016} & \textcolor{brown}{1048} / \textcolor{blue}{476} & \textcolor{brown}{2678} / \textcolor{blue}{569} & \textcolor{brown}{1662} / \textcolor{blue}{696} & \textcolor{brown}{1462} / \textcolor{blue}{646} & \textcolor{brown}{725} / \textcolor{blue}{236} & \textcolor{brown}{0.44} / \textcolor{blue}{0.34} & \\[3ex] \cline{2-10}
+		& 8 & \textcolor{brown}{1516} / \textcolor{blue}{2182} & \textcolor{brown}{2273} / \textcolor{blue}{608} & \textcolor{brown}{3482} / \textcolor{blue}{856} & \textcolor{brown}{3496} / \textcolor{blue}{748} & \textcolor{brown}{2692} / \textcolor{blue}{1099} & \textcolor{brown}{2878} / \textcolor{blue}{802} & \textcolor{brown}{972} / \textcolor{blue}{729} & \textcolor{brown}{0.36} / \textcolor{blue}{0.66} & \\[3ex] \cline{2-10}
+		& 10 & \textcolor{brown}{493} / \textcolor{blue}{449} & \textcolor{brown}{775} / \textcolor{blue}{638} & \textcolor{brown}{784} / \textcolor{blue}{563} & \textcolor{brown}{966} / \textcolor{blue}{570} & \textcolor{brown}{755} / \textcolor{blue}{555} & \textcolor{brown}{780} / \textcolor{blue}{567} & \textcolor{brown}{195} / \textcolor{blue}{78} & \textcolor{brown}{0.26} / \textcolor{blue}{0.14} & \\[3ex] \cline{2-10}
+		& 12 & \textcolor{brown}{1843} / \textcolor{blue}{594} & \textcolor{brown}{3438} / \textcolor{blue}{1422} & \textcolor{brown}{1791} / \textcolor{blue}{1018} & \textcolor{brown}{2848} / \textcolor{blue}{849} & \textcolor{brown}{2480} / \textcolor{blue}{971} & \textcolor{brown}{2346} / \textcolor{blue}{934} & \textcolor{brown}{803} / \textcolor{blue}{348} & \textcolor{brown}{0.32} / \textcolor{blue}{0.36} & \\[3ex] \cline{2-10}
+		\Xhline{5\arrayrulewidth}
 	\end{tabular}
-	\label{table:tiempo_topo_mediana}
+	\egroup
+	\label{table:tiempos_por_topologia}
 \end{table}
 
-\begin{table}[!h]
-	\scriptsize
-	\caption{Tiempo de demora en crear VPN en la topología grande. El tiempo se mide en ms. Los valores de color marrón se corresponden con la VPN de capa 2, y los azules con la de capa 3.}
-	\centering 
-	\begin{tabular}{p{2.2cm} p{1.4cm} p{1.4cm} p{1.4cm} p{1.4cm} p{1.4cm} p{1.4cm} p{1.4cm}}
-		\hline
-		Largo del camino & 1 & 2 & 4 & 6 & 8 & 10 & 12 \\ [0.5ex]
-		\hline
-		Ejecución & & & & & & & \\
-		1 & \textcolor{brown}{425} / \textcolor{blue}{483} & \textcolor{brown}{642} / \textcolor{blue}{810} & \textcolor{brown}{1692} / \textcolor{blue}{1000} & \textcolor{brown}{1669} / \textcolor{blue}{722} & \textcolor{brown}{1516} / \textcolor{blue}{2182} & \textcolor{brown}{493} / \textcolor{blue}{449} & \textcolor{brown}{1843} / \textcolor{blue}{594} \\
-		2 & \textcolor{brown}{940} / \textcolor{blue}{325} & \textcolor{brown}{457} / \textcolor{blue}{223} & \textcolor{brown}{2457} / \textcolor{blue}{2209} & \textcolor{brown}{1254} / \textcolor{blue}{1016}  & \textcolor{brown}{2273} / \textcolor{blue}{608} & \textcolor{brown}{775} / \textcolor{blue}{638} & \textcolor{brown}{3438} / \textcolor{blue}{1422} \\
-		3 & \textcolor{brown}{573} / \textcolor{blue}{581} & \textcolor{brown}{1044} / \textcolor{blue}{319} & \textcolor{brown}{1543} / \textcolor{blue}{1070} & \textcolor{brown}{1048} / \textcolor{blue}{476} & \textcolor{brown}{3482} / \textcolor{blue}{856} & \textcolor{brown}{784} / \textcolor{blue}{563} & \textcolor{brown}{1791} / \textcolor{blue}{1018} \\
-		4 & \textcolor{brown}{428} / \textcolor{blue}{282} & \textcolor{brown}{2671} / \textcolor{blue}{1346} & \textcolor{brown}{1613} / \textcolor{blue}{668} & \textcolor{brown}{2678} / \textcolor{blue}{569} & \textcolor{brown}{3496} / \textcolor{blue}{748} & \textcolor{brown}{966} / \textcolor{blue}{570} & \textcolor{brown}{2848} / \textcolor{blue}{849} \\
-		& & & & & & & \\
-		Media & \textcolor{brown}{592} / \textcolor{blue}{418} & \textcolor{brown}{1204} / \textcolor{blue}{675} & \textcolor{brown}{1826} / \textcolor{blue}{1237} & \textcolor{brown}{1662} / \textcolor{blue}{696} & \textcolor{brown}{2692} / \textcolor{blue}{1099} & \textcolor{brown}{755} / \textcolor{blue}{555} & \textcolor{brown}{2480} / \textcolor{blue}{971} \\
-		Mediana & \textcolor{brown}{501} / \textcolor{blue}{404} & \textcolor{brown}{843} / \textcolor{blue}{565} & \textcolor{brown}{1653} / \textcolor{blue}{1035} & \textcolor{brown}{1462} / \textcolor{blue}{646} & \textcolor{brown}{2878} / \textcolor{blue}{802} & \textcolor{brown}{780} / \textcolor{blue}{567} & \textcolor{brown}{2346} / \textcolor{blue}{934} \\
-		Desv. Estandar & \textcolor{brown}{242} / \textcolor{blue}{139} & \textcolor{brown}{1009} / \textcolor{blue}{516} & \textcolor{brown}{425} / \textcolor{blue}{672} & \textcolor{brown}{725} / \textcolor{blue}{236} & \textcolor{brown}{972} / \textcolor{blue}{729} & \textcolor{brown}{195} / \textcolor{blue}{78} & \textcolor{brown}{803} / \textcolor{blue}{348} \\
-		CV & \textcolor{brown}{0.41} / \textcolor{blue}{0.33} & \textcolor{brown}{0.99} / \textcolor{blue}{0.76} & \textcolor{brown}{0.23} / \textcolor{blue}{0.54} & \textcolor{brown}{0.44} / \textcolor{blue}{0.34} & \textcolor{brown}{0.36} / \textcolor{blue}{0.66} & \textcolor{brown}{0.26} / \textcolor{blue}{0.14} & \textcolor{brown}{0.32} / \textcolor{blue}{0.36} \\ [1ex]
-		\hline
-	\end{tabular}
-	\label{table:tiempo_topo_grande}
-\end{table}
-
-
-Las tablas \ref{table:tiempo_topo_basica}, \ref{table:tiempo_topo_chica}, \ref{table:tiempo_topo_mediana} y \ref{table:tiempo_topo_grande} muestran los resultados obtenidos en el escenario. Cada tabla corresponde a una topología. En cada tabla se muestran los tiempos obtenidos para cada largo de camino. Cada caso fue ejecutado cuatro veces, y para cada conjunto de ejecuciones se calcula la media, mediana, desviación estándar y coeficiente de variación (CV). \\
+La tabla \ref{table:tiempos_por_topologia} muestra los resultados obtenidos en el escenario. En ella se muestran los tiempos obtenidos para cada topología y largo de camino. Cada caso fue ejecutado cuatro veces, y para cada conjunto de ejecuciones se calcula la media, mediana, desviación estándar y coeficiente de variación (CV). \\
 
 El primer dato que se puede extraer de los resultados obtenidos es que hay una diferencia de tiempo significativa entre una VPN de capa 2 y una de capa 3. Esto es esperable dado que un servicio de capa 2 debe instalar 42 flujos en cada nodo que compone el camino, porque debe instalar un flujo por cada ethertype posible (esto se explica en X). Por otro lado, un servicio de capa 3 solo debe instalar un flujo en cada nodo del camino.
 
