@@ -20,7 +20,7 @@ Todas las topologias tienen las siguientes características:
 \begin{itemize}
 	\item Tienen un conjunto de RAUSwitch, conectados de acuerdo a lo que dicte la topología.
 	\item Existen dos subredes cliente, implementadas por un QuaggaRouter y un RAUHost cada una (recordar las clases del entorno virtual). El RAUHost representa la computadora que utiliza el usuario final para conectarse a la red, y QuaggaRouter representa el router legacy que conecta la subred del usuario a la red SDN. Los RAUHost serán los remitentes y destinatarios del tráfico que pasará por la red. Esos datos se generarán con el comando \textit{ping} y la herramienta \textit{iperf}. Estas dos subredes tendrán una ubicación variable en cada topología, ya que se probará con distintos caminos entre ellas. Por esta razón, se omiten en las imágenes de las topologias.
-	\item El controlador se conecta con un switch virtual genérico (gracias a la clase Switch de Mininet, en el modo \textit{standalone}), que a su vez se conectará con los RAUSwitch. Esta será la red de gestión. Por simplicidad, dicha red se omite en las imágenes.
+	\item El controlador se conecta con un switch virtual genérico (implementado por la clase Switch de Mininet, en el modo \textit{standalone}), el cual se conecta con los RAUSwitch. Esta será la red de gestión. Por simplicidad, dicha red se omite en las imágenes.
 \end{itemize}
 
 \begin{figure}[H]
@@ -54,12 +54,12 @@ Todas las topologias tienen las siguientes características:
 Es importante tener en cuenta que realizar esta serie de pruebas es posible gracias al proceso de verificación funcional explicado en la sección 3.5. En ella se explica la detección y corrección de algunos problemas de escalabilidad tanto del entorno virtual como de la arquitectura RAUFlow misma. Por lo tanto, estas pruebas se pueden considerar como una continuación del estudio de escalabilidad presentado en dicha sección.
 
 \subsection{Escenario}
-El objetivo es estudiar como impacta el tamaño de la topología y el largo del camino en el tiempo que demora la arquitectura en establecer una VPN. Se espera que ese tiempo sea influenciado en gran medida por dos factores: el tiempo que demora el controlador en calcular el camino óptimo y el tiempo que demora en configurar los flujos en cada nodo. Dado que los servicios se crean enviando pedidos HTTP POST al controlador, el tiempo de creación de los mismos se medirá como el tiempo que demore el controlador en devolver las respuestas HTTP indicando que fueron creados con éxito (esta información está disponible en los logs). Para lograr resultados representativos y reducir el margen de error, en lugar de crear una VPN y medir su tiempo solamente, se realizan cuatro ejecuciones y se calculan las métricas estadísticas relevantes. Para agilizar la ejecución de esta prueba se utiliza un script en Python que manda los pedidos HTTP POST al controlador para crear las VPN, y de este modo no hay necesidad de hacerlo manualmente a través de la interfaz web.
+El objetivo es estudiar como impacta el tamaño de la topología y el largo del camino en el tiempo que demora la arquitectura en establecer una VPN entre dos subredes cliente. Se espera que ese tiempo sea influenciado en gran medida por dos factores: el tiempo que demora el controlador en calcular el camino óptimo y el tiempo que demora en configurar los flujos en cada nodo del camino. Dado que los servicios se crean enviando pedidos HTTP POST al controlador, el tiempo de creación de los mismos se medirá como el tiempo que demore el controlador en devolver las respuestas HTTP indicando que fueron creados con éxito (esta información está disponible en los logs). Para lograr resultados representativos y reducir el margen de error, en lugar de crear una VPN y medir su tiempo solamente, se realizan cuatro ejecuciones y se calculan las métricas estadísticas relevantes. Para agilizar la ejecución de esta prueba se utiliza un script en Python que manda los pedidos HTTP POST al controlador para crear las VPN, y de este modo no hay necesidad de hacerlo manualmente a través de la interfaz web.
 
 \newcolumntype{?}{!{\vrule width 3pt}}
 \newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
 \begin{table}
-	\caption{Tiempo que demora el controlador en dar de alta VPNs. El tiempo se mide en ms. Los valores de color marrón se corresponden con la VPN de capa 2, y los azules con la de capa 3.}
+	\caption{Tiempo que demora el controlador en dar de alta VPNs. El tiempo se mide en ms. Los valores de color marrón  corresponden a la VPN de capa 2, y los azules a la de capa 3.}
 	\centering
 	\scriptsize
 	\bgroup
@@ -99,7 +99,7 @@ El objetivo es estudiar como impacta el tamaño de la topología y el largo del 
 
 La tabla \ref{table:tiempos_por_topologia} muestra los resultados obtenidos en el escenario. En ella se muestran los tiempos obtenidos para cada topología y largo de camino. Cada caso fue ejecutado cuatro veces, y para cada conjunto de ejecuciones se calcula la media, mediana, desviación estándar y coeficiente de variación (CV). \\
 
-El primer dato que se puede extraer de los resultados obtenidos es que hay una diferencia de tiempo significativa entre una VPN de capa 2 y una de capa 3. Esto es esperable dado que un servicio de capa 2 debe instalar 42 flujos en cada nodo que compone el camino, porque debe instalar un flujo por cada ethertype posible (esto se explica en X). Por otro lado, un servicio de capa 3 solo debe instalar un flujo en cada nodo del camino.
+El primer dato que se puede extraer de los resultados obtenidos es que hay una diferencia de tiempo significativa entre una VPN de capa 2 y una de capa 3. Esto es esperable dado que un servicio de capa 2 debe instalar 42 flujos en cada nodo que compone el camino, porque debe instalar un flujo por cada ethertype posible (esto se explica en la sección 2.6). Por otro lado, un servicio de capa 3 solo debe instalar un flujo en cada nodo del camino.
 
 También se puede observar que los tiempos tienden a incrementarse a medida que el camino por el que pasa la VPN es mayor. Esto se debe principalmente a que mientras más nodos haya en el camino, más flujos deben instalarse. Se observa una diferencia de tiempo más acentuada entre el camino de largo 1 y el de 2. Esto se debe a que cuando la VPN pasa por un camino de largo uno el controlador debe configurar sólo un nivel de etiquetas MPLS, mientras que si el camino es de largo mayor, corresponden dos niveles de etiquetas. Esto requiere más tiempo de computo, e instalar al menos un flujo adicional.
 
@@ -107,90 +107,16 @@ Si se comparan los resultados entre cada topología, también hay observaciones 
 \begin{itemize}
 	\item Si la topología tiene más nodos, entonces el algoritmo Dijkstra que calcula el camino óptimo va a demorar más tiempo en converger. (poner referencia o explicar)
 	\item A medida que hay más RAUSwitch en la topología, la red de gestión tiene más tráfico por la mensajería generada por OpenFlow. Esto puede llevar a congestión en dicha red. Los flujos correspondientes a cada nodo son instalados mediante mensajes OpenFlow que envía el controlador a través de la red de gestión, y si esos mensajes experimentan retrasos o pérdidas, entonces eso significa un retraso en la creación de la VPN. Este fenómeno también se explora en la sección 3.5.2.
-	\item Como se está usando un entorno virtual, tener más nodos implica que el procesador anfitrión debe repartir el tiempo de cómputo entre más procesos. Naturalmente, esto resulta en una lentitud generalizada que afecta a todo el entorno virtual. A diferencia de los puntos anteriores, este fenómeno no se observaría en un despliegue real de la red, así que es relevante solo en este ambiente de pruebas.
+	\item Como se está usando un emulador, tener más nodos implica que el procesador anfitrión debe repartir el tiempo de cómputo entre más procesos. Naturalmente, esto resulta en una lentitud generalizada que afecta a toda la red virtual. A diferencia de los puntos anteriores, este fenómeno no se observaría en un despliegue real de la red, así que es relevante solo en este ambiente de pruebas.
 \end{itemize}
-Los dos últimos puntos también ayudan a explicar otro detalle importante que muestran las tablas: el coeficiente de variación (CV). Se puede observar que este valor es mayor a medida que crece la topología, y que incluso llega a 0.99 (o 99\%) cuando se realizaron las ejecuciones para un camino de largo 2 en la topología grande. Esto implica que a medida que la topología crece, la variabilidad de los tiempos que se miden es mayor, y por lo tanto son menos confiables.
+Los dos últimos puntos también ayudan a explicar otro detalle importante que muestran las tablas: el coeficiente de variación (CV). Se puede observar que este valor es mayor a medida que crece la topología, y que incluso llega a 0.99 (o 99\%) cuando se realizaron las ejecuciones en la topología grande. Esto implica que a medida que la topología crece, la variabilidad de los tiempos que se miden es mayor, y por lo tanto son menos confiables.
 El segundo punto puede explicar esto porque si hay congestión en la red, entonces la variabilidad del RTT (round-trip time) va a ser mayor (referencia o explicacion?). El tercer punto también puede influir en un CV más alto, ya que es posible que una sobrecarga en la CPU introduzca variabilidad al tiempo de CPU que recibe cada proceso, o quizás también una variabilidad en las tareas que puede desempeñar un proceso dado un determinado tiempo de CPU. \\
 
 Con el objetivo de hacer un análisis más fino sobre el tiempo de creación de las VPNs, se repitieron las pruebas pero agregando modificaciones al código del controlador que permitan analizar cuánto tiempo dedica a cada parte del proceso. Se identificaron tres partes fundamentales: el cálculo del camino óptimo, todo lo relacionado al cálculo y manejo de las etiquetas MPLS, y la instalación de los flujos OpenFlow. La ejecución de esas tres tareas abarca la mayoría (más del 90\%) del tiempo de creación de una VPN. Las modificaciones en el código consistieron de agregar \textit{timestamps}\footnote{Marca temporal que indica la hora en la que se lleva a cabo un evento.} en las partes claves del código. Luego, analizando el log del controlador se hace la resta de los diferentes timestamps para determinar cuánto tiempo se tomó para cada tarea. Es importante tener en cuenta que este método tiene un margen de error no despreciable, ya que está a la merced del tiempo de CPU que se le asigna al controlador. De hecho, algunas ejecuciones fueron descartadas de los resultados ya que se alejan demasiado del resto, probablemente porque la CPU fue asignada durante la creación de una VPN a otros procesos por demasiado tiempo.
 
-%Posible explicacion: https://www.ibm.com/support/knowledgecenter/SSLTBW_1.13.0/com.ibm.zos.r13.ieag200/cputvari.htm%23cputvari
-
-Las figuras \ref{fig:gráfica_tiempo_básica}, \ref{fig:gráfica_tiempo_chica}, \ref{fig:gráfica_tiempo_mediana} y \ref{fig:gráfica_tiempo_grande} a continuación muestran, para cada topología, cómo se descompone el tiempo de ejecución para cada largo de camino. Para cada topología y largo de camino se realizaron 8 ejecuciones, se descartaron las que se alejan demasiado del resto y se calculó el promedio de las restantes.
+Las gráficas en las figuras \ref{fig:gráfica_tiempo_chica}, \ref{fig:gráfica_tiempo_mediana} y \ref{fig:gráfica_tiempo_grande} a continuación muestran, para cada topología, cómo se descompone el tiempo de ejecución para cada largo de camino. Se omite la de la topología básica ya que sólo permite crear VPNs de largo 1. Cada punto en la gráfica indica el porcentaje del tiempo total que se necesitó para llevar a cabo una de las tres tareas ya mencionadas (cálculo del camino, manejo de etiquetas, instalación de flujos OpenFlow). Cada porcentaje se mide en base al promedio de 8 ejecuciones (descartando las ejecuciones que arrojan valores muy alejados del resto).
 
 \begin{figure}[H]
-	\caption{Distribución del tiempo de creación de VPNs en la topología básica}
-	\centering
-	\label{fig:gráfica_tiempo_básica}
-	\begin{tikzpicture}
-	\begin{axis}[
-	xlabel={Largo del camino},
-	ylabel={Porcentaje del tiempo total},
-	xtick={0,1,2,4,6,8,10,12},
-	ytick={0,10,20,30,40,50,60,70,80,90,100},
-	scaled x ticks = false,
-	x tick label style={/pgf/number format/fixed},
-	legend pos= outer north east,
-	ymajorgrids=true,
-	grid style=dashed,
-	width=5cm,
-	height=10cm,
-	legend cell align=left,
-	]
-	\addplot[
-	color=blue,
-	mark=square,
-	]
-	coordinates {
-		(1,0.5)
-	};
-	\addlegendentry{[Capa 2] Cálculo del camino}
-	\addplot[
-	color=green,
-	mark=square,
-	]
-	coordinates {
-		(1,1.1)
-	};
-	\addlegendentry{[Capa 2] Manejo de etiquetas MPLS}
-	\addplot[
-	color=red,
-	mark=square,
-	]
-	coordinates {
-		(1,96)
-	};
-	\addlegendentry{[Capa 2] Instalación de flujos}
-	\addplot[
-	color=blue,
-	mark=square,
-	dashed,
-	]
-	coordinates {
-		(1,10)
-	};
-	\addlegendentry{[Capa 3] Cálculo del camino}
-	\addplot[
-	color=green,
-	mark=square,
-	dashed,
-	]
-	coordinates {
-		(1,21)
-	};
-	\addlegendentry{[Capa 3] Manejo de etiquetas MPLS}
-	\addplot[
-	color=red,
-	mark=square,
-	dashed,
-	]
-	coordinates {
-		(1,38)
-	};
-	\addlegendentry{[Capa 3] Instalación de flujos}
-	\end{axis}
-	\end{tikzpicture}
-
 	\caption{Distribución del tiempo de creación de VPNs en la topología chica}
 	\centering
 	\label{fig:gráfica_tiempo_chica}
@@ -409,7 +335,14 @@ coordinates {
 	\end{tikzpicture}
 \end{figure}
 
-**Algunas conclusiones de estos resultados.
+Las líneas rojas muestran como evoluciona el porcentaje del tiempo que abarca la instalación de flujos. Se observa que la porción de tiempo requerida para la instalación de los flujos de una VPN de capa 2 (denotada por las líneas rojas continuas) queda siempre por encima de la requerida para instalar flujos de una VPN de capa 3 (líneas rojas punteadas). Esto se debe a que, como ya fue explicado anteriormente, una VPN de capa 2 debe instalar más flujos en los nodos, lo cual implica que se debe dedicar más tiempo a la etapa de instalación de flujos. Para ambos tipos de VPN se observa que la instalación de flujos abarca más tiempo de ejecución (las líneas suben) a medida que el camino es más largo. Esto es esperable ya que más nodos implican más flujos. Curiosamente, esta suba parece ser más pronunciada para la VPN de capa 3.
+
+Las líneas verdes muestran qué porcentaje del tiempo total se dedica al cálculo y manejo de etiquetas MPLS. Igual que la instalación de flujos, esta etapa requiere más tiempo a medida que hay más nodos en el camino, ya que se aumenta la cantidad de etiquetas MPLS. También se observa que la VPN de capa 3 requiere un mayor porcentaje del tiempo que la de capa 2 para esta tarea. Esto puede resultar extraño, ya que la de capa 2 debe manejar más etiquetas. Lo que ocurre es que la de capa 2 requiere más tiempo absoluto, pero el tiempo total de creación de la VPN también es mayor, por lo tanto el porcentaje del tiempo que se dedica a la tarea resulta mayor para la VPN de capa 3. Otra observación es que esta tarea es la que menos tiempo requiere de las tres.
+
+Por último, el cálculo del camino óptimo. Lo primero a tener en cuenta es que esta etapa no es afectada por el tipo de VPN que se está creando, ya que lo único que debe hacer es determinar el camino óptimo entre dos nodos de un grafo. Tampoco es afectada por el largo del camino que está calculando. Lo único que la afecta es el tamaño de la topología.
+Las líneas azules denotan la participación del cálculo del camino óptimo en la distribución del tiempo. Lo primero que se observa es que el porcentaje de tiempo dedicado a esta tarea decrece a medida que se aumenta el largo del camino. Esto es esperable, ya que el tiempo requerido tiende a ser constante, mientras que las otras tareas requieren más tiempo, por lo tanto su porción del tiempo disminuye. Otra observación interesante es que a medida que se aumenta el tamaño de la topología, esta etapa ocupa una mayor parte del tiempo de ejecución. En la topología chica la etapa de instalación de flujos se lleva la mayor parte del tiempo de ejecución tanto para la VPN de capa 2 como la de capa 3. Sin embargo, en la topología mediana eso cambia, y se cumple sólo para la VPN de capa 2. Por último, en la topología grande, ya no se observa eso para ninguno de los dos tipos, y la VPN de capa 2 reparte de forma bastante equitativa el tiempo de ejecución entre el cálculo del camino y la instalación de flujos.
+
+Desde el punto de vista técnico esto también es esperable, ya que el algoritmo que calcula el camino es de orden cuadrático en la cantidad de nodos, mientras que las otras etapas (manejo de etiquetas e instalación de flujos OpenFlow) aumentan linealmente con la cantidad de nodos en el camino. Esto lleva a creer que si se siguiera experimentando con topologias aún más grandes, el cálculo del camino óptimo eventualmente abarcaría la mayoría del tiempo de creación de las VPNs, tanto de capa 2 como de capa 3.
 
 
 \section{Escala de servicios y flujos}
@@ -420,7 +353,7 @@ También es importante recordar que el entorno virtual no generará resultados r
 Se puede concluir entonces que las pruebas detalladas a continuación no aseguran la escalabilidad de RAUFlow, pero sí ayudan a investigar el comportamiento de la red y los dispositivos cuando se los somete a muchos servicios.
 
 \subsection{Descripción del escenario}
-El escenario de prueba consiste en crear una cantidad relativamente grande de VPNs en la topología básica, y analizar si esto degrada el rendimiento de la red de alguna forma. Se utiliza una VPN punto a punto de capa 3 para conectar dos subredes cliente, y se utiliza \textit{iperf} para generar tráfico TCP y medir el ancho de banda entre los dos hosts. Para cargar a la arquitectura con servicios, se crean múltiples VPN de capa 2 entre las subredes, variando los valores de los cabezales VLAN\_ID y VLAN\_PCP (pudiendo crear un total de 32.768 combinaciones distintas) para que toda VPN sea distinta de las demás. De esta forma, existirán múltiples VPN pero solo una (la de capa 3) será utilizada con tráfico. \\
+El escenario de prueba consiste en crear una cantidad relativamente grande de VPNs en la topología básica, y analizar si esto degrada el rendimiento de la red de alguna forma. Se utiliza una VPN punto a punto de capa 3 para conectar dos subredes cliente, y se utiliza \textit{iperf} para generar tráfico TCP y medir el ancho de banda entre los dos hosts. Para cargar al controlador con servicios, se crean múltiples VPN de capa 2 entre las subredes, variando los valores de los cabezales VLAN\_ID y VLAN\_PCP (pudiendo crear un total de 32.768 combinaciones distintas) para que toda VPN sea distinta de las demás. De esta forma, existirán múltiples VPN pero solo una (la de capa 3) será utilizada con tráfico. \\
 Dado que cargar todas las VPN a mano en la interfaz web llevaría demasiado tiempo, se creó un servicio web que recibe como parámetro la cantidad de VPN que se desean. Cuando se hace un pedido GET a ese servicio web, se inicia el proceso de creación de las mismas. Este proceso puede tomar entre algunos minutos y varias horas, dependiendo de la cantidad. \\ \\
 Con este escenario de prueba se busca verificar los dos siguientes aspectos claves: \\ \\
 \textbf{Escalabilidad interna del RAUSwitch} \\
@@ -431,7 +364,7 @@ Se estudian posibles problemas que puedan tener la arquitectura de la red o, en 
 \subsection{Resultados y observaciones}
 
 \begin{table}[ht]
-	\caption{Throughput en Kbits/s medidos para distinta cantidades de VPNs.}
+	\caption{Throughput en Kbits/s medidos para distintas cantidades de VPNs.}
 	\centering 
 	\begin{tabular}{c c}
 		\hline\hline
@@ -448,9 +381,9 @@ Se estudian posibles problemas que puedan tener la arquitectura de la red o, en 
 	\label{table:escala_de_servicios}
 \end{table}
 
-Como se explica en la descripción del escenario, se busca determinar si la existencia de muchos flujos en la tabla implica que un switch OpenFlow demora más tiempo en encontrar el flujo que corresponde para un paquete entrante, y por lo tanto demora más en determinar la acción a tomar para ese paquete. Si esto fuera así, debería existir una relación inversamente proporcional entre la cantidad de flujos en la tabla de un nodo y su velocidad para procesar paquetes. En la tabla \ref{table:escala_de_servicios} se pueden observar los throughput promedio medidos para un flujo de datos sobre la topología básica, con distintas cantidades de VPN existiendo en la red. La principal conclusión que se puede sacar de la tabla es que el throughput no es afectado por la cantidad de VPNs existentes en el momento (se asume que las pequeñas diferencias numéricas entran en el margen de error).
+Como se explica en la descripción del escenario, se busca determinar si la existencia de muchos flujos en la tabla implica que un RAUSwitch demora más tiempo en encontrar el flujo OpenFlow que corresponde para un paquete entrante, y por lo tanto demora más en determinar la acción a tomar para ese paquete. Si esto fuera así, debería existir una relación inversamente proporcional entre la cantidad de flujos en la tabla de un nodo y su velocidad para procesar paquetes. En la tabla \ref{table:escala_de_servicios} se pueden observar los throughput promedio medidos para un flujo de datos sobre la topología básica, con distintas cantidades de VPN existiendo en la red. La principal conclusión que se puede sacar de la tabla es que el throughput no es afectado por la cantidad de VPNs existentes en el momento (se asume que las pequeñas diferencias numéricas entran en el margen de error).
 
-Se puede ver que la máxima cantidad de VPNs con la que se probó fue de 15.000. Cada VPN de capa 2 está compuesta por dos servicios de capa 2, y cada uno de esos servicios introduce 42 flujos en cada nodo del camino. Esto quiere decir que cada uno contiene alrededor de 1.260.000 (15.000 * 2 * 42) flujos en su tabla. Se podría argumentar que hacen falta más flujos para impactar el throughput, pero en realidad la explicación de porqué esa cantidad de flujos no afecta se encuentra en la especificación de Open vSwitch, y ya fue mencionada en el capítulo 3. Open vSwitch realiza cacheo de flujos. Eso quiere decir que cuando un paquete de datos de un determinado flujo llega por primera vez a un nodo, este paquete es enviado al pipeline de OpenFlow para determinar qué acción se debe tomar. Luego de realizada, esta acción es escrita en la caché, y tiene un tiempo de vida de entre 5 y 10 segundos. Si en ese período de tiempo llega otro paquete del mismo flujo, no hay necesidad de enviar el paquete al pipeline, porque ya se sabe cuales son las acciones a tomar para el mismo. Por lo tanto, si un flujo de datos es constante y rápido, el tamaño de la tabla de OpenFlow no afectará el tiempo de decisión, ya que sólo el primer paquete de ese flujo deberá ser comparado con dicha tabla.
+Se puede ver que la máxima cantidad de VPNs con la que se probó fue de 15.000. Cada VPN de capa 2 está compuesta por dos servicios de capa 2, y cada uno de esos servicios introduce 42 flujos en cada nodo del camino. Esto quiere decir que cada uno contiene alrededor de 1.260.000 (15.000 * 2 * 42) flujos en su tabla. Se podría argumentar que hacen falta más flujos para impactar el throughput, pero en realidad la explicación se encuentra en la especificación de Open vSwitch, y ya fue mencionada en el capítulo 3. Open vSwitch realiza cacheo de flujos. Eso quiere decir que cuando un paquete de datos de un determinado flujo llega por primera vez a un nodo, este paquete es enviado al pipeline de OpenFlow para determinar qué acción se debe tomar. Luego de realizada, esta acción es escrita en la caché, y tiene un tiempo de vida de entre 5 y 10 segundos. Si en ese período de tiempo llega otro paquete del mismo flujo, no hay necesidad de enviar el paquete al pipeline, porque ya se sabe cuales son las acciones a tomar para el mismo. Por lo tanto, si un flujo de datos es constante y rápido, el tamaño de la tabla de OpenFlow no afectará el tiempo de decisión, ya que sólo el primer paquete de ese flujo deberá ser comparado con dicha tabla.
 
 Mediante el comando 'ovs-appctl dpctl/show' de Open vSwitch, se puede examinar las estadísticas de la cache de cada nodo. A modo de ejemplo, en la figura \ref{fig:cache_sample} se observan las estadísticas de un nodo llamado 'alice'. En la sección 'lookups' se detallan cuantos 'hits' y 'miss' de caché han ocurrido hasta el momento, y 'flows' indica cuantos flujos activos hay en el momento en la caché.
 
@@ -461,7 +394,7 @@ Mediante el comando 'ovs-appctl dpctl/show' de Open vSwitch, se puede examinar l
 	\label{fig:cache_sample}
 \end{figure}
 
-Otro objetivo de la prueba es determinar si la arquitectura, y en particular el controlador, tienen algún problema para manejar muchos servicios. En la prueba de servicios ya mencionada no se detectó ningún problema de esa índole. Sin embargo, es importante recordar que el controlador mantiene toda su información en memoria, por lo tanto es de interés realizar un estudio del consumo de memoria del mismo a medida que crece la cantidad de servicios. El comando de Linux llamado \textit{pmap} permite estudiar el consumo de memoria del proceso que se le indique, y con el mismo podemos analizar la evolución del consumo de memoria del controlador a medida que se le agregan servicios. En la tabla \ref{table:consumo_de_memoria} y la figura \ref{fig:consumo_de_memoria} se puede observar el resultado de estas mediciones. \\
+Otro objetivo de la prueba es determinar si la arquitectura, y en particular el controlador, tienen algún problema para manejar muchos servicios. No se ha detectado ningún problema de esa índole. Sin embargo, es importante recordar que el controlador mantiene toda su información en memoria, por lo tanto es de interés realizar un estudio del consumo de memoria del mismo a medida que crece la cantidad de servicios. El comando de Linux llamado \textit{pmap} permite estudiar el consumo de memoria del proceso que se le indique, y con el mismo se puede analizar la evolución del consumo de memoria del controlador a medida que se le agregan servicios. En la tabla \ref{table:consumo_de_memoria} y la figura \ref{fig:consumo_de_memoria} se puede observar el resultado de estas mediciones. \\
 
 \begin{table}[ht]
 	\caption{Evolución del consumo de memoria del controlador.}
@@ -512,7 +445,7 @@ coordinates {
 
 La principal observación que se puede hacer es que el consumo de memoria del controlador aumenta de forma lineal con la cantidad de servicios. El mismo se incrementa en 74916 KB cada 3000 servicios, por lo tanto se puede calcular que cada servicio ocupa alrededor de 25 KB (74916/3000). A modo de ejemplo, si extrapolamos ese número a una computadora que puede dedicar 4 Gb de RAM para mantener los servicios, llegamos a que el controlador podrá mantener alrededor de 167.772 servicios. A pesar de que no es ideal mantener tantos datos en memoria, se puede concluir que es un consumo aceptable. \\
 
-En el proceso de realizar las pruebas ya mencionadas también se observó un comportamiento que no se esperaba. Se detectó que a medida que hay más VPN creadas, la red demora más tiempo en crear una nueva VPN. Con el propósito de entender más ese comportamiento, se hizo un experimento cuyos resultados se observan en la figura \ref{fig:tiempo_vpns_acumuladas}.
+En el proceso de realizar las pruebas ya mencionadas también se observó un comportamiento que no se esperaba. Se detectó que a medida que hay más VPNs creadas, la red demora más tiempo en crear una nueva VPN. Con el propósito de entender más ese comportamiento, se hizo un experimento cuyos resultados se observan en la figura \ref{fig:tiempo_vpns_acumuladas}.
 
 \begin{figure}
 \caption{Efecto de la cantidad de VPNs sobre el tiempo de carga de una VPN nueva}
@@ -550,7 +483,6 @@ coordinates {
 \end{tikzpicture}
 \end{figure}
 
-Cada punto indica el tiempo que demora la red en dar de alta una nueva VPN con una determinada cantidad de VPN ya existentes. Estos tiempos se miden de la misma forma que los obtenidos en la sección de pruebas anterior: se toma el tiempo que demora la aplicación en devolver la respuesta HTTP indicando que el servicio se creó con éxito (disponible en los logs). En la gráfica se puede ver que el tiempo de carga aumenta de forma lineal a medida que hay más VPN en la red, y esto se cumple para la de capa 2 como la de capa 3. Una posible explicación inicial para esto puede ser que al tener más flujos, cada nodo demora más en insertar nuevos flujos en su tabla. Esa teoría se descarta con el siguiente razonamiento. En la gráfica se observa que toma más tiempo crear una VPN de capa 2 que una de capa 3. Esto en gran medida se explica porque un servicio de capa 2 debe insertar 42 flujos en los nodos del camino, mientras que uno de capa 3 solo inserta 1. Pero también se observa que las lineas son virtualmente paralelas, es decir, esa diferencia de tiempo se mantiene constante a pesar de las VPN que existan. Si insertar un flujo nuevo cada vez tomara más tiempo, ese incremento se debería multiplicar por 42 para la VPN de capa 2, y la linea correspondiente a la VPN de capa 2 debería tener una pendiente más inclinada que la de capa 3. \\
-Otra posible explicación para este comportamiento puede ser que la aplicación RAUFlow se vuelve más lenta a medida que sus estructuras de datos crecen. Sin embargo, no se observó ningún patrón en el código que indique esto. \\ \\
+Cada punto indica el tiempo que demora la red en dar de alta una nueva VPN con una determinada cantidad de VPN ya existentes. Estos tiempos se miden de la misma forma que los obtenidos en la sección de pruebas anterior: se toma el tiempo que demora la aplicación en devolver la respuesta HTTP indicando que el servicio se creó con éxito (disponible en los logs). En la gráfica se puede ver que el tiempo de carga aumenta de forma lineal a medida que hay más VPN en la red, y esto se cumple para la de capa 2 como la de capa 3. Una posible explicación inicial para esto puede ser que al tener más flujos, cada nodo demora más en insertar nuevos flujos en su tabla. Esa teoría se descarta con el siguiente razonamiento. En la gráfica se observa que toma más tiempo crear una VPN de capa 2 que una de capa 3. Esto en gran medida se explica porque un servicio de capa 2 debe insertar 42 flujos en los nodos del camino, mientras que uno de capa 3 solo inserta 1. Pero también se observa que las lineas son virtualmente paralelas, es decir, esa diferencia de tiempo se mantiene constante a pesar de las VPNs que existan. Si insertar un flujo nuevo cada vez tomara más tiempo, ese incremento se debería multiplicar por 42 para la VPN de capa 2, y la linea correspondiente a la VPN de capa 2 debería tener una pendiente más inclinada que la de capa 3.
 
-***Algunas conclusiones de estas pruebas.
+Otra posible explicación para este comportamiento, y quizás la más probable, es que la aplicación RAUFlow se vuelve más lenta a medida que sus estructuras de datos crecen. Sin embargo, no se observa ninguna característica en el código que indique esto.

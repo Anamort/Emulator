@@ -3,9 +3,20 @@
 % **************************** Define Graphics Path **************************
 \graphicspath{{Chapter5/Figs/}}
 
-mencionar que el trabajo complementó el paper de rauflow
+Se realizó una investigación del estado del arte de las diferentes aplicaciones que se le puede dar al paradigma SDN, prestando especial atención a las diferentes maneras de implementar redes privadas virtuales. También se hizo una investigación profunda sobre las diferentes opciones de virtualización para las redes definidas por software.
+
+Tomando como base al popular emulador Mininet, se construyó una herramienta que permite emular dispositivos que pueden actuar como switches OpenFlow y al mismo tiempo correr protocolos distribuidos legados como OSPF. Esta herramienta permite la virtualización de la arquitectura RAUFlow, pero también se la puede ver como un resultado valioso incluso afuera del contexto de RAUFlow, ya que hasta el momento de realizar este trabajo no se encontró ninguna herramienta que tenga esas capacidades. Se creó un repositorio público en Github \cite{gitp2015_44} con el código fuente del emulador con la intención de hacerlo disponible para la comunidad. También se produjo un manual de usuario para facilitar el uso futuro de la herramienta.
+
+Se trabajó en una verificación funcional del entorno construido, que permitió detectar y corregir problemas, y validar el correcto funcionamiento del mismo con diversas topologias. Dicha verificación también permitió corregir dos defectos en el código fuente de la aplicación RAUFlow, y detectar algunos posibles problemas de escalabilidad de la arquitectura. También se implementó una mejora a RAUFlow, que permite eliminar la necesidad de agentes SNMP en cada RAUSwitch, reduciendo la complejidad y posiblemente aumentando el rendimiento de los mismos.
+
+Usando la herramienta construida se realizó una serie de pruebas para estudiar la escalabilidad de RAUFlow. En primer lugar, mediante diferentes topologias de prueba se estudió el tiempo requerido para la creación de VPNs. Para profundizar el análisis, se estudió la distribución del tiempo de ejecución entre las principales tareas que componen dicho proceso de creación. En segundo lugar, se llevó a cabo una serie de pruebas que estudian el comportamiento de RAUFlow y los RAUSwitch cuando existen muchos servicios. Desde el punto de vista de los RAUSwitch, un estudio a fondo de la herramienta Open vSwitch determinó que la existencia de muchos servicios no afecta el rendimiento de los mismos. Desde el punto de vista del controlador, se verificó que no tiene problemas para mantener muchos servicios, y se estudió la evolución de su consumo de memoria.
+
+Por último, este trabajo contribuyó a la realización de una publicación científica llamada "RAUflow: building Virtual Private Networks with MPLS and OpenFlow", la cual fue presentada recientemente en la conferencia ACM SIGCOMM Workshop on Fostering Latin-American Research in Data Communication Networks (LANCOMM 2016).
+
+%mencionar SSN si corresponde
 
 \section{Trabajo futuro}
-miniedit
 
-Sanity checks en la topología (IP por ej.)
+- expandir el entorno (miniedit, aumentar fidelity, investigar openvswitch para que sea mas realista)
+- hacer pruebas de escala de servicios mas realistas
+- trabajo sobre la arquitectura misma
