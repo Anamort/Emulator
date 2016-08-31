@@ -11,12 +11,21 @@ Se trabajó en una verificación funcional del entorno construido, que permitió
 
 Usando la herramienta construida se realizó una serie de pruebas para estudiar la escalabilidad de RAUFlow. En primer lugar, mediante diferentes topologias de prueba se estudió el tiempo requerido para la creación de VPNs. Para profundizar el análisis, se estudió la distribución del tiempo de ejecución entre las principales tareas que componen dicho proceso de creación. En segundo lugar, se llevó a cabo una serie de pruebas que estudian el comportamiento de RAUFlow y los RAUSwitch cuando existen muchos servicios. Desde el punto de vista de los RAUSwitch, un estudio a fondo de la herramienta Open vSwitch determinó que la existencia de muchos servicios no afecta el rendimiento de los mismos. Desde el punto de vista del controlador, se verificó que no tiene problemas para mantener muchos servicios, y se estudió la evolución de su consumo de memoria.
 
-Por último, este trabajo contribuyó a la realización de una publicación científica llamada "RAUflow: building Virtual Private Networks with MPLS and OpenFlow", la cual fue presentada recientemente en la conferencia ACM SIGCOMM Workshop on Fostering Latin-American Research in Data Communication Networks (LANCOMM 2016).
+Por último, este trabajo contribuyó a la realización de una publicación científica llamada "RAUflow: building Virtual Private Networks with MPLS and OpenFlow" \cite{rauflow}, la cual fue presentada recientemente en la conferencia ACM SIGCOMM Workshop on Fostering Latin-American Research in Data Communication Networks (LANCOMM 2016).
 
 %mencionar SSN si corresponde
 
 \section{Trabajo futuro}
 
-- expandir el entorno (miniedit, aumentar fidelity, investigar openvswitch para que sea mas realista)
-- hacer pruebas de escala de servicios mas realistas
-- trabajo sobre la arquitectura misma
+Si bien en este trabajo se ha desarrollado un emulador completamente funcional, aún existe lugar para mejorarlo. Por ejemplo, la configuración de nuevas topologias se debe hacer mediante scripts en Python. Si bien la API para hacerlo es relativamente simple, la tarea puede ser tediosa si se trata de topologias grandes. Existe una propuesta de interfaz gráfica para Mininet llamada MiniEdit \cite{miniedit} que puede ser utilizada con el propósito de mejorar la usabilidad del entorno virtual. Es probable que sea necesario modificar MiniEdit para que funcione con el entorno construido, pero esto no debería ser una tarea muy compleja ya que el código fuente está disponible y bien documentado.
+
+El entorno construido también puede ser mejorado para proporcionar experimentos más reales, o fieles a la realidad. Existe una extensión de Mininet llamada Mininet-HiFi \cite{mininet-hifi} que apunta a mejorar Mininet para proveer experimentos más realistas y reproducibles. Utiliza conceptos como límites de CPU, control de tráfico y aislamiento de recursos para intentar que el experimento que se lleve a cabo sea lo más fiel posible al mismo escenario pero con hardware real.
+Otra posible línea de trabajo con el objetivo de aumentar el realismo de los experimentos es investigar la herramienta Open vSwitch para encontrar maneras de hacer que múltiples switches OpenFlow en distintos network namespaces puedan procesar paquetes a nivel del kernel. Esto aumentaría sustancialmente la velocidad de los switches que ofrece el entorno virtual actualmente, y ayudaría a que los switches emulados se asemejen más a los físicos.
+
+Se han hecho diversas pruebas sobre la arquitectura RAUFlow que muestran que posee una buena escalabilidad. Sin embargo, es necesario hacer más pruebas para poder asegurarlo. Desde el punto de vista de la escalabilidad en las topologias, en la sección 3.5 se detallaron algunos problemas funcionales que se sospecha pueden afectar un despliegue real de la arquitectura, y por ende se sugiere una investigación a fondo sobre los mismos. Desde el punto de vista de la escalabilidad en el uso, no se hicieron pruebas con modelos de tráfico que reflejen el volumen y características del tráfico que se espera en la red. Esto es un paso clave en la determinación de la escalabilidad de RAUFlow.
+
+Sería interesante implementar nuevas funcionalidades sobre la arquitectura RAUFlow que incorporen nociones como Ingeniería de tráfico, Quality of Service y seguridad de la red.
+
+Se ha mencionado que el controlador de RAUFlow almacena todos sus datos en memoria. Implementar un método de persistencia que no dependa de la memoria del sistema podría mejorar la escalabilidad y también la robustez, ya que el controlador se podría recuperar ante fallas.
+
+También se discutió que mantener comunicación con demasiados switches OpenFlow puede ser un problema para el controlador, lo cual presentaría un serio problema de escalabilidad. La existencia de un único centro de cómputo para el control de la red también puede generar un efecto cuello de botella. Estos problemas pueden ser solucionados utilizando múltiples controladores, y estableciendo una relación de jerarquía entre ellos.
