@@ -24,7 +24,7 @@ La comunicación entre las capas se da mediante interfaces (o APIs). La comunica
 \subsection{OpenFlow}
 OpenFlow \cite{openflow-paper} es un estándar desarrollado por la Universidad de Stanford en 2008, y desde entonces es mantenido por la ONF (Open Networking Foundation). Es una implementación de la Interfaz Sur de la arquitectura de SDN, es decir, implementa la comunicación entre la capa de control y la capa de infraestructura (los dispositivos de red). Existen algunas diferencias entre las distintas versiones de OpenFlow. A pesar de que la última versión de OpenFlow al momento de realizar este trabajo es la 1.5, se explicará la versión 1.3.1 ya que es la utilizada por RAUFlow.
 
-La estructura de un switch OpenFlow se puede ver en la figura \ref{fig:switch_openflow}. Se pueden identificar tres componentes principales: a) un conjunto de tablas de flujos, b) un canal seguro de comunicación entre el switch y el controlador para intercambiar comandos y paquetes, c) protocolo OpenFlow, que define la comunicación entre el switch y el controlador.
+La estructura de un switch OpenFlow se puede ver en la figura \ref{fig:switch_openflow}. Se pueden identificar tres componentes principales: a) un conjunto de tablas de flujos, b) un canal seguro de comunicación entre el switch y el controlador para intercambiar comandos y paquetes, c) el protocolo OpenFlow, que define la comunicación entre el switch y el controlador.
 
 \begin{figure}[h] 
 	\centering    
@@ -44,13 +44,13 @@ La estructura de un switch OpenFlow se puede ver en la figura \ref{fig:switch_op
 	\end{tabular}
 \end{table}
 
-Las capacidades de un switch OpenFlow se abstraen mediante un concepto denominado flujo. Un flujo es una instrucción que le indica al switch qué acciones debe tomar cuando recibe un paquete de un determinado tipo. La tabla \ref{table:flow_entry} muestra cómo está compuesto un flujo OpenFlow. Los campos son los siguientes:
+Las capacidades de un switch OpenFlow se abstraen mediante un concepto denominado \textbf{flujo}. Un flujo es una instrucción que le indica al switch qué acciones debe tomar cuando recibe un paquete de un determinado tipo. La tabla \ref{table:flow_entry} muestra cómo está compuesto un flujo OpenFlow. Los campos son los siguientes:
 \begin{itemize}
-	\item \textbf{Match Fields}. Este campo indica a qué tipo de tráfico aplica el flujo. Esto lo logra especificando valores para los cabezales de los paquetes. Como lo muestra la figura \ref{fig:openflow_matching_fields}, OpenFlow 1.3.1 permite utilizar protocolos de las capas 1-4 del modelo OSI. Esta capacidad le permite a un switch OpenFlow 'agrupar' el tráfico en grupos (o flujos), y tomar las mismas acciones para tráfico similar.
+	\item \textbf{Match Fields}. Este campo indica a qué tipo de tráfico aplica el flujo. Esto lo logra especificando valores para los cabezales de los paquetes. Como lo muestra la figura \ref{fig:openflow_matching_fields}, OpenFlow 1.3.1 puede trabajar con los cabezales de protocolos de las capas 1-4 del modelo OSI. Esta capacidad le permite a un switch OpenFlow "agrupar" el tráfico en grupos (o flujos), y tomar las mismas acciones para tráfico similar.
 	
 	\begin{figure}[H] 
 		\centering    
-		\includegraphics[width=10cm]{openflow131_matchingfields}
+		\includegraphics[width=7cm]{openflow131_matchingfields}
 		\caption{Match fields de OpenFlow 1.3.1. Imagen extraída de \cite{proyecto-rrap}}
 		\label{fig:openflow_matching_fields}
 	\end{figure}
@@ -64,8 +64,12 @@ Las capacidades de un switch OpenFlow se abstraen mediante un concepto denominad
 			\item \textbf{Push-Tag/Pop-Tag} permite agregar o quitar etiquetas MPLS o VLAN.
 		\end{itemize}
 	\item \textbf{Timeouts}. Tiempo que debe pasar para que el switch elimine al flujo por inactividad.
-	\item \textbf{Counters}, \textbf{Cookie}. Son campos auxiliares. Si el lector desea puede leer sobre ellos en \cite{openflow-1.3.1}.
+	\item \textbf{Counters}, \textbf{Cookie}. Son campos auxiliares. Si el lector desea, puede leer sobre ellos en \cite{openflow-1.3.1}.
 \end{itemize}
+
+Cuando un paquete llega a un switch OpenFlow, el switch analiza los cabezales del mismo, y los compara con los Match Fields de los flujos que tiene almacenados, y así determina si el paquete pertenece a alguno de ellos. En caso positivo, realiza las acciones que indique el flujo correspondiente. En caso negativo, se aplican las acciones de un flujo especial llamado "Table-miss Flow Entry". Este flujo es el que se utiliza para el tráfico que no se corresponde con ninguno de los otros flujos de un switch, y en general descarta el paquete o lo reenvía al controlador.
+
+OpenFlow 1.3.1 permite utilizar múltiples tablas de flujos. Gracias a una instrucción especial llamada "GoTo Table" un flujo puede indicar que el paquete pase por otra tabla. Cuando el paquete termina de recorrer ese pipeline de tablas, se ejecuta el conjunto de instrucciones que se obtuvo de cada una. La figura \ref{fig:openflow_pipeline} muestra como funciona el pipeline de OpenFlow.
 
 \begin{figure}[h] 
 	\centering    
@@ -73,8 +77,6 @@ Las capacidades de un switch OpenFlow se abstraen mediante un concepto denominad
 	\caption{Pipeline de procesado de paquetes de OpenFlow. Imagen extraída de \cite{openflow-1.3.1}}
 	\label{fig:openflow_pipeline}
 \end{figure}
-
-
 
 \subsection{Open vSwitch}
 %http://openvswitch.org/pipermail/discuss/2012-February/006447.html
