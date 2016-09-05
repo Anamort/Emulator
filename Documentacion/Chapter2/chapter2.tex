@@ -79,35 +79,45 @@ OpenFlow 1.3.1 permite utilizar múltiples tablas de flujos. Gracias a una instr
 \end{figure}
 
 \subsection{Open vSwitch}
-%http://openvswitch.org/pipermail/discuss/2012-February/006447.html
+Open vSwitch \cite{ovs} es una implementación en software de un switch virtual multicapa. Es open-source y está disponible para múltiples sistemas operativos, pero está mayoritariamente enfocado hacia Linux. Open vSwitch fue diseñado para actuar como switch virtual entre máquinas virtuales y para brindarles conectividad con la red física.
 
-%http://openvswitch.org/support/dist-docs/ovs-vswitchd.8.txt
+\begin{figure}[H] 
+	\centering    
+	\includegraphics[width=12cm]{ovs_architecture}
+	\caption{Arquitectura de Open vSwitch.}
+	\label{fig:ovs_architecture}
+\end{figure}
 
-%http://benpfaff.org/papers/ovs.pdf
-
-%http://networkheresy.com/2014/11/13/accelerating-open-vswitch-to-ludicrous-speed/
-
-%http://bluesy.wang/notes/2014/09/14/flow-caching-for-high-entropy-packet-fields/
-
-%http://yuba.stanford.edu/~nickm/papers/flow-caching.pdf
-
-%http://wangcong.org/2012/10/20/an-overview-of-openvswitch-implementation/
-
-%https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&ved=0ahUKEwixpuyBieLLAhUCdR4KHVV7CKgQFggfMAA&url=https%3A%2F%2Fnsrc.org%2Fworkshops%2F2014%2Fnznog-sdn%2Fraw-attachment%2Fwiki%2FAgenda%2FOpenVSwitch.pdf&usg=AFQjCNFg9VULvEmHMXQAsuTOE6XLH6WbzQ&bvm=bv.117868183,d.dmo&cad=rja
-
-%http://openvswitch.org/slides/OpenStack-131107.pdf
-
-%http://openvswitch.org/slides/openvswitch.en-2.pdf
-
-%https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=3&ved=0ahUKEwjP95D9ieLLAhVIpB4KHUKeCzYQFggoMAI&url=http%3A%2F%2Fopenvswitch.org%2Fsupport%2Fovscon2014%2F17%2F1530-ovsconf2014_chadnorgan.pptx&usg=AFQjCNEmnrXDB0psj5oXvoAzVYr8F5sLtQ&cad=rja
-
-%https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&cad=rja&uact=8&ved=0ahUKEwjZvdvaiuLLAhWF1h4KHfYrCKoQFggiMAA&url=http%3A%2F%2Fopenvswitch.org%2Fsupport%2Fovscon2014%2F18%2F1600-ovs_perf.pptx&usg=AFQjCNGGTT0rHmENeZ2ZcoRfWNFJ__hBLw
+Debido a que soporta OpenFlow, Open vSwitch es comúnmente utilizado como switch en despliegues SDN. La figura \ref{fig:ovs_architecture} muestra la arquitectura de Open vSwitch, y cómo ella interactúa con un controlador OpenFlow. Se identifican tres componentes principales:
+\begin{itemize}
+	\item \textbf{ovsdb-server} \cite{ovsdb-server}. Es un servidor de base de datos que almacena toda la información relacionada con los switches. Este servidor se puede usar tanto para hacer cambios en configuraciones como para hacer consultas. La interacción con este proceso se hace mediante un protocolo llamado OVSDB (RFC 7047 \cite{ovsdb-rfc}). Esta comunicación se puede llevar a cabo de forma local y remota. Cuando se desea utilizar ovsdb-server localmente, desde el sistema operativo anfitrión, la comunicación se implementa con un archivo socket de Unix. Para gestión remota en general se utiliza el puerto TCP 6640.
+	\item \textbf{ovs-vswitchd} \cite{ovs-vswitchd}. Es un demonio que ejecuta en el userspace y se encarga de manejar y controlar los switches virtuales. Este demonio está pendiente y se actualiza automáticamente ante cambios de configuración efectuados en ovsdb-server. Para poder comunicarse con él, en general utiliza un Unix socket.
+	Este demonio es quien se conecta con el controlador OpenFlow, e interactúa con el mismo de acuerdo al funcionamiento normal de OpenFlow.
+	\item \textbf{Kernel Datapath}. Esto es un módulo que ejecuta en el kernel creado para aumentar la velocidad de los switches. Mantiene una caché de flujos para que sólo algunos paquetes deban ser resueltos en el userspace. Una vez un flujo está en el kernel datapath, ya no hay necesidad de que ovs-vswitchd resuelva qué hacer con el paquete, y se puede resolver a nivel del kernel, lo cual aumenta significativamente la velocidad de procesamiento. La comunicación de este módulo con el demonio ovs-vswitchd se implementa con el protocolo Netlink \cite{netlink}.
+\end{itemize}
 
 \subsection{Multiprotocol Label Switching (MPLS)}
-Conceptos básicos
+Multiprotocol Label Switching (MPLS) es un mecanismo de transporte de datos que utiliza conmutación de etiquetas para reenviar paquetes a través de una red. MPLS trabaja entre las capas de Red y Enlace del modelo OSI, y puede encapsular paquetes de varios protocolos (de ahí surge el nombre "multiprotocol").
+
+Cuando un paquete ingresa a una red MPLS, es recibido por un router llamado Label Edge Router (LER), es decir, un router de borde. El LER le agrega al paquete un cabezal MPLS y lo reenvía. Cada nodo interno de la red (llamado Label Switching Router) que recibe el paquete le extrae el cabezal y lo analiza, y basándose en el valor de la etiqueta decide cuál es el próximo nodo al que debe reenviarse. Luego le asigna un nuevo cabezal con la nueva etiqueta y lo reenvía. Este proceso se repite hasta que el paquete llega a un LER de salida, donde sale de la red sin etiquetas.
+
+Un cabezal MPLS está compuesto por cuatro campos: Label, TC (Traffic Class), S (bottom-of-stack) y TTL (time-to-live). Label es el campo principal, y su valor decide el camino que toma el paquete. El campo TC es utilizado para implementar Quality of Service. TTL indica el tiempo de vida (en saltos) que le queda al paquete. MPLS permite utilizar múltiples etiquetas solapadas en una pila o stack. El campo S indica si la etiqueta es la última en el stack o no.
+
+Algunos términos relacionados a MPLS son:
+\begin{itemize}
+	\item Forwarding Equivalence Class (FEC). Clase de equivalencia que agrupa a los paquetes "similares" y que pueden ser reenviados por la misma ruta, es decir, pueden ser etiquetados con la misma etiqueta MPLS.
+	\item Label Switched Path (LSP). Ruta sobre una red MPLS. En general es establecida por un protocolo de distribución de etiquetas como LDP, y se establece para encaminar tráfico de una más FECs.
+	\item Label Distribution Protocol (LDP). Protocolo de distribución de etiquetas MPLS entre los nodos de una red.
+\end{itemize}
 
 \subsection{Red Privada Virtual (VPN)}
-Conceptos básicos
+Una Red Privada Virtual (VPN por sus siglas en inglés) es una red privada que se extiende a través de una red pública, como lo es Internet. Permite conectar redes ubicadas en distintos lugares geográficos de modo transparente, es decir, como si estuvieran directamente conectadas.
+
+Los servicios de VPNs en general proveen autenticación, integridad y confidencialidad de los datos, y en ocasiones ofrecen funcionalidades avanzadas como priorizar tipos de tráfico y Quality of Service (QoS).
+
+Una VPN puede ser punto a punto o multipunto. La primera se utiliza para conectar sólo dos extremos de una organización, mientras que la segunda se utiliza para brindar conectividad a una organización dispersa en múltiples lugares.
+
+Otra forma de clasificar una VPN es de acuerdo a la capa en la que opera. Una VPN de capa 3 en general conecta subredes IP distintas, y el tráfico que pasa a través de ella consiste de paquetes IP. Por otro lado, una VPN de capa 2 permite que dos o más redes dispersas geográficamente compartan un dominio de difusión Ethernet, y actúen como si estuvieran en la misma LAN. Esta última comúnmente recibe el nombre de Virtual Private LAN Service (VPLS).
 
 \subsection{RAUFlow/RAUSwitch}
 

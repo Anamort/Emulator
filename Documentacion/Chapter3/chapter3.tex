@@ -47,13 +47,19 @@ Por otro lado, los hosts de Mininet sí tienen su propio network namespace, y gr
 
 \subsection{RAUSwitch}
 %mirar http://netgroup.uniroma2.it/twiki/pub/Oshi/WebHome/OSHI_tech_report.pdf pagina 41
-La clase RAUSwitch es el núcleo del entorno virtual. Es un Host extendido de tal forma para que, gracias a la funcionalidad de directorios privados, ejecute su propia instancia de Quagga y Open vSwitch. Cada RAUSwitch tiene los siguientes directorios privados: /var/log/, /var/log/quagga, /var/run, /var/run/quagga, /var/run/openvswitch. Cada RAUSwitch también usa un directorio bajo /tmp, para almacenar sus archivos de configuración.
 
-Open vSwitch básicamente consiste de 2 demonios (ovs-vswitchd y ovsdb-server) que ejecutan en el user-space, y un módulo en el kernel que actúa como cache para los flujos recientes. Utiliza el protocolo 'netlink' para comunicar el user-space con el módulo en el kernel. Poder tomar decisiones sobre los paquetes a nivel del kernel, sin tener que pasar por el user-space, explica en gran medida el buen nivel de performance que ofrece Open vSwitch. Sin embargo, tener múltiples módulos de kernel ejecutando en el mismo sistema operativo puede crear comportamientos impredecibles e incorrectos, ya que no está previsto que más de una instancia de Open vSwitch ejecute en la misma máquina.\\
-Afortunadamente, Open vSwitch puede ejecutarse completamente en modo user-space, es decir, sin soporte del módulo del kernel. Esto implica que se puede ejecutar tantas instancias de Open vSwitch como se deseen, pero la performance va a ser significativamente peor. Esto no es una desventaja muy seria, ya que el objetivo del entorno no es ser performante al procesar paquetes. Cabe aclarar que en este modo Open vSwitch continúa haciendo cacheo de flujos, pero ahora lo hace en el user-space.
+La clase RAUSwitch es el núcleo del entorno virtual. Como se explica anteriormente, no es posible utilizar la clase Switch de Mininet, así que se utiliza la clase Host y se la extiende para cumplir los requerimientos del RAUSwitch.
+
+Cada RAUSwitch está en su propio network namespace (igual que la clase Host) y ejecuta su propia instancia de Quagga y Open vSwitch. Esto se logra gracias a la funcionalidad de directorios privados de Mininet. Cada RAUSwitch tiene los siguientes directorios privados: /var/log/, /var/log/quagga, /var/run, /var/run/quagga, /var/run/openvswitch. Cada RAUSwitch también usa un directorio bajo /tmp, para almacenar sus archivos de configuración.
+
+No es posible utilizar una única instancia de Open vSwitch (como en Mininet estándar, recordar sección 2.3.3 del estado del arte) ya que no es posible que una instancia defina múltiples switches, cada uno en su propio network namespace. Y se necesita que cada uno tenga su namespace para que pueda comportarse como router legado y tenga sus propias tablas de ruteo e interfaces. Aunque Quagga no presenta ningún problema para ejecutarse de este modo, es importante tener en cuenta que Open vSwitch no está diseñado para ejecutarse en múltiples instancias paralelas, y por lo tanto hacer que funcione correctamente es una tarea más compleja. Como la comunicación entre los componentes de Open vSwitch se efectúa mediante Unix Sockets, es necesario que cada instancia tenga su propio socket, de lo contrario si todas las instancias utilizaran el mismo socket ocurriría un problema de lockeo.
+
+Si bien el enfoque de múltiples instancias de Open vSwitch funciona, lo hace con determinadas limitaciones. Como se explica en la sección 2.1.3 del capítulo del estado del arte, Open vSwitch utiliza un módulo en el kernel que actúa como cache para flujos recientes y que aumenta radicalmente la velocidad de procesamiento de paquetes. Debido a que Open vSwitch no contempla la existencia de múltiples módulos de kernel paralelos, y no se puede utilizar un único módulo para múltiples instancias, es necesario que cada instancia se ejecute completamente en el userspace. Esto implica que cada paquete que un RAUSwitch procese deberá ser evaluado por su demonio ovs-vswitchd que se encuentra en el userspace, lo cual reduce la velocidad significativamente.
+
+Obviamente esto no es deseable, pero no significa una desventaja muy seria, ya que el objetivo del entorno no es ser performante al procesar paquetes. Cabe aclarar que en este modo Open vSwitch continúa haciendo cacheo de flujos, pero ahora lo hace en el userspace.
 
 \begin{figure}[t]
-	\caption{Arquitectura de Open vSwitch.}
+	\caption{Arquitectura simplificada de Open vSwitch.}
 	\includegraphics[scale=0.65]{ovs_dataplane}
 	\centering
 	\label{fig:ovs_dataplane}
