@@ -119,10 +119,46 @@ Una VPN puede ser punto a punto o multipunto. La primera se utiliza para conecta
 
 Otra forma de clasificar una VPN es de acuerdo a la capa en la que opera. Una VPN de capa 3 en general conecta subredes IP distintas, y el tráfico que pasa a través de ella consiste de paquetes IP. Por otro lado, una VPN de capa 2 permite que dos o más redes dispersas geográficamente compartan un dominio de difusión Ethernet, y actúen como si estuvieran en la misma LAN. Esta última comúnmente recibe el nombre de Virtual Private LAN Service (VPLS).
 
-\subsection{RAUFlow/RAUSwitch}
+\subsection{RAUFlow}
+El propósito de esta sección es resumir y explicar los aspectos técnicos de RAUFlow, ya que es la base sobre la que se construye el presente trabajo. Si el lector desea profundizar en este tema se recomienda la lectura del capítulo 5 del informe del Proyecto RRAP \cite{proyecto-rrap}.
 
--componentes
--proactivo
+RAUFlow es una aplicación para control de red basada en el controlador SDN Ryu \cite{ryu}, que combina OpenFlow y MPLS para implementar servicios de VPN. El plano de control de la red no depende únicamente de la aplicación que ejecuta en el controlador, ya que existen más componentes. Por lo tanto, el término RAUFlow también se utiliza para referirse a la arquitectura global de la solución.
+
+\begin{figure}[t]
+	\caption{Visión general de la arquitectura de RAUFlow. Imagen extraída de \cite{proyecto-rrap}}
+	\includegraphics[width=14cm]{componentes_rauflow}
+	\centering
+	\label{fig:componentes_rauflow}
+\end{figure}
+
+RAUFlow utiliza OpenFlow y MPLS para conectar dos extremos de la red con una VPN. Además, utiliza herramientas adicionales como Quagga y SNMP para que el controlador tenga información de la topología y de los dispositivos. La figura \ref{fig:componentes_rauflow} muestra la arquitectura global de RAUFlow. A continuación se explican sus principales características:
+\begin{itemize}
+	\item \textbf{RAUSwitch} es el nombre que llevan los dispositivos de red. Se componen de la siguiente manera:
+		\begin{itemize}
+			\item \textbf{Open vSwitch}. Se utiliza como implementación (en software) de OpenFlow. Es lo que permite que los dispositivos se comporten como switches OpenFlow.
+			\item \textbf{Quagga}. Este software de ruteo se utiliza para que los RAUSwitch puedan utilizar el protocolo de ruteo OSPF. El objetivo de utilizar este protocolo se explicará mas adelante, cuando se explique el módulo LSDB Sync del controlador. Esta característica hace que se refiera al RAUSwitch como un switch híbrido, ya que se comporta como switch OpenFlow y al mismo tiempo como router tradicional.
+			\item \textbf{Agente SNMP}. El controlador necesita conocer las direcciones IP de las interfaces de los RAUSwitch, pero OpenFlow no provee una manera de comunicarle esto al controlador, ya que está orientado a esquemas SDN puros donde los switches OpenFlow no tienen direcciones IP. Por lo tanto, se utiliza un agente SNMP en cada RAUSwitch, el cual es consultado desde un administrador SNMP en el controlador para obtener las direcciones IP de cada RAUSwitch.
+		\end{itemize}
+	\item \textbf{Controlador}. Esta entidad es la que ejecuta la aplicación RAUFlow y se comunica con todos los componentes de la arquitectura para implementar el plano de control. Se compone de la siguiente manera:
+		\begin{itemize}
+			\item \textbf{Controlador Ryu + aplicación RAUFlow}. Aquí es donde se encuentra la mayoría de la inteligencia de la red. Provee una interfaz gráfica Web para que el administrador de la red cree, modifique y elimine VPNs. Cuando se crea una nueva VPN, se encarga de computar el camino óptimo entre un par de nodos utilizando una versión modificada del algoritmo Dijkstra. Luego de computar el camino para la VPN, instala los flujos OpenFlow necesarios en los RAUSwitch involucrados para que los mismos puedan brindar conectividad a la VPN mediante conmutación de etiquetas MPLS.
+			\item \textbf{LSDB Sync} se encarga de tomar la información de la base de datos topológica de OSPF, procesarla y enviarla a la aplicación RAUFlow.
+			Esta componente se encarga de detectar cambios en la topología (escuchando los mensajes del protocolo OSPF) y cuando la base de información topológica local del controlador está actualizada, la procesa y luego la envía a la aplicación en el controlador. RAUFlow toma esta información y se actualiza con la nueva topología, y luego utiliza el módulo Administrador SNMP para obtener información adicional sobre los dispositivos (como las direcciones IP de cada puerto).
+			\item \textbf{Quagga}. El controlador ejecuta una instancia de Quagga, obteniendo de esta forma acceso local a la información de la base de datos topológica construida por OSPF (Link-State-Database).
+			\item \textbf{Administrador SNMP}. El administrador SNMP es utilizado para consultar al agente SNMP instalado en cada nodo, para así obtener información adicional que no puede ser obtenida por el protocolo OpenFlow, como la correspondencia entre números de puerto OpenFlow y direcciones IP. Este componente es utilizado por RAUFlow cada vez que se actualiza la topología, y es necesario obtener la información de cada RAUSwitch.
+		\end{itemize}
+\end{itemize}
+
+En RAUFlow, un servicio se refiere a una clase de tráfico a la que se brindará conectividad. Para crear un servicio desde la interfaz Web, es necesario indicar las siguientes propiedades:
+\begin{itemize}
+	\item Nodo e interfaz de entrada.
+	\item Nodo e interfaz de salida.
+	\item Tipo de servicio: si es de capa 2 o 3.
+	\item Ethertype. Indica el protocolo al que pertenece el tráfico del servicio. Es necesario indicar esto sólo si se trata de un servicio de capa 3.
+	\item Opcionalmente, se puede definir el servicio de forma más específica, utilizando puertos TCP o UDP, direcciones IP, direcciones IPv6, etiquetas VLAN, direcciones MAC, y muchos otros.
+\end{itemize}
+
+Definiendo dos servicios iguales pero en sentidos inversos (nodos opuestos de entrada y salida) efectivamente se está definiendo una VPN.
 
 \section{Aplicaciones de SDN}
 El paradigma SDN, por definición, está basado en el software. Esto implica que el rango de aplicaciones o modos de uso que se le puede dar al paradigma es enorme. En esta sección se estudiarán algunas aplicaciones existentes sobre SDN, haciendo foco en la implementación de redes privadas virtuales, debido a que es el servicio que provee RAUFlow.

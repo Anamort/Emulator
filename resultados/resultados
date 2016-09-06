@@ -224,6 +224,7 @@ investigar si se puede levantar varios datapaths en el kernel datapath
 probar quaggarouters (estuvo desactivado mucho tiempo)
 probar la topologia de ejemplo
 probar los cambios al graphml_loader (y probar topologia de prueba del informe)
+correr quagga en el controlador?
 
 PIQUE:
 /proc/[host shell PID]/ns/net (para ver los namespaces de cada host, "ps aux | grep mininet" para ver los PID)
