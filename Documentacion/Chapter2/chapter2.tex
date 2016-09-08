@@ -5,7 +5,7 @@
 En este capítulo se presentan los resultados de la investigación del estado del arte. La sección 2.1 está dedicada a introducir conceptos previos que son claves para entender el trabajo. La sección 2.2 estudia las diferentes aplicaciones que se le puede dar a las redes definidas por software, haciendo hincapié en la implementación de redes privadas virtuales. Por último, la sección 2.3 hace un estudio de las diferentes herramientas que se pueden utilizar para virtualizar SDN, y en particular, la arquitectura RAUFlow.
 
 \section{Conceptos previos}
-A continuación se explican algunos conceptos que son fundamentales, ya que son sobre los que se basa el proyecto RRAP \cite{proyecto-rrap} y este trabajo. Además, se hace un resumen de los aspectos técnicos de RAUFlow y RAUSwitch.
+A continuación se explican algunos conceptos que son fundamentales, ya que son pilares del proyecto RRAP \cite{proyecto-rrap} y de este trabajo. Además, se hace un resumen de los aspectos técnicos de RAUFlow y RAUSwitch.
 
 \subsection{Software Defined Networking}
 Las Redes Definidas por Software (o Software Defined Networking en inglés) es una arquitectura de red emergente que propone separar el plano de control del plano de datos. Esto significa que toda la inteligencia de la red, que en las redes tradicionales se encuentra en cada dispositivo de red, se extrae de los mismos y se pasa a ubicar en una entidad central.
@@ -22,7 +22,7 @@ La arquitectura de SDN está compuesta por tres capas, y se puede ver en la figu
 La comunicación entre las capas se da mediante interfaces (o APIs). La comunicación entre la capa de infraestructura y la de control se implementa con la llamada \textbf{interfaz sur}. Por otro lado, la \textbf{interfaz norte} especifica como las aplicaciones de negocio deben utilizar la visión abstracta de la red y los servicios provistos por el controlador.
 
 \subsection{OpenFlow}
-OpenFlow \cite{openflow-paper} es un estándar desarrollado por la Universidad de Stanford en 2008, y desde entonces es mantenido por la ONF (Open Networking Foundation). Es una implementación de la Interfaz Sur de la arquitectura de SDN, es decir, implementa la comunicación entre la capa de control y la capa de infraestructura (los dispositivos de red). Existen algunas diferencias entre las distintas versiones de OpenFlow. A pesar de que la última versión de OpenFlow al momento de realizar este trabajo es la 1.5, se explicará la versión 1.3.1 ya que es la utilizada por RAUFlow.
+OpenFlow \cite{openflow-paper} es un estándar desarrollado por la Universidad de Stanford en 2008, y desde entonces es mantenido por la ONF (Open Networking Foundation) \cite{onf}. Es una implementación de la Interfaz Sur de la arquitectura de SDN, es decir, implementa la comunicación entre la capa de control y la capa de infraestructura (los dispositivos de red). Existen algunas diferencias entre las distintas versiones de OpenFlow. A pesar de que la última versión de OpenFlow al momento de realizar este trabajo es la 1.5, se explicará la versión 1.3.1 ya que es la utilizada por RAUFlow.
 
 La estructura de un switch OpenFlow se puede ver en la figura \ref{fig:switch_openflow}. Se pueden identificar tres componentes principales: a) un conjunto de tablas de flujos, b) un canal seguro de comunicación entre el switch y el controlador para intercambiar comandos y paquetes, c) el protocolo OpenFlow, que define la comunicación entre el switch y el controlador.
 
@@ -59,7 +59,7 @@ Las capacidades de un switch OpenFlow se abstraen mediante un concepto denominad
 	\item \textbf{Instructions}. Indica las acciones que se deben tomar para los paquetes que le correspondan al flujo. Algunos ejemplos de acciones son:
 		\begin{itemize}
 			\item \textbf{Output:port} permite reenviar el paquete por uno de los puertos del switch.
-			\item \textbf{Output:controller} permite enviarle el paquete al controlador para que él decida que acciones tomar. El controlador luego puede elegir descartar el paquete o instalar un nuevo flujo para contemplar ese tipo de tráfico.
+			\item \textbf{Output:controller} permite enviarle el paquete al controlador para que él decida que acciones tomar. El controlador luego puede elegir descartar el paquete o instalar un nuevo flujo para contemplar ese tipo de tráfico. Este tipo de acción recibe el nombre de \textbf{packet\_in}.
 			\item \textbf{Drop} descarta el paquete.
 			\item \textbf{Push-Tag/Pop-Tag} permite agregar o quitar etiquetas MPLS o VLAN.
 		\end{itemize}
@@ -69,7 +69,7 @@ Las capacidades de un switch OpenFlow se abstraen mediante un concepto denominad
 
 Cuando un paquete llega a un switch OpenFlow, el switch analiza los cabezales del mismo, y los compara con los Match Fields de los flujos que tiene almacenados, y así determina si el paquete pertenece a alguno de ellos. En caso positivo, realiza las acciones que indique el flujo correspondiente. En caso negativo, se aplican las acciones de un flujo especial llamado "Table-miss Flow Entry". Este flujo es el que se utiliza para el tráfico que no se corresponde con ninguno de los otros flujos de un switch, y en general descarta el paquete o lo reenvía al controlador.
 
-OpenFlow 1.3.1 permite utilizar múltiples tablas de flujos. Gracias a una instrucción especial llamada "GoTo Table" un flujo puede indicar que el paquete pase por otra tabla. Cuando el paquete termina de recorrer ese pipeline de tablas, se ejecuta el conjunto de instrucciones que se obtuvo de cada una. La figura \ref{fig:openflow_pipeline} muestra como funciona el pipeline de OpenFlow.
+Los flujos se agrupan en tablas, y OpenFlow 1.3.1 permite utilizar múltiples tablas de flujos. Gracias a una instrucción especial llamada "GoTo Table" un flujo puede indicar que el paquete pase por otra tabla. Cuando el paquete termina de recorrer ese pipeline de tablas, se ejecuta el conjunto de instrucciones que se obtuvo de cada una. La figura \ref{fig:openflow_pipeline} muestra como funciona el pipeline de OpenFlow.
 
 \begin{figure}[h] 
 	\centering    
@@ -173,7 +173,7 @@ CoCo \cite{coco-paper} es un proyecto que estudia el desarrollo de un servicio d
 	\label{fig:coco_imagen}
 \end{figure}
 La arquitectura de CoCo, que se ilustra en la figura \ref{fig:coco_imagen}, está diseñada para aplicarse a muchos dominios. Cada dominio es una red OpenFlow administrada por un controlador OpenDaylight, llamado agente CoCo. Este último tiene dos grandes tareas. La primera es controlar los switches OpenFlow de su dominio, haciendo descubrimiento de la topología y configurando las reglas de reenvío de los switches. La segunda tarea es en el plano de control de la arquitectura, y consiste en utilizar el protocolo BGP para intercambiar información de accesibilidad con otros agentes CoCo (por ende, otros dominios). \\ \\
-Como ya se mencionó, la red de cada dominio está compuesta por switches OpenFlow. Éstos últimos pueden ser internos o de borde, también llamados Provider Edge (o PE). Los de borde son los que se conectan con otros dominios o con las redes cliente (Customer Edge). Las reglas de reenvío están basadas en MPLS, y se utilizan dos niveles de etiquetas. La etiqueta exterior sirve para identificar al switch PE al cual se debe enviar un paquete. La etiqueta interior identifica a la VPN a la cual pertenece el paquete. Esto quiere decir que el tráfico que se recibe por la red CE es etiquetado apropiadamente por el switch PE que recibe dicho tráfico. Cuando el tráfico sale de la red interna hacia la red CE, el switch PE se encarga de remover las etiquetas MPLS del tráfico saliente. \\ \\
+Como ya se mencionó, la red de cada dominio está compuesta por switches OpenFlow. Éstos últimos pueden ser internos o de borde, también llamados Provider Edge (o PE). Los de borde son los que se conectan con otros dominios o con las redes cliente (Customer Edge). Las reglas de reenvío están basadas en MPLS, y se utilizan dos niveles de etiquetas. La etiqueta exterior sirve para identificar al switch PE al cual se debe enviar un paquete. La etiqueta interior identifica a la VPN a la cual pertenece el paquete. Esto quiere decir que el tráfico que se recibe desde la red CE es etiquetado apropiadamente por el switch PE que lo recibe. Cuando el tráfico sale de la red interna hacia la red CE, el switch PE se encarga de remover las etiquetas MPLS del tráfico saliente. \\ \\
 \textbf{OpenFlow para mejorar la escalabilidad de un servicio IP-VPN} \\
 En \cite{ip-vpn-bgp-sdn} se estudia el problema de la escalabilidad al proveer un servicio de IP-VPN, y propone una solución basada en SDN y OpenFlow. Si un proveedor de servicios de telecomunicaciones ofrece un servicio de IP-VPN, es posible que lo haga utilizando el protocolo BGP. Dicho protocolo se utiliza para intercambiar la información de ruteo correspondiente a cada red cliente conectada al servicio. En un esquema no SDN, el procesamiento del plano de control (en este caso BGP) queda a cargo de los routers de la red. Esto presenta un posible problema de escalabilidad. Cuando se agregan nuevos clientes a la VPN, la nueva información de ruteo debe ser propagada. Los recursos de CPU y memoria de los routers serán consumidos de acuerdo a lo que exijan los nuevos clientes. Por lo tanto, es necesario confirmar que hay margen en la capacidad de los dispositivos antes de aceptar nuevos clientes. \\ \\
 La solución que se propone para atacar este problema es utilizar OpenFlow. Se despliega un controlador OpenFlow que además ejecuta múltiples demonios BGP, uno por cada cliente. Los demonios BGP se encargan del intercambio de información de ruteo con los routers de las redes cliente. Un cliente puede tener múltiples redes conectadas a la VPN. Cuando el controlador recibe información de ruteo correspondiente a una determinada red, el demonio BGP encargado de ese cliente notifica a las demás redes del mismo cliente. Además, la misma información de ruteo recibida es procesada para generar las reglas de forwarding (entradas de flujos en los switches OpenFlow) que aseguren la conectividad. Dado que distintos clientes pueden compartir direcciones IP, es necesario que la red OpenFlow pueda distinguir de algún modo a qué cliente pertenece el tráfico. Esto lo logra asignando etiquetas de VLAN a los paquetes cuando entran a la red, que identifican a cada cliente. En el trabajo se menciona, como objetivo futuro, utilizar MPLS en lugar de etiquetas de VLAN. \\ \\
@@ -188,7 +188,7 @@ SDxVPN \cite{sdxvpn} es una propuesta de implementación de VPNs de capa 2 y 3, 
 \end{figure}
 \begin{figure}[t]
 	\caption{Modo de operación de cada servicio de acuerdo a su capa. Imagen extraída de \cite{sdxvpn}}
-	\includegraphics[scale=0.65]{sdxvpn_design}
+	\includegraphics[scale=0.75]{sdxvpn_design}
 	\centering
 	\label{fig:sdxvpn_design}
 \end{figure}
@@ -215,7 +215,7 @@ La principal observación que se debe hacer es que ninguna de las herramientas e
 
 La cuarta columna especifica si se trata de un emulador o simulador (en algunos casos se da que es un híbrido) y la quinta columna detalla cómo es el modo de virtualización que aplica la herramienta. Esta columna es de especial interés para analizar la escalabilidad de la herramienta. Si se trata de un motor de simulación o una emulación con virtualización ligera, es esperable que la herramienta pueda realizar experimentos con muchos nodos. Por otro lado, si utiliza máquinas virtuales completas para representar a los nodos, probablemente se trate de una herramienta diseñada para hacer experimentos chicos, con pocos nodos.
 
-Las siguientes secciones estudian con más detalle las herramientas que se consideran más apropiadas para virtualizar la arquitectura RAUFlow/RAUSwitch. En la última sección se hace una mención aparte para un tipo de herramientas especial, que no sirve para hacer pruebas funcionales de una red como conjunto, sino que para hacer pruebas de estrés sobre cada elemento de la red por separado.
+Las siguientes secciones estudian con más detalle las herramientas que se consideran más apropiadas para virtualizar la arquitectura RAUFlow/RAUSwitch. En la última sección se hace una mención aparte para un tipo de herramientas especial, que no sirve para hacer pruebas funcionales de una red como conjunto, sino que para hacer pruebas de estrés sobre cada elemento de la red OpenFlow por separado.
 
 \begin{table}
 \caption{Lista de emuladores y simuladores más relevantes para este trabajo.}
@@ -274,7 +274,7 @@ EstiNet \cite{estinet} es un emulador y simulador para redes OpenFlow, desarroll
 
 \begin{figure}[H]
 	\caption{Arquitectura de simulación de EstiNet. Imagen extraída de \cite{estinet}}
-	\includegraphics[scale=0.85]{estinet_simulation_archi}
+	\includegraphics[scale=0.75]{estinet_simulation_archi}
 	\centering
 	\label{fig:estinet_simulation_archi}
 \end{figure}
@@ -288,7 +288,7 @@ Este modo dual de EstiNet permite que se pueda integrar con aplicaciones reales,
 Una desventaja importante que tiene EstiNet es que, de acuerdo a \cite{estinet}, la versión máxima de OpenFlow que soporta es la 1.1.0, mientras que la versión que utiliza RAUFlow es la 1.3.1.
 
 \subsection{Mininet}
-Mininet es un emulador de redes SDN muy utilizado en la actualidad, que permite emular hosts, switches y enlaces. Utiliza \textit{virtualización ligera} en Linux para levantar una red completa en un único kernel. La virtualización ligera, también llamada virtualización en el nivel de sistema operativo, consiste en un conjunto de funcionalidades de Linux que le permiten a un sistema ser separado en múltiples \textit{containers} (contenedores) más chicos. Cada container tiene sus propios recursos, pero todos ejecutan sobre el mismo kernel, lo cual los hace más rápidos y livianos. Esto se combina con la capacidad de crear links virtuales entre dichos containers. Mininet no provee ni emula un controlador; el mismo se debe ejecutar como una aplicación común y corriente.
+Mininet \cite{mininet-paper} es un emulador de redes SDN muy utilizado en la actualidad, que permite emular hosts, switches y enlaces. Utiliza \textit{virtualización ligera} en Linux para levantar una red completa en un único kernel. La virtualización ligera, también llamada virtualización en el nivel de sistema operativo, consiste en un conjunto de funcionalidades de Linux que le permiten a un sistema ser separado en múltiples \textit{containers} (contenedores) más chicos. Cada container tiene sus propios recursos, pero todos ejecutan sobre el mismo kernel, lo cual los hace más rápidos y livianos. Esto se combina con la capacidad de crear links virtuales entre dichos containers. Mininet no provee ni emula un controlador; el mismo se debe ejecutar como una aplicación común y corriente.
 
 Este modo de funcionamiento logra que Mininet pueda ser mucho más rápido y escalable que emuladores que utilizan máquinas virtuales completas. Analizando con un poco más de detalle, a continuación se listan los componentes de Mininet y sus características:
 \begin{itemize}
@@ -301,7 +301,7 @@ Mininet tiene una API en Python (el lenguaje en el que está escrito el emulador
 
 Debido a su buena documentación y la forma en que está desarrollado, Mininet puede ser fácilmente extensible para lograr experimentos que la versión estándar no contempla. Existen diversos trabajos donde se presentan extensiones a Mininet, para lograr objetivos específicos:
 \begin{itemize}
-	\item Mininet-HiFi \cite{mininet-hifi} intenta mejorar el realismo de la emulación en Mininet, agregando mecanismos de reserva de recusos y monitoreo para los mismos.
+	\item Mininet-HiFi \cite{mininet-hifi} intenta mejorar el realismo de la emulación en Mininet, agregando mecanismos de reserva de recursos y monitoreo para los mismos.
 	\item MaxiNet \cite{maxinet} y Mininet CE \cite{mininet-ce} son extensiones para hacer emulaciones distribuidas, es decir, con múltiples máquinas físicas.
 	\item Mininet DC \cite{mininet-dc} es un trabajo que extiende Mininet y el controlador POX para hacer experimentos orientados a data centers en la nube.
 \end{itemize}
@@ -334,7 +334,7 @@ El testing y benchmarking de switches OpenFlow tiene como objetivo analizar cuá
 	\item \textbf{Spirent OpenFlow Controller Emulation} \cite{spirent-controller-emulation} es una herramienta desarrollada por la empresa Spirent\footnote{http://spirent.com/} que, igual que OFLOPS, tiene como propósito el testing y benchmarking de switches OpenFlow. Puede emular un controlador OpenFlow, definir millones de flujos y aplicar patrones de tráfico a esos flujos, y de ese modo medir el rendimiento, disponibilidad, seguridad y escalabilidad del switch. Entre sus funcionalidades, se destaca que puede probar todos los aspectos de OpenFlow 1.3, y que puede trabajar con switches híbridos. Estos dos puntos lo hacen una valiosa herramienta para el testing del RAUSwitch.
 \end{itemize}
 \textbf{Testing de controladores} \\
-Similar al caso de los switches, las pruebas de estrés sobre controladores OpenFlow consisten en someterlos a condiciones de mucha carga y estudiar determinadas métricas de su comportamiento. En general los principales aspectos que se buscan estudiar son 1) la cantidad de sesiones paralelas con switches OpenFlow que puede mantener el controlador y 2) el ritmo de mensajes packet\_in que puede manejar. No sólo es útil conocer esos umbrales, sino que también es muy valioso saber cual es el comportamiento esperado si se exceden dichos umbrales. Al ser RAUFlow un controlador de estilo proactivo, el aspecto número dos no es relevante aquí, ya que la red no genera paquetes de tipo packet\_in. A continuación se listan algunas de las herramientas disponibles:
+Similar al caso de los switches, las pruebas de estrés sobre controladores OpenFlow consisten en someterlos a condiciones de mucha carga y estudiar determinadas métricas de su comportamiento. En general los principales aspectos que se buscan estudiar son 1) la cantidad de sesiones paralelas con switches OpenFlow que puede mantener el controlador y 2) el ritmo de mensajes packet\_in que puede manejar. No sólo es útil conocer esos umbrales, sino que también es muy valioso saber cual es el comportamiento esperado si se exceden dichos umbrales. Al ser RAUFlow un controlador de estilo proactivo (instala de antemano los flujos para el tráfico permitido, todo el tráfico restante es descartado), el aspecto número dos no es relevante aquí, ya que la red no genera paquetes de tipo packet\_in. A continuación se listan algunas de las herramientas disponibles:
 \begin{itemize}
 	\item \textbf{Cbench} \cite{cbench} es una herramienta para benchmarking de controladores, y es parte del proyecto OFLOPS. Su funcionamiento es muy simple: el usuario indica una cantidad \textit{n} de switches, la herramienta crea \textit{n} sesiones OpenFlow paralelas con el controlador, y luego comienza a enviar mensajes de tipo packet\_in y mide el tiempo que demora el controlador en responder a esos mensajes.
 	\item \textbf{Spirent OpenFlow Switch Emulation} \cite{spirent-switch-emulation} es la propuesta de Spirent para el stress-testing de controladores OpenFlow. Igual que Cbench, en esencia consiste en emular múltiples switches y generar mensajes de tipo packet\_in. Sin embargo, es una solución un poco más sofisticada que Cbench, ya que permite trabajar con múltiples topologias y protocolos como ARP y LLDP.
