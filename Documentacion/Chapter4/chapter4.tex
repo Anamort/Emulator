@@ -10,10 +10,10 @@ El objetivo de estas pruebas es aplicar topologias de diferentes tamaños y cara
 
 Las topologias utilizadas se listan a continuación:
 \begin{itemize}
-	\item \textbf{Básica}: 4 nodos en topología de full mesh. Es la utilizada en el prototipo físico. Figura \ref{fig:topo_basica}.
-	\item \textbf{Chica}: topología arbitraria de 11 nodos (fuente: Topology Zoo). Figura \ref{fig:topo_chica}.
-	\item \textbf{Mediana}: topología arbitraria de 45 nodos (fuente: Topology Zoo). Figura \ref{fig:topo_mediana}.
-	\item \textbf{Grande}: topología de tipo arborescente compuesta por 105 nodos. Figura \ref{fig:topo_grande}
+	\item \textbf{Básica}: 4 nodos en topología de full mesh. Es la utilizada en el prototipo físico. Figura \ref{fig:basic_topology}.
+	\item \textbf{Chica}: topología arbitraria de 11 nodos (fuente: Topology Zoo). Figura \ref{fig:small_topology}.
+	\item \textbf{Mediana}: topología arbitraria de 45 nodos (fuente: Topology Zoo). Figura \ref{fig:medium_topology}.
+	\item \textbf{Grande}: topología de tipo arborescente compuesta por 105 nodos. Figura \ref{fig:large_topology}
 \end{itemize}
 
 Todas las topologias tienen las siguientes características:
@@ -24,31 +24,31 @@ Todas las topologias tienen las siguientes características:
 \end{itemize}
 
 \begin{figure}[H]
-	\caption{Topología básica}
-	\includegraphics[scale=0.4]{topo_basica}
+	\caption{Topología de prueba básica}
+	\includegraphics[scale=0.6]{basic_topology}
 	\centering
-	\label{fig:topo_basica}
+	\label{fig:basic_topology}
 \end{figure}
 
 \begin{figure}[H]
-	\caption{Topología chica}
-	\includegraphics[scale=0.4]{topo_chica}
+	\caption{Topología de prueba chica}
+	\includegraphics[scale=0.4]{small_topology}
 	\centering
-	\label{fig:topo_chica}
+	\label{fig:small_topology}
 \end{figure}
 
 \begin{figure}[H]
-	\caption{Topología mediana}
-	\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{topo_mediana}
+	\caption{Topología de prueba grande}
+	\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{large_topology}
 	\centering
-	\label{fig:topo_mediana}
+	\label{fig:large_topology}
 \end{figure}
 
 \begin{figure}[H]
-	\caption{Topología grande}
-	\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{topo_grande}
+	\caption{Topología de prueba mediana}
+	\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{medium_topology}
 	\centering
-	\label{fig:topo_grande}
+	\label{fig:medium_topology}
 \end{figure}
 
 Es importante tener en cuenta que realizar esta serie de pruebas es posible gracias al proceso de verificación funcional explicado en la sección 3.5. En ella se explica la detección y corrección de algunos problemas de escalabilidad tanto del entorno virtual como de la arquitectura RAUFlow misma. Por lo tanto, estas pruebas se pueden considerar como una continuación del estudio de escalabilidad presentado en dicha sección.
