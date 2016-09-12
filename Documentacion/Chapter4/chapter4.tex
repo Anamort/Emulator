@@ -6,7 +6,11 @@
 Con el entorno de simulación construido, el siguiente objetivo es realizar pruebas de escala sobre la arquitectura. Se realizan dos tipos de pruebas de escala: (a) verificar cómo funciona la arquitectura para topologias de escala, (b) realizar estudios de escala sobre la cantidad de servicios que soporta. En este capítulo se explicará el propósito de cada prueba, las condiciones bajo las cuales se ejecuta cada una de ellas (topologias, tipos de tráfico, etc) y por último, los resultados que arrojan. Las pruebas fueron realizadas en el servidor del Instituto de Computación, con una máquina virtual Lubuntu 14.04 sobre KVM, con 32GB de RAM y un procesador AMD Opteron 23xx.
 
 \section{Topologias de escala}
-El objetivo de estas pruebas es aplicar topologias de diferentes tamaños y características a la arquitectura y estudiar el proceso de creación de las redes privadas virtuales en cada realidad.
+Como se explica en el capítulo 1, la arquitectura RAUFlow ha sido probada (hasta antes de realizar este trabajo) con una topología de 4 nodos, debido a las limitaciones del prototipo físico. Por lo tanto, el objetivo de estas pruebas es utilizar el entorno virtual para aplicar topologias de diferentes tamaños y características a la arquitectura y estudiar el proceso de creación de las redes privadas virtuales en cada realidad.
+
+Es importante tener en cuenta que realizar esta serie de pruebas es posible gracias al proceso de verificación funcional explicado en la sección 3.5. En ella se explica la detección y corrección de algunos problemas de escalabilidad tanto del entorno virtual como de la arquitectura RAUFlow misma. Por lo tanto, estas pruebas se pueden considerar como una continuación del estudio de escalabilidad presentado en dicha sección.
+
+\subsection{Descripción del escenario}
 
 Las topologias utilizadas se listan a continuación:
 \begin{itemize}
@@ -38,23 +42,22 @@ Todas las topologias tienen las siguientes características:
 \end{figure}
 
 \begin{figure}[H]
-	\caption{Topología de prueba grande}
-	\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{large_topology}
-	\centering
-	\label{fig:large_topology}
-\end{figure}
-
-\begin{figure}[H]
 	\caption{Topología de prueba mediana}
 	\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{medium_topology}
 	\centering
 	\label{fig:medium_topology}
 \end{figure}
 
-Es importante tener en cuenta que realizar esta serie de pruebas es posible gracias al proceso de verificación funcional explicado en la sección 3.5. En ella se explica la detección y corrección de algunos problemas de escalabilidad tanto del entorno virtual como de la arquitectura RAUFlow misma. Por lo tanto, estas pruebas se pueden considerar como una continuación del estudio de escalabilidad presentado en dicha sección.
+\begin{figure}[H]
+	\caption{Topología de prueba grande}
+	\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{large_topology}
+	\centering
+	\label{fig:large_topology}
+\end{figure}
 
-\subsection{Escenario}
 El objetivo es estudiar como impacta el tamaño de la topología y el largo del camino en el tiempo que demora la arquitectura en establecer una VPN entre dos subredes cliente. Se espera que ese tiempo sea influenciado en gran medida por dos factores: el tiempo que demora el controlador en calcular el camino óptimo y el tiempo que demora en configurar los flujos en cada nodo del camino. Dado que los servicios se crean enviando pedidos HTTP POST al controlador (y se deben enviar dos por cada VPN, uno de ida y uno de vuelta), el tiempo de creación de los mismos se medirá como el tiempo que demore el controlador en devolver las respuestas HTTP indicando que fueron creados con éxito (esta información está disponible en los logs). Para lograr resultados representativos y reducir el margen de error, en lugar de crear una VPN y medir su tiempo solamente, se realizan cuatro ejecuciones y se calculan las métricas estadísticas relevantes. Para agilizar la ejecución de esta prueba se utiliza un script en Python que manda los pedidos HTTP POST al controlador para crear las VPN, y de este modo no hay necesidad de hacerlo manualmente a través de la interfaz web.
+
+\subsection{Resultados y observaciones}
 
 \newcolumntype{?}{!{\vrule width 3pt}}
 \newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
@@ -97,7 +100,7 @@ El objetivo es estudiar como impacta el tamaño de la topología y el largo del 
 	\label{table:tiempos_por_topologia}
 \end{table}
 
-La tabla \ref{table:tiempos_por_topologia} muestra los resultados obtenidos en el escenario. En ella se muestran los tiempos obtenidos para cada topología y largo de camino. Cada caso fue ejecutado cuatro veces, y para cada conjunto de ejecuciones se calcula la media, mediana, desviación estándar y coeficiente de variación (CV).
+La tabla \ref{table:tiempos_por_topologia} muestra los resultados obtenidos en las pruebas. En ella se muestran los tiempos obtenidos para cada topología y largo de camino. Cada caso fue ejecutado cuatro veces, y para cada conjunto de ejecuciones se calcula la media, mediana, desviación estándar y coeficiente de variación (CV).
 
 El primer dato que se puede extraer de los resultados obtenidos es que hay una diferencia de tiempo significativa entre una VPN de capa 2 y una de capa 3. La explicación de este comportamiento se encuentra en el algoritmo de distribución de etiquetas MPLS, explicado en la sección 5.5.4 de \cite{proyecto-rrap}. En ella se explica el problema de que, cuando un paquete entra a la red, su ethertype es sustituido por el ethertype correspondiente al protocolo MPLS. Esto implica que cuando el paquete sale de la red, es necesario de alguna forma obtener el ethertype original del mismo. Como explica la documentación de RRAP, en la VPN de capa 3 esto se resuelve haciendo que el usuario indique el ethertype del servicio cuando lo crea. Por otro lado, dado que el tráfico de una VPN de capa 2 puede ser de cualquier ethertype, la solución adoptada es, por cada servicio de capa 2, instalar 42 flujos, uno por cada ethertype posible. De esta forma, cuando el paquete sale de la red, se le asigna el ethertype que corresponda al flujo que utilizó. Desde el punto de vista del tiempo, es esperable que crear una VPN de capa 2 requiera más tiempo que una de capa 3, ya que debe instalar muchos más flujos en los nodos de su camino.
 
@@ -114,9 +117,7 @@ El segundo punto puede explicar esto porque si hay congestión en la red, entonc
 
 Con el objetivo de hacer un análisis más fino sobre el tiempo de creación de las VPNs, se repitieron las pruebas pero agregando modificaciones al código del controlador que permitan analizar cuánto tiempo dedica a cada parte del proceso. Se identificaron tres partes fundamentales: el cálculo del camino óptimo, todo lo relacionado al cálculo y manejo de las etiquetas MPLS, y la instalación de los flujos OpenFlow. La ejecución de esas tres tareas abarca la mayoría (más del 90\%) del tiempo de creación de una VPN. Las modificaciones en el código consistieron de agregar \textit{timestamps}\footnote{Marca temporal que indica la hora en la que se lleva a cabo un evento.} en las partes claves del código. Luego, analizando el log del controlador se hace la resta de los diferentes timestamps para determinar cuánto tiempo se tomó para cada tarea. Es importante tener en cuenta que este método tiene un margen de error no despreciable, ya que está a la merced del tiempo de CPU que se le asigna al controlador. De hecho, algunas ejecuciones fueron descartadas de los resultados ya que se alejan demasiado del resto, probablemente porque la CPU fue asignada durante la creación de una VPN a otros procesos por demasiado tiempo.
 
-Las gráficas en las figuras \ref{fig:gráfica_tiempo_chica}, \ref{fig:gráfica_tiempo_mediana} y \ref{fig:gráfica_tiempo_grande} a continuación muestran, para cada topología, cómo se descompone el tiempo de ejecución para cada largo de camino. Se omite la de la topología básica ya que sólo permite crear VPNs de largo 1. Cada punto en la gráfica indica el porcentaje del tiempo total que se necesitó para llevar a cabo una de las tres tareas ya mencionadas (cálculo del camino, manejo de etiquetas, instalación de flujos OpenFlow). Cada porcentaje se mide en base al promedio de 8 ejecuciones (descartando las ejecuciones que arrojan valores muy alejados del resto).
-
-\begin{figure}[H]
+\begin{figure}[h]
 	\caption{Distribución del tiempo de creación de VPNs en la topología chica}
 	\centering
 	\label{fig:gráfica_tiempo_chica}
@@ -189,7 +190,9 @@ Las gráficas en las figuras \ref{fig:gráfica_tiempo_chica}, \ref{fig:gráfica_
 	\end{tikzpicture}
 \end{figure}
 
-\begin{figure}[H]
+Las gráficas en las figuras \ref{fig:gráfica_tiempo_chica}, \ref{fig:gráfica_tiempo_mediana} y \ref{fig:gráfica_tiempo_grande} muestran, para cada topología, cómo se descompone el tiempo de ejecución para cada largo de camino. Se omite la de la topología básica ya que sólo permite crear VPNs de largo 1. Cada punto en la gráfica indica el porcentaje del tiempo total que se necesitó para llevar a cabo una de las tres tareas ya mencionadas (cálculo del camino, manejo de etiquetas, instalación de flujos OpenFlow). Cada porcentaje se mide en base al promedio de 8 ejecuciones (descartando las ejecuciones que arrojan valores muy alejados del resto).
+
+\begin{figure}[h]
 	\caption{Distribución del tiempo de creación de VPNs en la topología mediana}
 	\centering
 	\label{fig:gráfica_tiempo_mediana}
@@ -262,7 +265,7 @@ coordinates {
 \end{tikzpicture}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[h]
 	\caption{Distribución del tiempo de creación de VPNs en la topología grande}
 	\centering
 	\label{fig:gráfica_tiempo_grande}
@@ -385,10 +388,10 @@ Como se explica en la descripción del escenario, se busca determinar si la exis
 
 Se puede ver que la máxima cantidad de VPNs con la que se probó fue de 15.000. Cada VPN de capa 2 está compuesta por dos servicios de capa 2, y cada uno de esos servicios introduce 42 flujos en cada nodo del camino. Esto quiere decir que cada uno contiene alrededor de 1.260.000 (15.000 * 2 * 42) flujos en su tabla. Se podría argumentar que hacen falta más flujos para impactar el throughput, pero en realidad la explicación se encuentra en la especificación de Open vSwitch, y ya fue mencionada en el capítulo 3. Open vSwitch realiza cacheo de flujos. Eso quiere decir que cuando un paquete de datos de un determinado flujo llega por primera vez a un nodo, este paquete es enviado al pipeline de OpenFlow para determinar qué acción se debe tomar. Luego de realizada, esta acción es escrita en la caché, y tiene un tiempo de vida de entre 5 y 10 segundos. Si en ese período de tiempo llega otro paquete del mismo flujo, no hay necesidad de enviar el paquete al pipeline, porque ya se sabe cuales son las acciones a tomar para el mismo. Por lo tanto, si un flujo de datos es constante y rápido, el tamaño de la tabla de OpenFlow no afectará el tiempo de decisión, ya que sólo el primer paquete de ese flujo deberá ser comparado con dicha tabla.
 
-Mediante el comando 'ovs-appctl dpctl/show' de Open vSwitch, se puede examinar las estadísticas de la cache de cada nodo. A modo de ejemplo, en la figura \ref{fig:cache_sample} se observan las estadísticas de un nodo llamado 'alice'. En la sección 'lookups' se detallan cuantos 'hits' y 'miss' de caché han ocurrido hasta el momento, y 'flows' indica cuantos flujos activos hay en el momento en la caché.
+Mediante el comando "ovs-appctl dpctl/show" de Open vSwitch, se puede examinar las estadísticas de la cache de cada nodo. A modo de ejemplo, en la figura \ref{fig:cache_sample} se observan las estadísticas de un nodo llamado "alice". En la sección "lookups" se detallan cuantos "hits" y "miss" de caché han ocurrido hasta el momento, y "flows" indica cuantos flujos activos hay en el momento en la caché.
 
 \begin{figure}[H]
-	\caption{Estadísticas de cache de flujos del nodo 'alice'.}
+	\caption{Estadísticas de cache de flujos del nodo "alice".}
 	\includegraphics[scale=1]{cache_sample}
 	\centering
 	\label{fig:cache_sample}
