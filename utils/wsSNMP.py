@@ -1,4 +1,10 @@
 #!/usr/bin/python
+#
+# Este archivo fue re-implementado sin SNMP, con Open vSwitch.
+# Su sustituto es wsOVS.py
+# La razon del reemplazo se puede leer en el informe del proyecto,
+# En el capitulo 3
+#
 from flask import Flask
 import commands
 

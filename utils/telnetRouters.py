@@ -9,7 +9,7 @@ import json
 
 
 
-CONTROLLER = "http://192.168.1.10:8080/"
+CONTROLLER = "http://0.0.0.0:8080/"
 HOST = "localhost"
 password = "zebra"
 port = 2604

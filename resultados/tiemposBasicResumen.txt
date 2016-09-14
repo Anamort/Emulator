@@ -1,7 +1,0 @@
-Camino 1:
-	VPN Capa 2 -- Promedio Camino: 0.561359361521
-	VPN Capa 2 -- Promedio MPLS: 0.614400107146
-	VPN Capa 2 -- Promedio Flujos: 96.4633834535
-	VPN Capa 3 -- Promedio Camino: 10.1090641594
-	VPN Capa 3 -- Promedio MPLS: 20.9828568424
-	VPN Capa 3 -- Promedio Flujos: 37.7220467894

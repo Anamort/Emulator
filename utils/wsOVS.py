@@ -51,7 +51,6 @@ def getInfo(address):
     port = Puerto(numeroPuerto,mac,nombreInterfaz,ip)
     puertos[nombreInterfaz] = port
     # El numero de puerto se deriva con el orden de los puertos
-    # CUIDADO!!
 
   # Se obtiene el datapath_id
   regexp = re.compile('.*datapath_id\s*:\s*"(\w+)', re.DOTALL)
@@ -67,7 +66,6 @@ def getInfo(address):
   return router.to_JSON()
 
 if __name__ == '__main__':
-  # getInfo("192.168.1.14")
     app.run(host='0.0.0.0', port=5000)
 	#default port: 5000
 	
