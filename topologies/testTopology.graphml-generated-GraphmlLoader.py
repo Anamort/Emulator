@@ -11,7 +11,7 @@ class CustomTopology( Topo ):
         Topo.__init__(self)
 
         # Add controller
-        root = self.addHost('controller', cls=RAUController, ips=['192.168.1.10/24'])
+        controller = self.addHost('controller', cls=RAUController, ips=['192.168.1.10/24'])
         # Add management network switch
         man_switch = self.addSwitch('s1', protocols='OpenFlow13', failMode='standalone')
 
@@ -26,7 +26,7 @@ class CustomTopology( Topo ):
         host7 = self.addHost('host7', cls=RAUHost, ips=['10.10.9.2/24'])
 
         # Add links between nodes
-        self.addLink(man_switch, root, 1, 0)
+        self.addLink(man_switch, controller, 1, 0)
         self.addLink(man_switch, switch2, 2, 0)
         self.addLink(man_switch, switch1, 3, 0)
         self.addLink(man_switch, switch4, 4, 0)

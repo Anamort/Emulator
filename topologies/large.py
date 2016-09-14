@@ -491,7 +491,7 @@ class CustomTopology( Topo ):
     
 
     # Controlador
-    root = self.addHost('controller', cls=RAUController, ips=['192.168.1.10/24'])
+    controller = self.addHost('controller', cls=RAUController, ips=['192.168.1.10/24'])
     
     # Switch de la red de gestion
     man_switch = self.addSwitch('s1', protocols='OpenFlow13', failMode='standalone')
@@ -602,7 +602,7 @@ class CustomTopology( Topo ):
     self.addLink(man_switch, router103, 104, 0)
     self.addLink(man_switch, router104, 105, 0)
     self.addLink(man_switch, router105, 106, 0)
-    self.addLink(man_switch, root, 1, 0)
+    self.addLink(man_switch, controller, 1, 0)
     
     self.addLink(router1, router2, 1, 1)
     self.addLink(router1, router3, 2, 1)

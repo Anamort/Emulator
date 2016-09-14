@@ -1,6 +1,6 @@
-{"router_id": "192.168.1.14", "node_top_type": 1, "node_name": "alice"}
-{"router_id": "192.168.1.14", "ce_ip_address": "10.0.0.1", "ce_mac_address": "00:00:00:00:00:01", "ip_address": "10.0.0.2", "iface_top_type": 1}
-{"router_id": "192.168.1.11", "node_top_type": 0, "node_name": "galois"}
-{"router_id": "192.168.1.12", "node_top_type": 1, "node_name": "oz"}
-{"router_id": "192.168.1.12", "ce_ip_address": "10.1.0.1", "ce_mac_address": "00:00:00:00:00:02", "ip_address": "10.1.0.2", "iface_top_type": 1}
-{"router_id": "192.168.1.13", "node_top_type": 0, "node_name": "possion"}
+{"router_id": "192.168.1.12", "node_top_type": 0, "node_name": "switch1"}
+{"router_id": "192.168.1.11", "node_top_type": 0, "node_name": "switch2"}
+{"router_id": "192.168.1.14", "node_top_type": 1, "node_name": "switch3"}
+{"router_id": "192.168.1.14", "ce_ip_address": "10.10.7.2", "ce_mac_address": "00:00:00:00:00:1", "ip_address": "10.10.7.1", "iface_top_type": 1}
+{"router_id": "192.168.1.13", "node_top_type": 1, "node_name": "switch4"}
+{"router_id": "192.168.1.13", "ce_ip_address": "10.10.8.2", "ce_mac_address": "00:00:00:00:00:2", "ip_address": "10.10.8.1", "iface_top_type": 1}

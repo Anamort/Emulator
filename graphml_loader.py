@@ -65,7 +65,7 @@ outputstring_2a='''
         # Add controller
 '''
 outputstring_2a += "        "
-outputstring_2a += "root = self.addHost('controller', cls=RAUController, ips=['" + controller_ip + "/24'])"
+outputstring_2a += "controller = self.addHost('controller', cls=RAUController, ips=['" + controller_ip + "/24'])"
 outputstring_2a += '''
         # Add management network switch
         man_switch = self.addSwitch('s1', protocols='OpenFlow13', failMode='standalone')
@@ -274,7 +274,7 @@ outputstring_2b += tempstring
 # NOW CREATE THE LINKS
 # FIRST THE MANAGEMENT LINKS
 tempstring2 = ""
-tempstring2 += "        self.addLink(man_switch, root, 1, 0)\n"
+tempstring2 += "        self.addLink(man_switch, controller, 1, 0)\n"
 counter = 1
 for i in id_node_name_dict.keys():
     if id_node_type_dict[i] == "rauswitch":
@@ -368,9 +368,9 @@ outputstring_to_be_exported += outputstring_3
 
 # GENERATION FINISHED, WRITE STRING TO FILE
 if output_file_name == '':
-    output_file_name = input_file_name + '-generated-Mininet-Topo.py'
+    output_file_name = input_file_name + '-generated-GraphmlLoader.py'
 
-outputfile = open("topologies/" + output_file_name, 'w')
+outputfile = open(output_file_name, 'w')
 outputfile.write(outputstring_to_be_exported)
 outputfile.close()
 
