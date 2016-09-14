@@ -320,7 +320,7 @@ class RAUSwitch(Host):
       nro_puerto_virtual = i + len(vif_names)
       if self.border == 1 and i == len(vif_names):
         # Si es un router de borde y es la ultima interfaz, entonces es la interfaz con el CE
-        # Por lo tanto se agrega dl_type=0x0806
+        # Por lo tanto se agrega dl_type=0x0806 (ARP)
         self.cmd('ovs-ofctl -O %s add-flow "%s" table=0,priority=0,hard_timeout=0,idle_timeout=0,in_port=%s,dl_type=0x0806,actions=output:%s' %(self.OF_V, self.name, str(i), str(nro_puerto_virtual)))
         self.cmd('ovs-ofctl -O %s add-flow "%s" table=0,priority=0,hard_timeout=0,idle_timeout=0,in_port=%s,dl_type=0x0806,actions=output:%s' %(self.OF_V, self.name, str(nro_puerto_virtual), str(i)))
       else:        

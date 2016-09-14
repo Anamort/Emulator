@@ -28,6 +28,7 @@ class Puerto:
 
 app = Flask(__name__)
 
+# Se mantiene la ruta vieja de wsSNMP.py para evitar modificar el controlador
 @app.route('/snmp/atp/<address>')
 def getInfo(address):
   print address
