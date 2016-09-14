@@ -68,6 +68,8 @@ Obviamente esto no es deseable, pero no significa una desventaja muy seria, ya q
 \subsection{RAUController}
 En el uso típico de Mininet, la comunicación entre el controlador y el switch se da a través de la interfaz de loopback. Esto es así porque los switches no tienen su propio namespace. Para lograr dicha comunicación, no hace falta un objeto en Mininet que represente el controlador, ya que ejecutar la aplicación en el sistema operativo base ya habilita al switch a comunicarse con ella a través de la interfaz de loopback. Esta situación cambia en este diseño, porque los switches pasan a tener su propio network namespace. Esto lleva a la necesidad de crear un host virtual, que ejecute la aplicación de RAUFlow y se comunique con los switches a través de enlaces virtuales. Para satisfacer esta necesidad se usa la clase RAUController.
 
+Esta clase además ejecuta su propia instancia de Quagga, para poder acceder localmente a la base de datos topológica de OSPF.
+
 \subsection{QuaggaRouter}
 Es una clase similar al RAUSwitch pero sin Open vSwitch, es decir, sólo usa Quagga. Apunta a representar el router CE (Customer Edge) que utilizaría una subred cliente para conectarse a la red SDN. Siempre debería estar conectado a un RAUSwitch de borde.
 
