@@ -1,3 +1,0 @@
-1) explicar sdn
-2) explicar que no seria realista esperar un cambio repentino para adoptar SDN masivamente por la comunidad internacional
-3) introducir RAUFlow desde el punto anterior

@@ -266,7 +266,9 @@ class RAUSwitch(Host):
     self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait set bridge %s protocols=%s 2> /dev/null" %(self.path_ovs, 
     self.name, self.OF_V))
     self.cmd("ovs-vsctl --db=unix:%s/db.sock --no-wait set-fail-mode %s secure" %(self.path_ovs, self.name))
-    self.cmd('ovs-vsctl --db=unix:%s/db.sock --no-wait set bridge %s datapath_type=netdev' %(self.path_ovs, self.name))
+
+    # Esto hace que Open vSwitch se ejecute totalmente en modo user-space (sin modulo en el kernel)
+    # self.cmd('ovs-vsctl --db=unix:%s/db.sock --no-wait set bridge %s datapath_type=netdev' %(self.path_ovs, self.name))
     
     # Este entorno no utiliza sFlow.
     # Sin embargo, a continuacion se muestra un ejemplo

@@ -1,3 +1,0 @@
-metodo auxiliar netmask
-controlar ips<->intfs controller_ip border,ce_mac_address,ce_ip_address
-comentarios (lenguaje?)
