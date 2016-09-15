@@ -54,17 +54,6 @@ Cada RAUSwitch está en su propio network namespace (igual que la clase Host) y 
 
 No es posible utilizar una única instancia de Open vSwitch (como en Mininet estándar, recordar sección 2.3.3 del estado del arte) ya que no es posible que una instancia defina múltiples switches, cada uno en su propio network namespace. Y se necesita que cada uno tenga su namespace para que pueda comportarse como router legado y tenga sus propias tablas de ruteo e interfaces. Aunque Quagga no presenta ningún problema para ejecutarse de este modo, es importante tener en cuenta que Open vSwitch no está diseñado para ejecutarse en múltiples instancias paralelas, y por lo tanto hacer que funcione correctamente es una tarea más compleja. Como la comunicación entre los componentes de Open vSwitch se efectúa mediante Unix Sockets, es necesario que cada instancia tenga su propio socket, de lo contrario si todas las instancias utilizaran el mismo socket ocurriría un problema de lockeo.
 
-\begin{figure}[t]
-	\caption{Arquitectura simplificada de Open vSwitch.}
-	\includegraphics[scale=0.65]{ovs_dataplane}
-	\centering
-	\label{fig:ovs_dataplane}
-\end{figure}
-
-Si bien el enfoque de múltiples instancias de Open vSwitch funciona, lo hace con determinadas limitaciones. Como se explica en la sección 2.1.3 del capítulo del estado del arte (y como lo muestra la figura \ref{fig:ovs_dataplane}), Open vSwitch utiliza un módulo en el kernel que actúa como cache para flujos recientes y que aumenta radicalmente la velocidad de procesamiento de paquetes. Debido a que Open vSwitch no contempla la existencia de múltiples módulos de kernel paralelos, y no se puede utilizar un único módulo para múltiples instancias, es necesario que cada instancia se ejecute completamente en el userspace. Esto implica que cada paquete que un RAUSwitch procese deberá ser evaluado por su demonio ovs-vswitchd que se encuentra en el userspace, lo cual reduce la velocidad significativamente.
-
-Obviamente esto no es deseable, pero no significa una desventaja muy seria, ya que el objetivo del entorno no es ser performante al procesar paquetes. Cabe aclarar que en este modo Open vSwitch continúa haciendo cacheo de flujos, pero ahora lo hace en el userspace.
-
 \subsection{RAUController}
 En el uso típico de Mininet, la comunicación entre el controlador y el switch se da a través de la interfaz de loopback. Esto es así porque los switches no tienen su propio namespace. Para lograr dicha comunicación, no hace falta un objeto en Mininet que represente el controlador, ya que ejecutar la aplicación en el sistema operativo base ya habilita al switch a comunicarse con ella a través de la interfaz de loopback. Esta situación cambia en este diseño, porque los switches pasan a tener su propio network namespace. Esto lleva a la necesidad de crear un host virtual, que ejecute la aplicación de RAUFlow y se comunique con los switches a través de enlaces virtuales. Para satisfacer esta necesidad se usa la clase RAUController.
 

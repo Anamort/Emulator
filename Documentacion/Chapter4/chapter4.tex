@@ -351,7 +351,7 @@ Desde el punto de vista técnico esto también es esperable, ya que el algoritmo
 \section{Escala de servicios y flujos}
 Entre los requerimientos de la RAU2 se encuentra el de la escalabilidad de usuarios. Específicamente, se espera alcanzar en un mediano plazo un total de 11.000 docentes, 7.000 funcionarios y 140.000 estudiantes (de acuerdo a los requerimientos relevados por el proyecto RRAP). Esto implica que la red será sujeta a importantes cantidades de servicios y flujos distintos. Para poder asegurar que la arquitectura escala sin problemas, se la debería someter a experimentos que reflejen los niveles de actividad y tráfico que son esperados en un futuro. Sin embargo, dichos experimentos no son llevados a cabo por este trabajo por dos razones. En primer lugar, se considera que es una tarea que lleva demasiado tiempo como para ser incluida dentro del alcance de este trabajo. En segundo lugar, no están disponibles los modelos y patrones de tráfico que serían necesarios para esas pruebas.
 
-También es importante recordar que el entorno virtual no generará resultados relevantes en lo que refiere al nivel real de rendimiento de la arquitectura. Recordar sección 3.3.1, donde se explica que cada instancia de Open vSwitch se ejecuta en modo user-space, y por ende procesa los paquetes de forma bastante lenta.
+También es importante recordar que el entorno virtual no generará resultados relevantes en lo que refiere al nivel real de rendimiento de la arquitectura. Utilizar un emulador significa que los recursos de la computadora se repartirán entre todos los nodos virtuales, por lo tanto el rendimiento que se observe en la red emulada será inferior al observado en una red física.
 
 Se puede concluir entonces que las pruebas detalladas a continuación no aseguran la escalabilidad de RAUFlow, pero sí ayudan a investigar el comportamiento de la red y los dispositivos cuando se los somete a muchos servicios.
 
@@ -373,12 +373,12 @@ Se estudian posibles problemas que puedan tener la arquitectura de la red o, en 
 		\hline\hline
 		\# de VPNs & Throughput (Kbits/s) \\ [0.5ex]
 		\hline
-		1 & 893 \\
-		3000 & 887 \\
-		6000 & 887 \\
-		9000 & 890 \\
-		12000 & 885 \\
-		15000 & 886 \\ [1ex]
+		1 & 1287 \\
+		3000 & 1286 \\
+		6000 & 1265 \\
+		9000 & 1270 \\
+		12000 & 1290 \\
+		15000 & 1280 \\ [1ex]
 		\hline
 	\end{tabular}
 	\label{table:escala_de_servicios}
@@ -386,9 +386,16 @@ Se estudian posibles problemas que puedan tener la arquitectura de la red o, en 
 
 Como se explica en la descripción del escenario, se busca determinar si la existencia de muchos flujos en la tabla implica que un RAUSwitch demora más tiempo en encontrar el flujo OpenFlow que corresponde para un paquete entrante, y por lo tanto demora más en determinar la acción a tomar para ese paquete. Si esto fuera así, debería existir una relación inversamente proporcional entre la cantidad de flujos en la tabla de un nodo y su velocidad para procesar paquetes. En la tabla \ref{table:escala_de_servicios} se pueden observar los throughput promedio medidos para un flujo de datos sobre la topología básica, con distintas cantidades de VPN existiendo en la red. La principal conclusión que se puede sacar de la tabla es que el throughput no es afectado por la cantidad de VPNs existentes en el momento (se asume que las pequeñas diferencias numéricas entran en el margen de error).
 
-Se puede ver que la máxima cantidad de VPNs con la que se probó fue de 15.000. Cada VPN de capa 2 está compuesta por dos servicios de capa 2, y cada uno de esos servicios introduce 42 flujos en cada nodo del camino. Esto quiere decir que cada uno contiene alrededor de 1.260.000 (15.000 * 2 * 42) flujos en su tabla. Se podría argumentar que hacen falta más flujos para impactar el throughput, pero en realidad la explicación se encuentra en la especificación de Open vSwitch, y ya fue mencionada en el capítulo 3. Open vSwitch realiza cacheo de flujos. Eso quiere decir que cuando un paquete de datos de un determinado flujo llega por primera vez a un nodo, este paquete es enviado al pipeline de OpenFlow para determinar qué acción se debe tomar. Luego de realizada, esta acción es escrita en la caché, y tiene un tiempo de vida de entre 5 y 10 segundos. Si en ese período de tiempo llega otro paquete del mismo flujo, no hay necesidad de enviar el paquete al pipeline, porque ya se sabe cuales son las acciones a tomar para el mismo. Por lo tanto, si un flujo de datos es constante y rápido, el tamaño de la tabla de OpenFlow no afectará el tiempo de decisión, ya que sólo el primer paquete de ese flujo deberá ser comparado con dicha tabla.
+Se puede ver que la máxima cantidad de VPNs con la que se probó fue de 15.000. Cada VPN de capa 2 está compuesta por dos servicios de capa 2, y cada uno de esos servicios introduce 42 flujos en cada nodo del camino. Esto quiere decir que cada uno contiene alrededor de 1.260.000 (15.000 * 2 * 42) flujos en su tabla. Se podría argumentar que hacen falta más flujos para impactar el throughput, pero en realidad la explicación se encuentra en la especificación de Open vSwitch, y ya fue mencionada en el capítulo 2. Open vSwitch realiza cacheo de flujos. Eso quiere decir que cuando un paquete de datos de un determinado flujo llega por primera vez a un nodo, este paquete es enviado al pipeline de OpenFlow para determinar qué acción se debe tomar. Luego de realizada, esta acción es escrita en la caché, y tiene un tiempo de vida de entre 5 y 10 segundos. Si en ese período de tiempo llega otro paquete del mismo flujo, no hay necesidad de enviar el paquete al pipeline, porque ya se sabe cuales son las acciones a tomar para el mismo. Por lo tanto, si un flujo de datos es constante y rápido, el tamaño de la tabla de OpenFlow no afectará el tiempo de decisión, ya que sólo el primer paquete de ese flujo deberá ser comparado con dicha tabla. La figura \ref{fig:ovs_dataplane} ilustra este comportamiento.
 
-Mediante el comando "ovs-appctl dpctl/show" de Open vSwitch, se puede examinar las estadísticas de la cache de cada nodo. A modo de ejemplo, en la figura \ref{fig:cache_sample} se observan las estadísticas de un nodo llamado "alice". En la sección "lookups" se detallan cuantos "hits" y "miss" de caché han ocurrido hasta el momento, y "flows" indica cuantos flujos activos hay en el momento en la caché.
+\begin{figure}[t]
+	\caption{Arquitectura simplificada de Open vSwitch.}
+	\includegraphics[scale=0.65]{ovs_dataplane}
+	\centering
+	\label{fig:ovs_dataplane}
+\end{figure}
+
+Mediante el comando "ovs-dpctl show" de Open vSwitch, se puede examinar las estadísticas de la cache de cada nodo. A modo de ejemplo, en la figura \ref{fig:cache_sample} se observan las estadísticas de un nodo llamado "alice". En la sección "lookups" se detallan cuantos "hits" y "miss" de caché han ocurrido hasta el momento, y "flows" indica cuantos flujos activos hay en el momento en la caché.
 
 \begin{figure}[H]
 	\caption{Estadísticas de cache de flujos del nodo "alice".}
