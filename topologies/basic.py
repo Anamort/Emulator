@@ -1,6 +1,6 @@
 """
 Topologia basica
-4 routers SDN
+4 RAUSwitch
 2 routers Quagga
 2 hosts
 1 controlador
