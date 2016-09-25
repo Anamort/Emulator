@@ -109,7 +109,12 @@
 \end{frame}
 
 \begin{frame}{Objetivo}
-	Poder utilizar la arquitectura RAUFlow y RAUSwitch en un entorno virtual, para poder hacer experimentos y pruebas.
+	Poder utilizar la arquitectura RAUFlow y RAUSwitch en un entorno virtual para:
+	\begin{itemize}
+		\item Experimentos y pruebas.
+		\item Desarrollo de nuevas funcionalidades sobre RAUFlow.
+		\item Investigación sobre esquemas híbridos en general.
+	\end{itemize}
 \end{frame}
 %Pruebas y experimentos que no son posibles con prototipos físicos. Incluso si se contara con todo el equipamiento, la configuración es muy compleja.
 
@@ -164,11 +169,11 @@
 	\begin{itemize}
 		\item Emulador de redes.
 		\item Comúnmente utilizado para experimentar con SDN y OpenFlow.
+		\item Ofrece Hosts y Switches.
 		\item Virtualización ligera (containers).
-		\item Cumple todos los requerimientos \textbf{excepto} el concepto de los switches híbridos.
+		\item Cumple todos los requerimientos \textbf{excepto} el soporte para switches híbridos.
+		\item Pero permite al usuario definir sus propias clases de nodos para extender las funcionalidades de las clases que vienen por defecto.
 	\end{itemize}
-	\pause
-	{\color{green}Solución: utilizar Mininet pero como emulador de propósito general.}
 \end{frame}
 
 \begin{frame}{Arquitectura de Mininet}
@@ -179,17 +184,84 @@
 \end{frame}
 % Los recursos de red de cada switch no están aislados entre sí.
 
-\begin{frame}{Diseño e implementación}
-	
+\begin{frame}{Problema con Mininet tradicional}
+	\begin{itemize}
+		\item Los switches están en el root namespace, así que no es posible que cada uno ejecute su instancia de Quagga.
+		\item No es posible poner a cada Switch en su propio namespace ya que Open vSwitch no tendría acceso a ellos.
+		\item Si los switches están en su propio namespace, el controlador OpenFlow (RAUFlow) no puede comunicarse con ellos a través de la interfaz de loopback.
+	\end{itemize}
+	\pause
+	{\color{green}Solución: utilizar Mininet pero como emulador de propósito general.}
 \end{frame}
 
-\begin{frame}{Ventajas}
+\begin{frame}{Diseño de la solución}
+	\begin{figure}[t]
+		\centering
+		\includegraphics[scale=0.7]{clases_entorno}
+	\end{figure}
+\end{frame}
+
+\begin{frame}{Arquitectura del entorno construido}
+	\begin{figure}[t]
+		\centering
+		\includegraphics[scale=0.5]{emulator_architecture}
+	\end{figure}
+\end{frame}
+%Aca mencionar que OVS es el aspecto mas radical, y que resulta complejo ejecutar multiples instancias correctamente (capaz mencionar que es gracias a privateDirs, capaz).
+
+\begin{frame}{Eliminación de SNMP}
+	\begin{figure}[t]
+		\centering
+		\includegraphics[scale=0.5]{componentes_rauflow}
+	\end{figure}
+\end{frame}
+
+\begin{frame}{Eliminación de SNMP}
+	\begin{figure}[t]
+		\centering
+		\includegraphics[scale=0.5]{componentes_rauflow_2}
+	\end{figure}
+\end{frame}
+
+\begin{frame}{Eliminación de SNMP}
+	El envío de datos de las interfaces pasa a implementarse con Open vSwitch (por fuera de OpenFlow).
+	\begin{exampleblock}{Ventajas}
+		\begin{itemize}
+			\item Reduce complejidad de la arquitectura.
+			\item Reduce carga de cómputo en los switches.
+		\end{itemize}
+	\end{exampleblock}
+\end{frame}
+
+\begin{frame}{Verificación funcional}
+	Con el entorno construido, el siguiente paso es probar distintos escenarios y topologias para detectar:
 	\begin{itemize}
-		\item Utiliza las mismas herramientas que el prototipo físico. Podría utilizarse incluso en conjunto con dispositivos físicos.
+		\item Problemas con el entorno virtual.
+		\item Problemas con la arquitectura/código de RAUFlow.
 	\end{itemize}
 \end{frame}
 
+\begin{frame}{Problemas encontrados}
+	\begin{enumerate}
+		\item \textbf{Error en el código de RAUFlow}: error en el algoritmo del camino óptimo. Provocaba una excepción de Python.
+		\item \textbf{Error en el código de RAUFlow}: error en el código que instala los flujos OpenFlow en los nodos. Provocaba que los flujos en cada nodo de un camino tuvieran incorrecto puerto de entrada.
+	\end{enumerate}
+\end{frame}
 
+\begin{frame}{Problemas encontrados}
+	\begin{enumerate}
+		\setcounter{enumi}{2}
+		\item \textbf{Posible problema} en el módulo LSDB Sync para leer base de datos topológica de OSPF cuando la topología es muy grande (librería Telnetlib de Python).
+		\item \textbf{Posible problema} de comunicación en la red de gestión cuando hay muchos switches.
+	\end{enumerate}
+\end{frame}
+
+\begin{frame}{Problemas encontrados}
+	\begin{figure}[t]
+		\centering
+		\includegraphics[scale=0.3]{openflow_protocol_error}
+	\end{figure}
+\end{frame}
 
 \section{Pruebas de escala}
 
@@ -203,6 +275,7 @@
 	
 \end{frame}
 
+%Utiliza las mismas herramientas que el prototipo físico, lo cual mejora la calidad de los experimentos. También implica que podría utilizarse en conjunto con dispositivos físicos.
 
 
 
@@ -218,51 +291,6 @@
 \begin{frame}{Diapo1}
 	
 \end{frame}
-
-%\begin{frame}
-%  {A Movie}
-%
-%  \begin{block}{Some block}
-%    \begin{itemize}
-%    \item Movies only seem to work in Adobe Reader
-%    \item Movie file is not embedded, it must be on the computer
-%    \end{itemize}
-%  \end{block}
-%
-%  \begin{exampleblock}{Some more block}
-%    Movies only seem to work in Adobe Reader\par
-%    Movie file is not embedded, it must be on the computer
-%  \end{exampleblock}
-%
-%  \begin{alertblock}{}
-%    Some text in here.
-%    \begin{itemize}
-%    \item Movies only seem to work in Adobe Reader
-%    \item Movie file is not embedded, it must be on the computer
-%    \end{itemize}
-%  \end{alertblock}
-%\end{frame}
-
-
-%\begin{frame}
-%  {Credits}
-%
-%  \begin{itemize}
-%  \item Brought to you by Cédric Mauclair
-%  \item Please let me know about improvements!
-%  \item inspiration: \url{http://www.shawnlankton.com}... (in code)
-%  \end{itemize}
-%\end{frame}
-%
-%
-%\begin{frame}
-%  {Questions}
-%
-%  \nocite{lorem,ipsum}
-%  \bibliographystyle{plain}
-%  \bibliography{demo}
-%
-%\end{frame}
 
 \end{document}
 
