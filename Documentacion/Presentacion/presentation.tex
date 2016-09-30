@@ -16,7 +16,8 @@
 \author
 	[Santiago Vidal]
   {Santiago Vidal \\
-  	{\normalfont Tutores: \\
+  	\vspace{4mm}
+  	{\normalfont\small Tutores: \\
   	Dr. Eduardo Grampín \\
   	MSc. Martín Giachino}}
 
@@ -37,75 +38,89 @@
 
 \maketitle
 
-\section{Agenda}
-
-\begin{frame}{Agenda}
-
-  \begin{itemize}
-	  \item Introducción
-	  \item Conceptos previos \& RAUFlow
-	  \item Entorno virtual
-	  \item Pruebas de escala
-	  \item Conclusiones
-  \end{itemize}
+\begin{frame}{}
+	\tableofcontents
 \end{frame}
 
 \section{Introducción}
 
-\begin{frame}{}
+\begin{frame}
+	\tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}{Introducción}
+	\begin{block}{Red Académica Uruguaya (RAU)}
+		\begin{itemize}
+			\item Emprendimiento de la Universidad de la República, administrado por el Servicio Central de Informática Universitario
+			(SeCIU).
+			\item Red que conecta instituciones académicas, centros de investigación e instituciones gubernamentales.
+			\item Parte de la RedClara.
+		\end{itemize}
+	\end{block}
+	\begin{block}{RAU2}
+		RAU2 es un proyecto para reemplazar la infraestructura actual, con el objetivo de brindar más y mejores servicios a las instituciones.
+	\end{block}
+\end{frame}
+%La idea de esta red es proveer servicios especializados para las insituciones, mayor calidad de servicio, mas velocidad, etc.
+%Proveedores sobrevenden ancho de banda
+%Actividades comerciales y particulares tienen misma prioridad.
+
+\begin{frame}{Proyecto RRAP}
+	\textbf{Routers Reconfigurables de Altas Prestaciones} (Emiliano Viotti, Rodrigo Amaro):
+	\begin{itemize}
+		\item Proyecto de grado que terminó en agosto de 2015.
+		\item Construyó un prototipo para la RAU2, basado en SDN.
+		\item Desarrolló una aplicación para gestión de redes llamada \textbf{RAUFlow}, que implementa clasificación y separación de tráfico.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Proyecto RRAP}
 	\begin{center}
-		\huge{Introducción}
+		Prototipo físico para pruebas funcionales:
+		\begin{figure}[t]
+			\includegraphics[scale=0.25]{topologia_rrap}
+		\end{figure}
 	\end{center}
 \end{frame}
 
-\begin{frame}{Diapo1}
-	
+\begin{frame}{Motivación}
+	Contestar las siguientes preguntas:
+	\pause
+	\begin{enumerate}
+		\item ¿Cómo podemos seguir trabajando sobre la arquitectura RAUflow sin ser limitados por el prototipo físico?
+		\pause
+		\item ¿RAUFlow funciona con topologias más grandes?
+		\pause
+		\item ¿Tiene buena escalabilidad?
+		%en el contexto de la RAU, es vital estudiar la escalabilidad de cualquier enfoque porque va a afectar a muchas instituciones, usuarios y tráfico.
+	\end{enumerate}
 \end{frame}
 
-\begin{frame}{Diapo2}
-	
+\begin{frame}{Resultados esperados}
+	\pause
+	\begin{enumerate}
+		\item Estado del arte en las aplicaciones de SDN (con foco en VPNs), y las herramientas de virtualización disponibles.
+		\pause
+		\item Una herramienta que permita virtualizar la arquitectura RAUFlow para pruebas y desarrollo.
+		\pause
+		\item Diseño e implementación de pruebas para estudiar la escalabilidad de RAUFlow.
+	\end{enumerate}
 \end{frame}
-
-\begin{frame}{Diapo3}
-	
-\end{frame}
-
-\begin{frame}{Diapo4}
-	
-\end{frame}
-
-
-
-
 
 \section{Conceptos previos \& RAUFlow}
 
 \begin{frame}{}
-	\begin{center}
-		\huge{Conceptos previos}
-	\end{center}
-	\begin{center}
-		\huge{\&}
-	\end{center}
-	\begin{center}
-		\huge{RAUFlow}
-	\end{center}
+	\tableofcontents[currentsection]
 \end{frame}
 
 \begin{frame}{Diapo1}
 	
 \end{frame}
 
-
-
-
-
 \section{Entorno virtual}
 
 \begin{frame}{}
-	\begin{center}
-		\huge{Entorno virtual}
-	\end{center}
+	\tableofcontents[currentsection]
 \end{frame}
 
 \begin{frame}{Objetivo}
@@ -266,9 +281,7 @@
 \section{Pruebas de escala}
 
 \begin{frame}{}
-	\begin{center}
-		\huge{Pruebas de escala}
-	\end{center}
+	\tableofcontents[currentsection]
 \end{frame}
 
 \begin{frame}{Diapo1}
@@ -283,9 +296,7 @@
 \section{Conclusiones}
 
 \begin{frame}{}
-	\begin{center}
-		\huge{Conclusiones}
-	\end{center}
+	\tableofcontents[currentsection]
 \end{frame}
 
 \begin{frame}{Diapo1}
