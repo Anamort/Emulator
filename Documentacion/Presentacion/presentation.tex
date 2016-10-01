@@ -8,6 +8,7 @@
 \usepackage{amsmath,amsfonts,graphicx}
 \usepackage{beamerleanprogress}
 
+
 \title
 	[Escalabilidad de SDN en la RAU]
   {Proyecto de grado \\
@@ -70,7 +71,7 @@
 	\begin{itemize}
 		\item Proyecto de grado que terminó en agosto de 2015.
 		\item Construyó un prototipo para la RAU2, basado en SDN.
-		\item Desarrolló una aplicación para gestión de redes llamada \textbf{RAUFlow}, que implementa clasificación y separación de tráfico.
+		\item Desarrolló una aplicación para gestión de redes llamada \textbf{RAUFlow}, que implementa clasificación y separación de tráfico (VPN).
 	\end{itemize}
 \end{frame}
 
@@ -92,7 +93,7 @@
 		\item ¿RAUFlow funciona con topologias más grandes?
 		\pause
 		\item ¿Tiene buena escalabilidad?
-		%en el contexto de la RAU, es vital estudiar la escalabilidad de cualquier enfoque porque va a afectar a muchas instituciones, usuarios y tráfico.
+		%Por qué es importante estudiar la escalabilidad?
 	\end{enumerate}
 \end{frame}
 
@@ -113,8 +114,94 @@
 	\tableofcontents[currentsection]
 \end{frame}
 
-\begin{frame}{Diapo1}
-	
+\begin{frame}{Redes Definidas por Software (SDN)}
+	\begin{figure}[t]
+		\includegraphics[scale=0.6]{sdn_transicion}
+	\end{figure}
+\end{frame}
+
+\begin{frame}{Redes Definidas por Software (SDN)}
+	\begin{figure}[t]
+		\includegraphics[scale=0.6]{arquitectura_sdn}
+	\end{figure}
+\end{frame}
+%Empezar desde abajo
+%Decir ejemplo DDOS
+
+\begin{frame}{OpenFlow}
+	\begin{itemize}
+		\item Provee una forma de abstraer las capacidades de un dispositivo.
+		\item Protocolo de comunicación con el controlador OpenFlow.
+	\end{itemize}
+	\pause
+	\begin{minipage}[b]{0.4\textwidth}
+		Flujo:
+		\includegraphics[scale=0.55]{flujo_openflow}
+		\begin{itemize}
+			\item Regla: Define el tipo de tráfico.
+			\item Acciones: Define qué se debe hacer con los paquetes del flujo (Drop, Output)
+			\item Otros: Estadísticas, Prioridad, Timeout, etc.
+		\end{itemize}
+	\end{minipage}
+	\hfill
+	\pause
+	\begin{minipage}[b]{0.5\textwidth}
+		\includegraphics[scale=0.5]{switch_openflow}
+	\end{minipage}
+\end{frame}
+
+\begin{frame}{Open vSwitch}
+	\begin{minipage}[b]{0.5\textwidth}
+		\begin{itemize}
+			\item Switch virtual multicapa.
+			\item "Production quality"
+			\item Es utilizado en la arquitectura RAUFlow como implementación (en software) de OpenFlow.
+		\end{itemize}
+	\end{minipage}
+	\hfill
+	\begin{minipage}[b]{0.4\textwidth}
+		\includegraphics[scale=0.7]{openvswitch_logo}
+	\end{minipage}
+\end{frame}
+
+\begin{frame}{VPN}
+	Red privada que se extiende a través de una red pública, como Internet. Puede ser de capa 2 o 3.
+	\begin{center}
+		\includegraphics[scale=0.8]{vpn}
+	\end{center}
+\end{frame}
+
+\begin{frame}{MPLS}
+	Mecanismo de transporte de datos basado en la conmutación de etiquetas. Es la solución de facto para la implementación de servicios de VPN.
+	\begin{center}
+		\includegraphics[scale=0.6]{mpls}
+	\end{center}
+\end{frame}
+
+\begin{frame}{RAUFlow}
+	Aplicación para control de red basada en el controlador Ryu.
+	\begin{enumerate}
+		\item Implementa servicios de VPN de capa 2 y 3.
+		\item OpenFlow y MPLS.
+		\item OSPF y SNMP.
+	\end{enumerate}
+	\begin{minipage}[b]{0.4\textwidth}
+		\begin{center}
+			\includegraphics[scale=0.20]{rauflow_interfaz2}
+		\end{center}
+	\end{minipage}
+	\hfill
+	\begin{minipage}[b]{0.4\textwidth}
+		\begin{center}
+			\includegraphics[scale=0.20]{rauflow_interfaz}
+		\end{center}
+	\end{minipage}
+\end{frame}
+
+\begin{frame}{RAUFlow}
+	\begin{center}
+		\includegraphics[scale=0.6]{componentes_rauflow}
+	\end{center}
 \end{frame}
 
 \section{Entorno virtual}
@@ -284,8 +371,111 @@
 	\tableofcontents[currentsection]
 \end{frame}
 
-\begin{frame}{Diapo1}
-	
+\begin{frame}{Pruebas de escala}
+	Podemos analizar la escalabilidad desde dos frentes:
+	\begin{enumerate}
+		\item \textbf{Variable}: Tamaño de la topología \\
+		\textbf{Analizar}: Creación de los servicios
+		\item \textbf{Variable}: Nivel de carga \\
+		\textbf{Analizar}: Rendimiento de la red
+	\end{enumerate}
+	\includegraphics[scale=0.6]{resultados_pruebas_no}
+\end{frame}
+
+\begin{frame}{Pruebas de escala: topologias}
+	\begin{minipage}[b]{0.3\textwidth}
+		\begin{center}
+			Topología básica (prototipo)
+			\includegraphics[scale=0.4]{basic_topology}
+		\end{center}
+	\end{minipage}
+	\hfill
+	\begin{minipage}[b]{0.6\textwidth}
+		\begin{center}
+			Topología chica (11 nodos)
+			\includegraphics[scale=0.25]{small_topology}
+		\end{center}
+	\end{minipage}
+\end{frame}
+
+\begin{frame}{Pruebas de escala: topologias}
+	\begin{center}
+		Topología mediana (45 nodos)
+		\includegraphics[scale=0.15]{medium_topology}
+	\end{center}
+\end{frame}
+
+\begin{frame}{Pruebas de escala: topologias}
+	\begin{center}
+		Topología grande (105 nodos)
+		\includegraphics[scale=0.09]{large_topology}
+	\end{center}
+\end{frame}
+
+%\begin{frame}{Tiempos de creación de VPN}
+%	\begin{center}
+%		\textcolor{brown}{VPN de capa 2 (en ms)}
+%		\begin{table}[ht]
+%			{\color{brown}\begin{tabular}{c c c c c}
+%				\hline\hline
+%				Largo del camino & Básica & Chica & Mediana & Grande \\ [0.5ex]
+%				\hline
+%				1 & 191 & 234 & 311 & 592 \\
+%				2 & N/C & 296 & 611 & 1204 \\
+%				4 & N/C & 299 & 453 & 1826 \\
+%				6 & N/C & 313 & 491 & 1662 \\
+%				8 & N/C & 324 & 567 & 2692 \\
+%				10 & N/C & N/C & 481 & 755 \\
+%				12 & N/C & N/C & 536 & 2480 \\ [1ex]
+%				\hline
+%			\end{tabular}}
+%		\end{table}
+%	\end{center}
+%\end{frame}
+%
+%\begin{frame}{Tiempos de creación de VPN}
+%	\begin{center}
+%		\textcolor{blue}{VPN de capa 3 (en ms)}
+%		\begin{table}[ht]
+%			{\color{blue}\begin{tabular}{c c c c c}
+%				\hline\hline
+%				Largo del camino & Básica & Chica & Mediana & Grande \\ [0.5ex]
+%				\hline
+%				1 & 17 & 22 & 103 & 418 \\
+%				2 & N/C & 28 & 119 & 675 \\
+%				4 & N/C & 44 & 129 & 1237 \\
+%				6 & N/C & 53 & 158 & 696 \\
+%				8 & N/C & 60 & 196 & 1099 \\
+%				10 & N/C & N/C & 196 & 555 \\
+%				12 & N/C & N/C & 193 & 971 \\ [1ex]
+%				\hline
+%			\end{tabular}}
+%		\end{table}
+%	\end{center}
+%\end{frame}
+
+\begin{frame}{Tiempos de creación de VPN}
+	\begin{center}
+		\includegraphics[height=0.9\textheight]{tiempos_vpn}
+	\end{center}
+\end{frame}
+
+\begin{frame}{Tiempos de creación de VPN}
+	\begin{center}
+		\includegraphics[height=0.9\textheight]{tiempos_vpn_tipo}
+	\end{center}
+\end{frame}
+
+\begin{frame}{Tiempos de creación de VPN}
+	\begin{center}
+		\includegraphics[height=0.9\textheight]{tiempos_vpn_camino}
+	\end{center}
+\end{frame}
+
+\begin{frame}{Tiempos de creación de VPN}
+	\begin{center}
+		\includegraphics[height=0.9\textheight]{tiempos_vpn_topologia}
+	\end{center}
 \end{frame}
 
 %Utiliza las mismas herramientas que el prototipo físico, lo cual mejora la calidad de los experimentos. También implica que podría utilizarse en conjunto con dispositivos físicos.
