@@ -8,7 +8,6 @@
 \usepackage{amsmath,amsfonts,graphicx}
 \usepackage{beamerleanprogress}
 
-
 \title
 	[Escalabilidad de SDN en la RAU]
   {Proyecto de grado \\
@@ -365,6 +364,12 @@
 	\end{figure}
 \end{frame}
 
+\begin{frame}{GraphML Loader}
+	\begin{center}
+		\includegraphics[scale=0.4]{loader}
+	\end{center}
+\end{frame}
+
 \section{Pruebas de escala}
 
 \begin{frame}{}
@@ -377,9 +382,11 @@
 		\item \textbf{Variable}: Tamaño de la topología \\
 		\textbf{Analizar}: Creación de los servicios
 		\item \textbf{Variable}: Nivel de carga \\
-		\textbf{Analizar}: Rendimiento de la red
+		\textbf{Analizar}: Rendimiento de la red \\
 	\end{enumerate}
-	\includegraphics[scale=0.6]{resultados_pruebas_no}
+	\pause
+	\vspace{4mm}
+	\textbf{Observación}: las pruebas no nos dirán valores reales, pero sí nos permiten detectar comportamientos y tendencias.
 \end{frame}
 
 \begin{frame}{Pruebas de escala: topologias}
@@ -478,10 +485,91 @@
 	\end{center}
 \end{frame}
 
+\begin{frame}{Tiempos de creación de VPN}
+	Las tablas anteriores ya nos dan una idea del comportamiento que podemos esperar. \\
+	
+	Pero hagamos un análisis más fino. La creación de una VPN básicamente se divide en tres tareas que debe realizar RAUflow:
+	\begin{itemize}
+		\item Cálculo del camino óptimo
+		\item Manejo de etiquetas MPLS
+		\item Instalación de flujos OpenFlow
+	\end{itemize}
+	Agregando \textbf{timestamps} al código podemos ver cuánto tiempo dedica RAUflow a cada tarea.
+\end{frame}
+
+\begin{frame}{Descomposición del tiempo de creación}
+	Topología chica:
+	\begin{center}
+		\includegraphics[scale=0.6]{porcentajes_tiempos_chica}
+	\end{center}
+\end{frame}
+
+\begin{frame}{Descomposición del tiempo de creación}
+	Topología mediana:
+	\begin{center}
+		\includegraphics[scale=0.6]{porcentajes_tiempos_mediana}
+	\end{center}
+\end{frame}
+
+\begin{frame}{Descomposición del tiempo de creación}
+	Topología grande:
+	\begin{center}
+		\includegraphics[scale=0.6]{porcentajes_tiempos_grande}
+	\end{center}
+\end{frame}
+
+\begin{frame}{Pruebas de escala: servicios}
+	Podemos analizar la escalabilidad desde dos frentes:
+	\begin{enumerate}
+		\item {\color{gray}\textbf{Variable}: Tamaño de la topología \\
+		\textbf{Analizar}: Creación de los servicios}
+		\item {\textbf{Variable}: Nivel de carga \\
+		\textbf{Analizar}: Rendimiento de la red \\}
+	\end{enumerate}
+	\pause
+	Lo ideal sería tener \textbf{modelos de tráfico}, pero no están disponibles. \\
+	\pause
+	Pero sí podemos crear \textbf{muchos servicios} y ver que efecto genera.
+\end{frame}
+
+\begin{frame}{Cantidad de servicios - throughput}
+	\textbf{Primer enfoque}: determinar si la cantidad de servicios afecta a los RAUSwitch de forma individual (flujos).
+	\pause
+	\begin{center}
+		\includegraphics[scale=0.6]{throughput1}
+	\end{center}
+	\pause
+	15.000 VPN = 1.260.000 flujos
+\end{frame}
+
+\begin{frame}{Cantidad de servicios - throughput}
+	\textbf{Primer enfoque}: determinar si la cantidad de servicios afecta a los RAUSwitch de forma individual (flujos).
+	\begin{center}
+		\includegraphics[scale=0.6]{throughput2}
+	\end{center}
+\end{frame}
+
+\begin{frame}{Cantidad de servicios - Memoria}
+	\textbf{Segundo enfoque}: consumo de memoria de RAUFlow.
+	\pause
+	\begin{center}
+		\includegraphics[scale=0.8]{memoria_rauflow}
+	\end{center}
+	\pause
+	No es un consumo ineficiente, pero es deseable que se implemente persistencia.
+\end{frame}
+
+\begin{frame}{Cantidad de servicios - nuevo servicio}
+	\textbf{Efecto inesperado}: efecto sobre la creación de nuevos servicios.
+	\pause
+	\begin{center}
+		\includegraphics[scale=0.7]{cummulative_vpn}
+	\end{center}
+	\pause
+	Falta determinar porqué ocurre (probablemente esté relacionado a la memoria de RAUFlow).
+\end{frame}
+
 %Utiliza las mismas herramientas que el prototipo físico, lo cual mejora la calidad de los experimentos. También implica que podría utilizarse en conjunto con dispositivos físicos.
-
-
-
 
 \section{Conclusiones}
 
@@ -489,8 +577,53 @@
 	\tableofcontents[currentsection]
 \end{frame}
 
-\begin{frame}{Diapo1}
-	
+\begin{frame}{Conclusiones}
+	\begin{itemize}
+		\item Se construyó una herramienta capaz de emular arquitecturas híbridas legacy/SDN.
+		\pause
+		\item Se corrigieron errores de implementación en RAUFlow, y se detectaron posibles problemas que podrían afectar un despliegue real.
+		\pause
+		\item Se hizo un cambio en la arquitectura de RAUFlow (eliminación de SNMP), que reduce su complejidad y aumenta su rendimiento.
+		\pause
+		\item Se hizo un análisis de escalabilidad sobre RAUFlow, estudiando su comportamiento ante dos variables: topologias y servicios.
+		\pause
+		\item Se contribuyó a un artículo científico que fue aceptado en la conferencia ACM SIGCOMM Workshop on Fostering Latin American Research in Data Communication Networks (LANCOMM 2016).
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Trabajo futuro}
+	Sobre el emulador:
+	\begin{itemize}
+		\item Agregarle una interfaz gráfica para que sea más fácil de usar (MiniEdit).
+		\pause
+		\item Mejorar la confiabilidad de los resultados. Que los experimentos sean más realistas (Mininet-HiFi).
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Trabajo futuro}
+	Sobre las pruebas:
+	\begin{itemize}
+		\item Explorar a fondo algunos comportamientos detectados.
+		\pause
+		\item Hacer pruebas más realistas, con modelos de tráfico que reflejen la actividad de la RAU.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Trabajo futuro}
+	Sobre RAUFlow:
+	\begin{itemize}
+		\item Mejorar la implementación de VPN (diferentes caminos, load balacing, ingeniería de tráfico)
+		\pause
+		\item Implementar nuevas funcionalidades.
+		\pause
+		\item Implementar persistencia, para que no tenga todos los datos en memoria.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{}
+	\begin{center}
+		{\huge ¿Preguntas?}
+	\end{center}
 \end{frame}
 
 \end{document}
