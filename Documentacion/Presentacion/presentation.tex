@@ -70,7 +70,7 @@
 	\begin{itemize}
 		\item Proyecto de grado que terminó en agosto de 2015.
 		\item Construyó un prototipo para la RAU2, basado en SDN.
-		\item Desarrolló una aplicación para gestión de redes llamada \textbf{RAUFlow}, que implementa clasificación y separación de tráfico (VPN).
+		\item Desarrolló una aplicación para gestión de redes llamada \textbf{RAUFlow}, que implementa Redes Privadas Virtuales (VPN).
 	\end{itemize}
 \end{frame}
 
@@ -133,34 +133,16 @@
 		\item Protocolo de comunicación con el controlador OpenFlow.
 	\end{itemize}
 	\pause
-	\begin{minipage}[b]{0.4\textwidth}
-		Flujo:
+	\vspace{4mm}
+	\begin{center}
+		Flujo OpenFlow: \\
 		\includegraphics[scale=0.55]{flujo_openflow}
-		\begin{itemize}
-			\item Regla: Define el tipo de tráfico.
-			\item Acciones: Define qué se debe hacer con los paquetes del flujo (Drop, Output)
-			\item Otros: Estadísticas, Prioridad, Timeout, etc.
-		\end{itemize}
-	\end{minipage}
-	\hfill
-	\pause
-	\begin{minipage}[b]{0.5\textwidth}
-		\includegraphics[scale=0.5]{switch_openflow}
-	\end{minipage}
-\end{frame}
-
-\begin{frame}{Open vSwitch}
-	\begin{minipage}[b]{0.5\textwidth}
-		\begin{itemize}
-			\item Switch virtual multicapa.
-			\item "Production quality"
-			\item Es utilizado en la arquitectura RAUFlow como implementación (en software) de OpenFlow.
-		\end{itemize}
-	\end{minipage}
-	\hfill
-	\begin{minipage}[b]{0.4\textwidth}
-		\includegraphics[scale=0.7]{openvswitch_logo}
-	\end{minipage}
+	\end{center}
+	\begin{itemize}
+		\item Regla: Define el tipo de tráfico.
+		\item Acciones: Define qué se debe hacer con los paquetes del flujo (Drop, Output)
+		\item Otros: Estadísticas, Prioridad, Timeout, etc.
+	\end{itemize}
 \end{frame}
 
 \begin{frame}{VPN}
@@ -292,7 +274,7 @@
 		\item Si los switches están en su propio namespace, el controlador OpenFlow (RAUFlow) no puede comunicarse con ellos a través de la interfaz de loopback.
 	\end{itemize}
 	\pause
-	{\color{green}Solución: utilizar Mininet pero como emulador de propósito general.}
+	{\color{teal}Solución: utilizar Mininet pero como emulador de propósito general.}
 \end{frame}
 
 \begin{frame}{Diseño de la solución}
@@ -334,6 +316,12 @@
 	\end{exampleblock}
 \end{frame}
 
+\begin{frame}{GraphML Loader}
+	\begin{center}
+		\includegraphics[scale=0.4]{loader}
+	\end{center}
+\end{frame}
+
 \begin{frame}{Verificación funcional}
 	Con el entorno construido, el siguiente paso es probar distintos escenarios y topologias para detectar:
 	\begin{itemize}
@@ -347,27 +335,6 @@
 		\item \textbf{Error en el código de RAUFlow}: error en el algoritmo del camino óptimo. Provocaba una excepción de Python.
 		\item \textbf{Error en el código de RAUFlow}: error en el código que instala los flujos OpenFlow en los nodos. Provocaba que los flujos en cada nodo de un camino tuvieran incorrecto puerto de entrada.
 	\end{enumerate}
-\end{frame}
-
-\begin{frame}{Problemas encontrados}
-	\begin{enumerate}
-		\setcounter{enumi}{2}
-		\item \textbf{Posible problema} en el módulo LSDB Sync para leer base de datos topológica de OSPF cuando la topología es muy grande (librería Telnetlib de Python).
-		\item \textbf{Posible problema} de comunicación en la red de gestión cuando hay muchos switches.
-	\end{enumerate}
-\end{frame}
-
-\begin{frame}{Problemas encontrados}
-	\begin{figure}[t]
-		\centering
-		\includegraphics[scale=0.3]{openflow_protocol_error}
-	\end{figure}
-\end{frame}
-
-\begin{frame}{GraphML Loader}
-	\begin{center}
-		\includegraphics[scale=0.4]{loader}
-	\end{center}
 \end{frame}
 
 \section{Pruebas de escala}
@@ -419,48 +386,6 @@
 	\end{center}
 \end{frame}
 
-%\begin{frame}{Tiempos de creación de VPN}
-%	\begin{center}
-%		\textcolor{brown}{VPN de capa 2 (en ms)}
-%		\begin{table}[ht]
-%			{\color{brown}\begin{tabular}{c c c c c}
-%				\hline\hline
-%				Largo del camino & Básica & Chica & Mediana & Grande \\ [0.5ex]
-%				\hline
-%				1 & 191 & 234 & 311 & 592 \\
-%				2 & N/C & 296 & 611 & 1204 \\
-%				4 & N/C & 299 & 453 & 1826 \\
-%				6 & N/C & 313 & 491 & 1662 \\
-%				8 & N/C & 324 & 567 & 2692 \\
-%				10 & N/C & N/C & 481 & 755 \\
-%				12 & N/C & N/C & 536 & 2480 \\ [1ex]
-%				\hline
-%			\end{tabular}}
-%		\end{table}
-%	\end{center}
-%\end{frame}
-%
-%\begin{frame}{Tiempos de creación de VPN}
-%	\begin{center}
-%		\textcolor{blue}{VPN de capa 3 (en ms)}
-%		\begin{table}[ht]
-%			{\color{blue}\begin{tabular}{c c c c c}
-%				\hline\hline
-%				Largo del camino & Básica & Chica & Mediana & Grande \\ [0.5ex]
-%				\hline
-%				1 & 17 & 22 & 103 & 418 \\
-%				2 & N/C & 28 & 119 & 675 \\
-%				4 & N/C & 44 & 129 & 1237 \\
-%				6 & N/C & 53 & 158 & 696 \\
-%				8 & N/C & 60 & 196 & 1099 \\
-%				10 & N/C & N/C & 196 & 555 \\
-%				12 & N/C & N/C & 193 & 971 \\ [1ex]
-%				\hline
-%			\end{tabular}}
-%		\end{table}
-%	\end{center}
-%\end{frame}
-
 \begin{frame}{Tiempos de creación de VPN}
 	\begin{center}
 		\includegraphics[height=0.9\textheight]{tiempos_vpn}
@@ -486,15 +411,14 @@
 \end{frame}
 
 \begin{frame}{Tiempos de creación de VPN}
-	Las tablas anteriores ya nos dan una idea del comportamiento que podemos esperar. \\
-	
-	Pero hagamos un análisis más fino. La creación de una VPN básicamente se divide en tres tareas que debe realizar RAUflow:
+	Hagamos un análisis más fino. \\
+	\vspace{4mm}
+	Agregando \textbf{timestamps} al código podemos ver cuánto tiempo dedica RAUflow a cada tarea:
 	\begin{itemize}
 		\item Cálculo del camino óptimo
 		\item Manejo de etiquetas MPLS
 		\item Instalación de flujos OpenFlow
 	\end{itemize}
-	Agregando \textbf{timestamps} al código podemos ver cuánto tiempo dedica RAUflow a cada tarea.
 \end{frame}
 
 \begin{frame}{Descomposición del tiempo de creación}
@@ -547,6 +471,7 @@
 	\begin{center}
 		\includegraphics[scale=0.6]{throughput2}
 	\end{center}
+	15.000 VPN = 1.260.000 flujos
 \end{frame}
 
 \begin{frame}{Cantidad de servicios - Memoria}
