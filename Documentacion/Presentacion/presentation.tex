@@ -69,8 +69,8 @@
 	\textbf{Routers Reconfigurables de Altas Prestaciones} (Emiliano Viotti, Rodrigo Amaro):
 	\begin{itemize}
 		\item Proyecto de grado que terminó en agosto de 2015.
-		\item Construyó un prototipo para la RAU2, basado en SDN.
-		\item Desarrolló una aplicación para gestión de redes llamada \textbf{RAUFlow}, que implementa Redes Privadas Virtuales (VPN).
+		\item Desarrolló una arquitectura de red basada en SDN llamada \textbf{RAUFlow}, que implementa Redes Privadas Virtuales (VPN).
+		\item Construyó un prototipo físico para validación funcional.
 	\end{itemize}
 \end{frame}
 
@@ -99,11 +99,9 @@
 \begin{frame}{Resultados esperados}
 	\pause
 	\begin{enumerate}
-		\item Estado del arte en las aplicaciones de SDN (con foco en VPNs), y las herramientas de virtualización disponibles.
+		\item Una \textbf{herramienta} que permita virtualizar la arquitectura RAUFlow para pruebas y desarrollo.
 		\pause
-		\item Una herramienta que permita virtualizar la arquitectura RAUFlow para pruebas y desarrollo.
-		\pause
-		\item Diseño e implementación de pruebas para estudiar la escalabilidad de RAUFlow.
+		\item Diseño e implementación de \textbf{pruebas} para estudiar la escalabilidad de RAUFlow.
 	\end{enumerate}
 \end{frame}
 
@@ -111,6 +109,36 @@
 
 \begin{frame}{}
 	\tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}{Conceptos previos}
+	Estudiemos algunos conceptos previos relacionados a RAUFlow:
+	\begin{enumerate}
+		\item VPN
+		\item MPLS
+		\item Software Defined Networking
+		\item OpenFlow
+	\end{enumerate}
+\end{frame}
+
+\begin{frame}{VPN}
+	Red privada que se extiende a través de una red pública, como Internet. Puede ser de capa 2 (enlace) o 3 (red) del modelo OSI.
+	\begin{center}
+		\includegraphics[scale=0.8]{vpn}
+	\end{center}
+\end{frame}
+
+\begin{frame}{MPLS}
+	Mecanismo de transporte de datos basado en la conmutación de etiquetas. Es la solución de facto para la implementación de servicios de VPN.
+	\begin{center}
+		\includegraphics[scale=0.6]{mpls}
+	\end{center}
+\end{frame}
+
+\begin{frame}{Redes Definidas por Software (SDN)}
+	\begin{figure}[t]
+		\includegraphics[scale=0.6]{sdn_transicion1}
+	\end{figure}
 \end{frame}
 
 \begin{frame}{Redes Definidas por Software (SDN)}
@@ -136,27 +164,13 @@
 	\vspace{4mm}
 	\begin{center}
 		Flujo OpenFlow: \\
-		\includegraphics[scale=0.55]{flujo_openflow}
+		\includegraphics[scale=0.7]{flujo_openflow}
 	\end{center}
 	\begin{itemize}
 		\item Regla: Define el tipo de tráfico.
-		\item Acciones: Define qué se debe hacer con los paquetes del flujo (Drop, Output)
+		\item Acciones: Define qué se debe hacer con los paquetes del flujo (Drop, Output, Agregar/Quitar etiqueta MPLS)
 		\item Otros: Estadísticas, Prioridad, Timeout, etc.
 	\end{itemize}
-\end{frame}
-
-\begin{frame}{VPN}
-	Red privada que se extiende a través de una red pública, como Internet. Puede ser de capa 2 o 3.
-	\begin{center}
-		\includegraphics[scale=0.8]{vpn}
-	\end{center}
-\end{frame}
-
-\begin{frame}{MPLS}
-	Mecanismo de transporte de datos basado en la conmutación de etiquetas. Es la solución de facto para la implementación de servicios de VPN.
-	\begin{center}
-		\includegraphics[scale=0.6]{mpls}
-	\end{center}
 \end{frame}
 
 \begin{frame}{RAUFlow}
@@ -177,6 +191,18 @@
 			\includegraphics[scale=0.20]{rauflow_interfaz}
 		\end{center}
 	\end{minipage}
+\end{frame}
+
+\begin{frame}{RAUFlow}
+	\begin{center}
+		\includegraphics[scale=0.6]{componentes_rauflow01}
+	\end{center}
+\end{frame}
+
+\begin{frame}{RAUFlow}
+	\begin{center}
+		\includegraphics[scale=0.6]{componentes_rauflow02}
+	\end{center}
 \end{frame}
 
 \begin{frame}{RAUFlow}
@@ -255,7 +281,7 @@
 		\item Ofrece Hosts y Switches.
 		\item Virtualización ligera (containers).
 		\item Cumple todos los requerimientos \textbf{excepto} el soporte para switches híbridos.
-		\item Pero permite al usuario definir sus propias clases de nodos para extender las funcionalidades de las clases que vienen por defecto.
+		\item Permite al usuario definir sus propias clases de nodos para extender las funcionalidades de las clases que vienen por defecto.
 	\end{itemize}
 \end{frame}
 
@@ -292,6 +318,27 @@
 \end{frame}
 %Aca mencionar que OVS es el aspecto mas radical, y que resulta complejo ejecutar multiples instancias correctamente (capaz mencionar que es gracias a privateDirs, capaz).
 
+\begin{frame}{GraphML Loader}
+	\begin{center}
+		\includegraphics[scale=0.4]{loader}
+	\end{center}
+\end{frame}
+
+\begin{frame}{Verificación funcional}
+	Con el entorno construido, el siguiente paso es probar distintos escenarios y topologias para detectar:
+	\begin{itemize}
+		\item Problemas con el entorno virtual.
+		\item Problemas con la arquitectura/código de RAUFlow.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Problemas encontrados}
+	\begin{enumerate}
+		\item \textbf{Error en el código de RAUFlow}: error en el algoritmo del camino óptimo. Provocaba una excepción de Python.
+		\item \textbf{Error en el código de RAUFlow}: error en el código que instala los flujos OpenFlow en los nodos. Provocaba que los flujos en cada nodo de un camino tuvieran incorrecto puerto de entrada.
+	\end{enumerate}
+\end{frame}
+
 \begin{frame}{Eliminación de SNMP}
 	\begin{figure}[t]
 		\centering
@@ -314,27 +361,6 @@
 			\item Reduce carga de cómputo en los switches.
 		\end{itemize}
 	\end{exampleblock}
-\end{frame}
-
-\begin{frame}{GraphML Loader}
-	\begin{center}
-		\includegraphics[scale=0.4]{loader}
-	\end{center}
-\end{frame}
-
-\begin{frame}{Verificación funcional}
-	Con el entorno construido, el siguiente paso es probar distintos escenarios y topologias para detectar:
-	\begin{itemize}
-		\item Problemas con el entorno virtual.
-		\item Problemas con la arquitectura/código de RAUFlow.
-	\end{itemize}
-\end{frame}
-
-\begin{frame}{Problemas encontrados}
-	\begin{enumerate}
-		\item \textbf{Error en el código de RAUFlow}: error en el algoritmo del camino óptimo. Provocaba una excepción de Python.
-		\item \textbf{Error en el código de RAUFlow}: error en el código que instala los flujos OpenFlow en los nodos. Provocaba que los flujos en cada nodo de un camino tuvieran incorrecto puerto de entrada.
-	\end{enumerate}
 \end{frame}
 
 \section{Pruebas de escala}
@@ -491,7 +517,7 @@
 		\includegraphics[scale=0.7]{cummulative_vpn}
 	\end{center}
 	\pause
-	Falta determinar porqué ocurre (probablemente esté relacionado a la memoria de RAUFlow).
+	Falta determinar porqué ocurre (probablemente esté relacionado al consumo de memoria).
 \end{frame}
 
 %Utiliza las mismas herramientas que el prototipo físico, lo cual mejora la calidad de los experimentos. También implica que podría utilizarse en conjunto con dispositivos físicos.
@@ -511,24 +537,22 @@
 		\item Se hizo un cambio en la arquitectura de RAUFlow (eliminación de SNMP), que reduce su complejidad y aumenta su rendimiento.
 		\pause
 		\item Se hizo un análisis de escalabilidad sobre RAUFlow, estudiando su comportamiento ante dos variables: topologias y servicios.
-		\pause
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Conclusiones (2)}
+	\begin{itemize}
 		\item Se contribuyó a un artículo científico que fue aceptado en la conferencia ACM SIGCOMM Workshop on Fostering Latin American Research in Data Communication Networks (LANCOMM 2016).
+		\item El artículo también fue aceptado en formato de póster en la conferencia Spring School on Networks (SSN 2016) a llevarse a cabo en Chile.
 	\end{itemize}
 \end{frame}
 
 \begin{frame}{Trabajo futuro}
-	Sobre el emulador:
+	Sobre el emulador y las pruebas:
 	\begin{itemize}
 		\item Agregarle una interfaz gráfica para que sea más fácil de usar (MiniEdit).
 		\pause
-		\item Mejorar la confiabilidad de los resultados. Que los experimentos sean más realistas (Mininet-HiFi).
-	\end{itemize}
-\end{frame}
-
-\begin{frame}{Trabajo futuro}
-	Sobre las pruebas:
-	\begin{itemize}
-		\item Explorar a fondo algunos comportamientos detectados.
+		\item Explorar a fondo algunos comportamientos detectados (por ejemplo, el efecto acumulativo en la creación de VPNs).
 		\pause
 		\item Hacer pruebas más realistas, con modelos de tráfico que reflejen la actividad de la RAU.
 	\end{itemize}
@@ -537,9 +561,9 @@
 \begin{frame}{Trabajo futuro}
 	Sobre RAUFlow:
 	\begin{itemize}
-		\item Mejorar la implementación de VPN (diferentes caminos, load balacing, ingeniería de tráfico)
+		\item Mejorar la implementación de VPN (diferentes caminos, load balancing, ingeniería de tráfico)
 		\pause
-		\item Implementar nuevas funcionalidades.
+		\item Implementar nuevas funcionalidades de acuerdo a los requerimientos de la RAU.
 		\pause
 		\item Implementar persistencia, para que no tenga todos los datos en memoria.
 	\end{itemize}
